@@ -1,0 +1,51 @@
+{
+  "name": "game-manager",
+  "version": "0.0.0",
+  "description": "Socket server for managing game rooms",
+  "type": "module",
+  "engines": {
+    "node": ">= 20.9 < 21"
+  },
+  "scripts": {
+    "start": "node build/src/main.js",
+    "dev": "tsx src/index.ts --watch --no-clear",
+    "clean": "rimraf coverage build tmp",
+    "prebuild": "npm run lint",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -w -p tsconfig.json",
+    "build:release": "npm run clean && tsc -p tsconfig.release.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
+    "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
+    "test:watch": "vitest --watch"
+  },
+  "author": "Lukas Olsen <lukasolsen@users.noreply.github.com>",
+  "license": "Apache-2.0",
+  "volta": {
+    "node": "20.17.0"
+  },
+  "dependencies": {
+    "axios": "^1.8.1",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.40.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "1.4.5-lts.1",
+    "pg": "^8.13.3",
+    "tsx": "^4.19.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/multer": "^1.4.12",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
