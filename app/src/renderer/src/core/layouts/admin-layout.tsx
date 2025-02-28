@@ -1,7 +1,5 @@
 import { FC, ReactNode, useEffect } from 'react'
 import { observer } from 'mobx-react'
-// components
-import { LogoSpinner } from '../components/loader/LogoSpinner'
 //import { NewUserPopup } from '@/components/new-user-popup'
 import { useUser } from '@renderer/hooks'
 import { useRouter } from '@tanstack/react-router'
@@ -28,7 +26,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   if (isUserLoggedIn !== undefined) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
+        Loading component here
       </div>
     )
   }
