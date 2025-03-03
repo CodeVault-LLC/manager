@@ -19,17 +19,9 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
 
   useEffect(() => {
     if (isUserLoggedIn === false) {
-      router.navigate({ to: '/' })
+      router.navigate({ to: '/login' })
     }
   }, [router, isUserLoggedIn])
-
-  if (isUserLoggedIn !== undefined) {
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        Loading component here
-      </div>
-    )
-  }
 
   return (
     <div className="relative flex h-screen w-screen overflow-hidden">

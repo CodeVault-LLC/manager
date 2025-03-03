@@ -1,10 +1,6 @@
-import {
-  ICsrfTokenData,
-  IEmailCheckData,
-  IEmailCheckResponse,
-} from "@shared/types/auth";
+import { ICsrfTokenData, IEmailCheckData, IEmailCheckResponse } from "types";
 import { APIService } from "../api";
-import { API_BASE_URL } from "@shared/constants";
+import { API_BASE_URL } from "../../constants";
 
 /**
  * Service class for handling authentication-related operations

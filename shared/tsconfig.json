@@ -4,7 +4,11 @@
     "declaration": true,
     "declarationDir": "./dist",
     "emitDeclarationOnly": true,
-    "strict": true
+    "strict": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./"]
+    }
   },
-  "include": ["types/*.ts"]
 }

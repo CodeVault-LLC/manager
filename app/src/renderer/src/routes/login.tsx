@@ -6,12 +6,12 @@ import { observer } from 'mobx-react'
 
 const WorkspaceManagementPage = observer(() => {
   return (
-    <AuthenticationWrapper pageType={EPageTypes.PUBLIC}>
-      <div>Workspace Management Page</div>
+    <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
+      
     </AuthenticationWrapper>
   )
 })
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/login')({
   component: WorkspaceManagementPage
 })

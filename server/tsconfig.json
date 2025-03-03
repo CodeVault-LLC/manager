@@ -1,29 +1,14 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "es2022",
-    "module": "node16",
-    "lib": ["ES2022", "DOM"],
-    "moduleResolution": "node16",
-    "rootDirs": [".", "../shared"],
-    "outDir": "build",
-    "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
-    "alwaysStrict": true,
-    "sourceMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
-    "strictNullChecks": true,
-
+    "module": "esnext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/*"]
     },
+    "allowJs": false,
+    "strictNullChecks": true
   },
-  "include": ["src", "__tests__", "scripts"]
+  "include": ["src", "tsup.config.ts", "vitest.config.ts", "drizzle.config.ts"]
 }

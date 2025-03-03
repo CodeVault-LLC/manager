@@ -1,6 +1,7 @@
-import { API_BASE_URL } from "@shared/constants";
+import { EAuthenticationErrorCodes } from "../../helpers/authentication.helper";
+import { API_BASE_URL } from "../../constants";
 import { APIService } from "../api";
-import { IUser } from "@shared/types";
+import { IUser } from "types";
 
 /**
  * Service class for managing user operations
@@ -49,11 +50,28 @@ export class UserService extends APIService {
    * @throws {Error} If the API request fails
    * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
    */
-  async adminDetails(): Promise<IUser> {
-    return this.get("/api/instances/admins/me/", { validateStatus: null })
-      .then((response) => response?.data)
+  async adminDetails(): Promise<{
+    user?: IUser;
+    error?: EAuthenticationErrorCodes;
+  }> {
+    return this.get("/api/users/me/", { validateStatus: null })
+      .then((response) => {
+        if (response.status === 200) {
+          return { user: response.data };
+        }
+
+        return {
+          error: EAuthenticationErrorCodes.UNAUTHORIZED,
+        };
+      })
       .catch((error) => {
-        throw error?.response?.data;
+        if (error.response.status === 403) {
+          return { error: EAuthenticationErrorCodes.FORBIDDEN };
+        } else if (error.response.status === 401) {
+          return { error: EAuthenticationErrorCodes.UNAUTHORIZED };
+        }
+
+        return {};
       });
   }
 }

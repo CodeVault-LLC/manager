@@ -1,24 +1,11 @@
 {
-  "name": "game-manager",
-  "version": "0.0.0",
-  "description": "Socket server for managing game rooms",
-  "type": "module",
   "engines": {
     "node": ">= 20.9 < 21"
   },
   "scripts": {
-    "start": "node build/src/main.js",
-    "dev": "tsx src/index.ts --watch --no-clear",
-    "clean": "rimraf coverage build tmp",
-    "prebuild": "npm run lint",
-    "build": "tsc -p tsconfig.json",
-    "build:watch": "tsc -w -p tsconfig.json",
-    "build:release": "npm run clean && tsc -p tsconfig.release.json",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
-    "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
-    "test:watch": "vitest --watch"
+    "start": "tsx src/index.ts",
+    "dev": "tsx --watch src/index.ts",
+    "database:setup": "drizzle-kit push --config ./drizzle.config.ts"
   },
   "author": "Lukas Olsen <lukasolsen@users.noreply.github.com>",
   "license": "Apache-2.0",

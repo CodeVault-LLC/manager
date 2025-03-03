@@ -56,10 +56,11 @@ export class UserStore implements IUserStore {
     try {
       if (this.currentUser === undefined) this.isLoading = true
       const currentUser = await this.userService.adminDetails()
-      if (currentUser) {
+
+      if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
           this.isUserLoggedIn = true
-          this.currentUser = currentUser
+          this.currentUser = currentUser?.user
           this.isLoading = false
         })
       } else {
@@ -69,6 +70,7 @@ export class UserStore implements IUserStore {
           this.isLoading = false
         })
       }
+
       return currentUser
     } catch (error: any) {
       this.isLoading = false

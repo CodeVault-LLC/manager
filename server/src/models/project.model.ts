@@ -4,14 +4,13 @@ import {
   integer,
   pgTable,
   serial,
-  text,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { workspaces } from './workspace.model';
 import { users } from './user.model';
-import { projects } from './project.model';
 
-export const workspaces = pgTable('workspaces', {
+export const projects = pgTable('projects', {
   id: serial('id').primaryKey(),
   name: varchar('name', {
     length: 100,
@@ -20,11 +19,9 @@ export const workspaces = pgTable('workspaces', {
     length: 550,
   }).notNull(),
 
-  ownerId: integer('owner_id')
+  workspaceId: integer('workspace_id')
     .notNull()
-    .references((): AnyPgColumn => users.id),
-
-  logoId: text('logo_id').notNull(),
+    .references((): AnyPgColumn => workspaces.id),
 
   updatedById: integer('updated_by_id')
     .notNull()
@@ -34,16 +31,16 @@ export const workspaces = pgTable('workspaces', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-export const workspacesRelations = relations(workspaces, ({ many, one }) => ({
-  owner: one(users, {
-    fields: [workspaces.ownerId],
-    references: [users.id],
-  }),
+export const projectsRelations = relations(projects, ({ one }) => ({
   updatedBy: one(users, {
-    fields: [workspaces.updatedById],
+    fields: [projects.updatedById],
     references: [users.id],
   }),
-  projects: many(projects),
+
+  workspace: one(workspaces, {
+    fields: [projects.workspaceId],
+    references: [workspaces.id],
+  }),
 }));
 
-export type Workspace = typeof workspaces.$inferSelect;
+export type Project = typeof projects.$inferSelect;

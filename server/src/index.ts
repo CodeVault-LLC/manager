@@ -2,16 +2,12 @@ import express, { json, type Express } from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
 import bodyParser from 'body-parser';
-import { userMiddleware } from './user/core/user.middleware';
-import { router as userController } from './user/core/user.controller';
-import { router as subscriptionController } from './user/subscription/subscription.controller';
-import { router as productController } from './product/core/product.controller';
-import { type User } from './models/schema';
-import { errorMiddleware } from './middleware/error.middleware';
-import { createBuckets } from './aws-client';
+import { type User } from './models/user.model.js';
+import { userMiddleware } from './user/core/user.middleware.js';
+import { router as userRouter } from './user/core/user.controller.js';
 
 config();
-void createBuckets();
+//void createBuckets();
 
 declare global {
   namespace Express {
@@ -30,11 +26,8 @@ app.use(bodyParser.json());
 
 app.use(userMiddleware);
 
-app.use('/users', userController);
-app.use('/subscriptions', subscriptionController);
-app.use('/products', productController);
-
-app.use(errorMiddleware);
+app.use('/users', userRouter);
+//app.use(errorMiddleware);
 
 app.listen(3000, () => {
   // eslint-disable-next-line no-console

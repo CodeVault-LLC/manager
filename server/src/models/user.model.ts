@@ -7,7 +7,8 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { news, products } from '~/models/schema';
+import { workspaces } from './workspace.model';
+import { projects } from './project.model';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -33,8 +34,8 @@ export const users = pgTable('users', {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  products: many(products),
-  news: many(news),
+  workspaces: many(workspaces),
+  projects: many(projects),
 }));
 
 export type User = typeof users.$inferSelect;

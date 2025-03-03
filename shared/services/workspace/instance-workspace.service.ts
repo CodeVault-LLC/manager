@@ -1,6 +1,6 @@
-import { API_BASE_URL } from "@shared/constants";
+import { API_BASE_URL } from "../../constants";
 import { APIService } from "../api";
-import { IWorkspace, TWorkspacePaginationInfo } from "@shared/types";
+import { IWorkspace, TWorkspacePaginationInfo } from "types";
 
 /**
  * Service class for managing instance workspaces
