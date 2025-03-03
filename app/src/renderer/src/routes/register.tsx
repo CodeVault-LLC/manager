@@ -8,57 +8,62 @@ import { EPageTypes } from '@shared/helpers/authentication.helper'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { observer } from 'mobx-react'
-import { useState } from 'react'
 
-const LoginPage = observer(() => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const { login } = useUser()
+const RegisterPage = observer(() => {
+  const { register } = useUser()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const hello = await login(email, password)
-
-    console.log(hello)
+    await register({
+      first_name: e.currentTarget.firstName.value,
+      last_name: e.currentTarget.lastName.value,
+      username: e.currentTarget.username.value,
+      email: e.currentTarget.email.value,
+      password: e.currentTarget.password.value,
+      avatar: e.currentTarget.avatar.files?.[0] ?? null
+    })
   }
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
       <div className="flex flex-col gap-6 p-6 max-w-2xl mx-auto">
-        <form className="flex flex-col gap-6" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-6" onSubmit={onSubmit} encType="multipart/form-data">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
-              <h1 className="text-xl font-bold">Welcome to Manager App</h1>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{' '}
-                <Link to="/register" className="underline underline-offset-4">
-                  Sign up
+                Already have an account?{' '}
+                <Link to="/login" className="underline underline-offset-4">
+                  Login
                 </Link>
               </div>
             </div>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input id="firstName" type="text" placeholder="John" required />
+
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input id="lastName" type="text" placeholder="Doe" required />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="username">Username</Label>
+                <Input id="username" type="text" placeholder="johndoe" required />
+              </div>
+
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                />
+                <Input id="email" type="email" placeholder="m@example.com" required />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <PasswordInput
-                  id="password"
-                  placeholder="********"
-                  required
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                />
+                <PasswordInput id="password" placeholder="********" required />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="avatar">Avatar</Label>
+                <Input id="avatar" type="file" required />
               </div>
               <Button type="submit" className="w-full">
                 Login
@@ -98,6 +103,6 @@ const LoginPage = observer(() => {
   )
 })
 
-export const Route = createFileRoute('/login')({
-  component: LoginPage
+export const Route = createFileRoute('/register')({
+  component: RegisterPage
 })

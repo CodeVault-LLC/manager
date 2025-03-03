@@ -23,7 +23,7 @@ export class UserService extends APIService {
    * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
    */
   async me(): Promise<IUser> {
-    return this.get("/api/users/me/", { validateStatus: null })
+    return this.get("/users/me/", { validateStatus: null })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -54,7 +54,7 @@ export class UserService extends APIService {
     user?: IUser;
     error?: EAuthenticationErrorCodes;
   }> {
-    return this.get("/api/users/me/", { validateStatus: null })
+    return this.get("/users/me/", { validateStatus: null })
       .then((response) => {
         if (response.status === 200) {
           return { user: response.data };

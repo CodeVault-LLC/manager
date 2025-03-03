@@ -20,6 +20,7 @@ export abstract class APIService {
       withCredentials: false,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
 
@@ -49,9 +50,9 @@ export abstract class APIService {
             updatedPath = currentPath.replace("/spaces", "");
           }
 
-          window.location.replace(
+          /*window.location.replace(
             `${prefix}${updatedPath ? `?next_path=${updatedPath}` : ""}`
-          );
+          );*/
         }
         return Promise.reject(error);
       }

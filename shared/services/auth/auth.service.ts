@@ -16,6 +16,64 @@ export class AuthService extends APIService {
     super(BASE_URL || API_BASE_URL);
   }
 
+  async login(email: string, password: string) {
+    return this.post("/users/login/", {
+      email: email,
+      password: password,
+    })
+      .then((response) => {
+        console.log(response);
+
+        const token = response?.data?.token;
+
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async register(data: {
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+    password: string;
+    avatar: string;
+  }) {
+    const formData = new FormData();
+    formData.append("first_name", data.first_name);
+    formData.append("last_name", data.last_name);
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("avatar", data.avatar);
+
+    return this.post("/users/register/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((response) => {
+        console.log(response);
+
+        const token = response?.data?.token;
+
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   /**
    * Requests a CSRF token for form submission security
    * @returns {Promise<ICsrfTokenData>} Object containing the CSRF token

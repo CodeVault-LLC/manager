@@ -10,11 +10,11 @@ export const userMiddleware = async (
   try {
     const ignoredPaths = [
       {
-        path: /^\/users\/login$/,
+        path: /^\/users\/login\/?$/,
         method: 'POST',
       },
       {
-        path: /^\/users\/register$/,
+        path: /^\/users\/register\/?$/,
         method: 'POST',
       },
       {
@@ -22,6 +22,8 @@ export const userMiddleware = async (
         method: 'GET',
       },
     ];
+
+    console.log(req.path, req.method);
 
     const isIgnoredPath = ignoredPaths.some(
       (ignoredPath) =>

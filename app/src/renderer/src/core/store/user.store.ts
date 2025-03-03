@@ -14,6 +14,8 @@ export interface IUserStore {
   // fetch actions
   hydrate: (data: any) => void
   fetchCurrentUser: () => Promise<IUser>
+  login: (email: string, password: string) => Promise<IUser>
+  register: (data: any) => Promise<IUser>
   reset: () => void
   signOut: () => void
 }
@@ -40,6 +42,7 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action
     })
+
     this.userService = new UserService()
     this.authService = new AuthService()
   }
@@ -57,6 +60,84 @@ export class UserStore implements IUserStore {
       if (this.currentUser === undefined) this.isLoading = true
       const currentUser = await this.userService.adminDetails()
 
+      if (currentUser?.user && !currentUser?.error) {
+        runInAction(() => {
+          this.isUserLoggedIn = true
+          this.currentUser = currentUser?.user
+          this.isLoading = false
+        })
+      } else {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.currentUser = undefined
+          this.isLoading = false
+        })
+      }
+
+      return currentUser
+    } catch (error: any) {
+      this.isLoading = false
+      this.isUserLoggedIn = false
+      if (error.status === 403)
+        this.userStatus = {
+          status: EUserStatus.AUTHENTICATION_NOT_DONE,
+          message: error?.message || ''
+        }
+      else
+        this.userStatus = {
+          status: EUserStatus.ERROR,
+          message: error?.message || ''
+        }
+      throw error
+    }
+  }
+
+  /**
+   * @description Login in the current user
+   * @param {string} email
+   * @param {string} password
+   * @returns Promise<IUser>
+   */
+  login = async (email: string, password: string) => {
+    try {
+      this.isLoading = true
+      const currentUser = await this.authService.login(email, password)
+      if (currentUser?.user && !currentUser?.error) {
+        runInAction(() => {
+          this.isUserLoggedIn = true
+          this.currentUser = currentUser?.user
+          this.isLoading = false
+        })
+      } else {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.currentUser = undefined
+          this.isLoading = false
+        })
+      }
+
+      return currentUser
+    } catch (error: any) {
+      this.isLoading = false
+      this.isUserLoggedIn = false
+      if (error.status === 403)
+        this.userStatus = {
+          status: EUserStatus.AUTHENTICATION_NOT_DONE,
+          message: error?.message || ''
+        }
+      else
+        this.userStatus = {
+          status: EUserStatus.ERROR,
+          message: error?.message || ''
+        }
+      throw error
+    }
+  }
+
+  register: (data: any) => Promise<IUser> = async (data: any) => {
+    try {
+      this.isLoading = true
+      const currentUser = await this.authService.register(data)
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
           this.isUserLoggedIn = true

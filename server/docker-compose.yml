@@ -13,5 +13,15 @@ services:
     volumes:
       - managerapp-db-data:/var/lib/postgresql/data
 
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    command: server /data
+
 volumes:
   managerapp-db-data:
