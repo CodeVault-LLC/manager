@@ -1,9 +1,8 @@
 import { action, observable, runInAction, makeObservable } from 'mobx'
-import { IUser } from '@shared/types'
+import { IUser } from '@root/types'
 import { CoreRootStore } from './root.store'
-import { UserService } from '@shared/services/user'
-import { AuthService } from '@shared/services/auth'
-import { EUserStatus, TUserStatus } from '@shared/constants'
+import { EUserStatus, TUserStatus } from '@root/constants'
+import { ipcRenderer } from 'electron'
 
 export interface IUserStore {
   // observables
@@ -26,9 +25,6 @@ export class UserStore implements IUserStore {
   userStatus: TUserStatus | undefined = undefined
   isUserLoggedIn: boolean | undefined = undefined
   currentUser: IUser | undefined = undefined
-  // services
-  userService
-  authService
 
   constructor(private store: CoreRootStore) {
     makeObservable(this, {
@@ -42,9 +38,6 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action
     })
-
-    this.userService = new UserService()
-    this.authService = new AuthService()
   }
 
   hydrate = (data: IUser) => {
@@ -58,7 +51,7 @@ export class UserStore implements IUserStore {
   fetchCurrentUser = async () => {
     try {
       if (this.currentUser === undefined) this.isLoading = true
-      const currentUser = await this.userService.adminDetails()
+      const currentUser = await ipcRenderer.invoke('user:adminDetails')
 
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
@@ -101,7 +94,7 @@ export class UserStore implements IUserStore {
   login = async (email: string, password: string) => {
     try {
       this.isLoading = true
-      const currentUser = await this.authService.login(email, password)
+      const currentUser = await ipcRenderer.invoke('auth:login', email, password)
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
           this.isUserLoggedIn = true
@@ -137,7 +130,7 @@ export class UserStore implements IUserStore {
   register: (data: any) => Promise<IUser> = async (data: any) => {
     try {
       this.isLoading = true
-      const currentUser = await this.authService.register(data)
+      const currentUser = await ipcRenderer.invoke('auth:register', data)
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
           this.isUserLoggedIn = true

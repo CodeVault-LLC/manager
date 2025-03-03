@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 import { observer } from 'mobx-react'
-import { EPageTypes } from '@shared/helpers/authentication.helper'
+import { EPageTypes } from '@root/helpers'
 import { useUser } from '@renderer/hooks'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { LoadingSpinner } from '@renderer/core/components/loader/loading-spinner'

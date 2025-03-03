@@ -1,6 +1,5 @@
-import { API_BASE_URL } from "../../constants";
-import { APIService } from "../api";
-import { IWorkspace, TWorkspacePaginationInfo } from "types";
+import { API_BASE_URL } from '../../constants'
+import { IWorkspace, TWorkspacePaginationInfo } from '../../types'
 
 /**
  * Service class for managing instance workspaces
@@ -13,7 +12,7 @@ export class InstanceWorkspaceService extends APIService {
    * @param BASE_URL - Base URL for API requests
    */
   constructor(BASE_URL?: string) {
-    super(BASE_URL || API_BASE_URL);
+    super(BASE_URL || API_BASE_URL)
   }
 
   /**
@@ -25,13 +24,13 @@ export class InstanceWorkspaceService extends APIService {
   async list(nextPageCursor?: string): Promise<TWorkspacePaginationInfo> {
     return this.get(`/api/instances/workspaces/`, {
       params: {
-        cursor: nextPageCursor,
-      },
+        cursor: nextPageCursor
+      }
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
-      });
+        throw error?.response?.data
+      })
   }
 
   /**
@@ -41,12 +40,12 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async slugCheck(slug: string): Promise<any> {
-    const params = new URLSearchParams({ slug });
+    const params = new URLSearchParams({ slug })
     return this.get(`/api/instances/workspace-slug-check/?${params.toString()}`)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
-      });
+        throw error?.response?.data
+      })
   }
 
   /**
@@ -56,10 +55,10 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
-    return this.post("/api/instances/workspaces/", data)
+    return this.post('/api/instances/workspaces/', data)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
-      });
+        throw error?.response?.data
+      })
   }
 }

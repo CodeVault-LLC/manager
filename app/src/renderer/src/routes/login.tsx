@@ -4,7 +4,7 @@ import { Label } from '@renderer/components/ui/label'
 import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useUser } from '@renderer/hooks'
-import { EPageTypes } from '@shared/helpers/authentication.helper'
+import { EPageTypes } from '../../../helpers/authentication.helper'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { observer } from 'mobx-react'
