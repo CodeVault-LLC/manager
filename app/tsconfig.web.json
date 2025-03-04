@@ -4,19 +4,16 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "src/preload/*.d.ts",
-    "src/*.d.ts",
-    "src/*.ts",
-    "src/constants/**/*",
-    "src/helpers/**/*"
+    "../shared/**/*.d.ts",
+    "../shared/**/*.ts"
   ],
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@renderer/*": ["src/renderer/src/*"],
-      "@root/*": ["src/*"]
+      "@renderer/*": ["./src/renderer/src/*"],
+      "@shared/*": ["../shared/*"]
     }
   }
 }

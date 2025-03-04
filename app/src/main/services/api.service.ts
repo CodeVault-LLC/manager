@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_BASE_URL } from '@root/constants'
+import { API_BASE_URL } from '@shared/constants'
 import { ConfStorage } from '../store'
 
 export const api = axios.create({

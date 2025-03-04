@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "emitDeclarationOnly": true,
+    "strict": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./"]
+    }
+  }
+}

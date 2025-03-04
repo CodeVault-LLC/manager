@@ -1,6 +1,6 @@
 import set from 'lodash/set'
 import { action, observable, runInAction, makeObservable, computed } from 'mobx'
-import { IWorkspace, TLoader, TPaginationInfo } from '@root/types'
+import { IWorkspace, TLoader, TPaginationInfo } from '../../../../../../shared/types'
 import { CoreRootStore } from './root.store'
 
 export interface IWorkspaceStore {

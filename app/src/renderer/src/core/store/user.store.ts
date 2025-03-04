@@ -1,7 +1,7 @@
 import { action, observable, runInAction, makeObservable } from 'mobx'
-import { IUser } from '@root/types'
+import { IUser } from '../../../../../../shared/types'
 import { CoreRootStore } from './root.store'
-import { EUserStatus, TUserStatus } from '@root/constants'
+import { EUserStatus, TUserStatus } from '@shared/constants'
 import { ipcRenderer } from 'electron'
 
 export interface IUserStore {

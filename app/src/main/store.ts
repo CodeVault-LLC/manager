@@ -1,7 +1,7 @@
 import { app } from 'electron'
-import path from 'path'
+import path from 'node:path'
 import fs from 'fs/promises'
-import crypto from 'crypto'
+import crypto from 'node:crypto'
 
 const STORAGE_FILE = path.join(app.getPath('userData'), 'config.json')
 const ENCRYPTION_KEY = crypto.createHash('sha256').update('your-secure-key').digest()

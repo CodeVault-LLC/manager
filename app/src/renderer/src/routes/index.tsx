@@ -1,6 +1,6 @@
 import AdminUpcoming from '@renderer/core/components/admin-upcoming/admin-upcoming'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '../../../helpers/authentication.helper'
+import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { observer } from 'mobx-react'
