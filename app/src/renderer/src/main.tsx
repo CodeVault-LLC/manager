@@ -3,6 +3,14 @@ import './index.css'
 import { createRouter } from './router'
 import { RouterProvider } from '@tanstack/react-router'
 import { StoreProvider } from './utils/store-context'
+import { ElectronAPI } from '@electron-toolkit/preload'
+
+declare global {
+  interface Window {
+    electron: ElectronAPI
+    api: unknown
+  }
+}
 
 const router = createRouter()
 

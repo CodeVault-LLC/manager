@@ -2,7 +2,6 @@ import { action, observable, runInAction, makeObservable } from 'mobx'
 import { IUser } from '../../../../../../shared/types'
 import { CoreRootStore } from './root.store'
 import { EUserStatus, TUserStatus } from '@shared/constants'
-import { ipcRenderer } from 'electron'
 
 export interface IUserStore {
   // observables
@@ -21,7 +20,7 @@ export interface IUserStore {
 
 export class UserStore implements IUserStore {
   // observables
-  isLoading: boolean = true
+  isLoading: boolean = false
   userStatus: TUserStatus | undefined = undefined
   isUserLoggedIn: boolean | undefined = undefined
   currentUser: IUser | undefined = undefined
@@ -35,6 +34,8 @@ export class UserStore implements IUserStore {
       currentUser: observable,
       // action
       fetchCurrentUser: action,
+      login: action,
+      register: action,
       reset: action,
       signOut: action
     })
@@ -51,7 +52,10 @@ export class UserStore implements IUserStore {
   fetchCurrentUser = async () => {
     try {
       if (this.currentUser === undefined) this.isLoading = true
-      const currentUser = await ipcRenderer.invoke('user:adminDetails')
+
+      const currentUser = await window.electron.ipcRenderer.invoke('user:adminDetails')
+
+      console.log(currentUser)
 
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
@@ -94,7 +98,8 @@ export class UserStore implements IUserStore {
   login = async (email: string, password: string) => {
     try {
       this.isLoading = true
-      const currentUser = await ipcRenderer.invoke('auth:login', email, password)
+      const currentUser = await window.electron.ipcRenderer.invoke('auth:login', email, password)
+
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
           this.isUserLoggedIn = true
@@ -127,10 +132,16 @@ export class UserStore implements IUserStore {
     }
   }
 
+  /**
+   * @description Register the current user
+   * @param data any
+   * @returns Promise<IUser>
+   */
   register: (data: any) => Promise<IUser> = async (data: any) => {
     try {
       this.isLoading = true
-      const currentUser = await ipcRenderer.invoke('auth:register', data)
+      const currentUser = await window.electron.ipcRenderer.invoke('auth:register', data)
+
       if (currentUser?.user && !currentUser?.error) {
         runInAction(() => {
           this.isUserLoggedIn = true

@@ -1,10 +1,9 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { EPageTypes } from '@shared/helpers'
 import { useUser } from '@renderer/hooks'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { LoadingSpinner } from '@renderer/core/components/loader/loading-spinner'
-import useSWR from 'swr'
 
 type TPageType = EPageTypes
 
@@ -30,15 +29,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   // hooks
   const { isLoading: isUserLoading, currentUser, fetchCurrentUser } = useUser()
 
-  const { isLoading: isUserSWRLoading } = useSWR(
-    'USER_INFORMATION',
-    async () => await fetchCurrentUser(),
-    {
-      revalidateOnFocus: false,
-      shouldRetryOnError: false,
-      revalidateOnReconnect: false
-    }
-  )
+  useEffect(() => {
+    fetchCurrentUser()
+  }, [])
 
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = '/profile'
@@ -59,7 +52,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     return redirectionRoute
   }
 
-  if ((isUserSWRLoading || isUserLoading) && !currentUser?.id)
+  if (isUserLoading && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LoadingSpinner />
