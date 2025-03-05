@@ -2,6 +2,7 @@ import { action, observable, runInAction, makeObservable } from 'mobx'
 import { IUser } from '../../../../../../shared/types'
 import { CoreRootStore } from './root.store'
 import { EUserStatus, TUserStatus } from '@shared/constants'
+import { toast } from 'sonner'
 
 export interface IUserStore {
   // observables
@@ -111,6 +112,7 @@ export class UserStore implements IUserStore {
           this.isUserLoggedIn = false
           this.currentUser = undefined
           this.isLoading = false
+          toast.error(currentUser?.error)
         })
       }
 
@@ -153,6 +155,7 @@ export class UserStore implements IUserStore {
           this.isUserLoggedIn = false
           this.currentUser = undefined
           this.isLoading = false
+          toast.error(currentUser?.error)
         })
       }
 

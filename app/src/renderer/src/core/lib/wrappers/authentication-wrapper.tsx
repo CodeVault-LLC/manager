@@ -87,7 +87,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     if (currentUser?.id) {
       return <>{children}</>
     } else {
-      navigate({ to: `/?next_path=${pathname}` })
+      navigate({ to: '/login' })
       return <></>
     }
   }

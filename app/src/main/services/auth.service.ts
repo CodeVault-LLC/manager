@@ -11,28 +11,39 @@ const loadAuthServices = () => {
 
       return response.data
     } catch (error: any) {
-      throw error.response?.data
+      console.log(error)
+
+      if (error.response?.status === 403) return { error: 'Forbidden' }
+      if (error.response?.status === 404) return { error: 'User was not found' }
     }
   })
 
   ipcMain.handle('auth:register', async (_, data) => {
     try {
+      const { avatar, ...rest } = data
+
       const formData = new FormData()
-      Object.entries(data).forEach(([key, value]) => {
+
+      if (avatar) {
+        formData.append('avatar', avatar, 'avatar.png') // Assuming the file is a PNG
+      }
+
+      Object.entries(rest).forEach(([key, value]) => {
         if (typeof value === 'string' || value instanceof Blob) {
           formData.append(key, value)
         } else {
           formData.append(key, JSON.stringify(value))
         }
       })
-      const response = await api.post<{ token: string }>('/users/register/', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
+
+      const response = await api.post<{ token: string }>('/users/register/', formData)
+
       const token = response.data.token
-      if (token) ConfStorage.setSecureData('token', token)
+      if (token) ConfStorage.setSecureData('userToken', token)
+
       return response.data
     } catch (error: any) {
-      throw error.response?.data
+      return { error: 'Registration failed' + error }
     }
   })
 }

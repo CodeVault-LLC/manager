@@ -11,7 +11,7 @@ const loadUserServices = () => {
       if (response.status === 200) return { user: response.data }
       return { error: EAuthenticationErrorCodes.UNAUTHORIZED }
     } catch (error: any) {
-      console.log(error.response.status)
+      console.log(error)
 
       if (error.response?.status === 403) return { error: EAuthenticationErrorCodes.FORBIDDEN }
       if (error.response?.status === 401) return { error: EAuthenticationErrorCodes.UNAUTHORIZED }

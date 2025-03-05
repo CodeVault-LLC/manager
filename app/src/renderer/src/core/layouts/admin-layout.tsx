@@ -6,6 +6,7 @@ import { useRouter } from '@tanstack/react-router'
 import { InstanceHeader } from '../components/auth-header/auth-header'
 import { SidebarInset, SidebarProvider } from '@renderer/components/ui/sidebar'
 import { AppSidebar } from '../components/admin-sidebar'
+import { Toaster } from '@renderer/components/ui/sonner'
 
 type TAdminLayout = {
   children: ReactNode
@@ -29,6 +30,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
         <AppSidebar />
         <SidebarInset>
           <InstanceHeader />
+          <Toaster />
 
           <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-y-auto">{children}</main>
         </SidebarInset>
