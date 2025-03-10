@@ -19,9 +19,7 @@ const LoginPage = observer(() => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const hello = await login(email, password)
-
-    console.log(hello)
+    await login(email, password)
   }
 
   return (

@@ -14,15 +14,6 @@ type TAdminLayout = {
 
 export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props
-  const router = useRouter()
-  // store hooks
-  const { isUserLoggedIn } = useUser()
-
-  useEffect(() => {
-    if (isUserLoggedIn === false) {
-      router.navigate({ to: '/login' })
-    }
-  }, [router, isUserLoggedIn])
 
   return (
     <div className="relative flex h-screen w-screen overflow-hidden">

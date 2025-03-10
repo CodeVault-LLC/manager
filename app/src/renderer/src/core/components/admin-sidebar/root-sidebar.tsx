@@ -23,13 +23,7 @@ import { NavMain } from './sidebar-main'
 import { TeamSwitcher } from './sidebar-workspace'
 import { NavUser } from './sidebar-user'
 
-// This is sample data.
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg'
-  },
   teams: [
     {
       name: 'Acme Inc',
@@ -64,7 +58,7 @@ const data = {
         },
         {
           title: 'Settings',
-          url: '#'
+          url: ''
         }
       ]
     },
@@ -117,7 +111,7 @@ const data = {
       items: [
         {
           title: 'General',
-          url: '#'
+          url: '/settings'
         },
         {
           title: 'Team',
@@ -164,7 +158,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/*<NavProjects projects={data.projects} />*/}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

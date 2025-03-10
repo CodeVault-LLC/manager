@@ -6,6 +6,7 @@ import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authenticatio
 import { useUser } from '@renderer/hooks'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Link } from '@tanstack/react-router'
+
 import { observer } from 'mobx-react'
 
 const RegisterPage = observer(() => {
@@ -14,30 +15,14 @@ const RegisterPage = observer(() => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const fileInput = e.currentTarget.avatar.files?.[0]
-
-    if (fileInput) {
-      const fileBuffer = await fileInput.arrayBuffer()
-      const fileBlob = new Blob([fileBuffer], { type: fileInput.type })
-
-      await register({
-        first_name: e.currentTarget.first_name.value,
-        last_name: e.currentTarget.last_name.value,
-        username: e.currentTarget.username.value,
-        email: e.currentTarget.email.value,
-        password: e.currentTarget.password.value,
-        avatar: fileBlob // Send the file as a Blob
-      })
-    } else {
-      await register({
-        first_name: e.currentTarget.first_name.value,
-        last_name: e.currentTarget.last_name.value,
-        username: e.currentTarget.username.value,
-        email: e.currentTarget.email.value,
-        password: e.currentTarget.password.value,
-        avatar: null // No avatar provided
-      })
-    }
+    await register({
+      first_name: e.currentTarget.firstName.value,
+      last_name: e.currentTarget.lastName.value,
+      username: e.currentTarget.username.value,
+      email: e.currentTarget.email.value,
+      password: e.currentTarget.password.value,
+      avatar: e.currentTarget.avatar.files?.[0] ?? null
+    })
   }
 
   return (
@@ -55,11 +40,11 @@ const RegisterPage = observer(() => {
             </div>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="first_name">First Name</Label>
-                <Input id="first_name" type="text" placeholder="John" required />
+                <Label htmlFor="firstName">First Name</Label>
+                <Input id="firstName" type="text" placeholder="John" required />
 
-                <Label htmlFor="last_name">Last Name</Label>
-                <Input id="last_name" type="text" placeholder="Doe" required />
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input id="lastName" type="text" placeholder="Doe" required />
               </div>
 
               <div className="grid gap-2">
@@ -81,7 +66,7 @@ const RegisterPage = observer(() => {
                 <Input id="avatar" type="file" required />
               </div>
               <Button type="submit" className="w-full">
-                Register
+                Login
               </Button>
             </div>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

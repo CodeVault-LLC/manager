@@ -23,8 +23,6 @@ export const userMiddleware = async (
       },
     ];
 
-    console.log(req.path, req.method);
-
     const isIgnoredPath = ignoredPaths.some(
       (ignoredPath) =>
         ignoredPath.path.test(req.path) && req.method === ignoredPath.method,

@@ -34,7 +34,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   }, [])
 
   const getWorkspaceRedirectionUrl = (): string => {
-    let redirectionRoute = '/profile'
+    let redirectionRoute = '/'
 
     // validating the nextPath from the router query
     if (nextPath && isValidURL(nextPath.toString())) {

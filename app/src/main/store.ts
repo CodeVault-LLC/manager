@@ -44,8 +44,6 @@ export const ConfStorage = {
     await this.validateExistence()
 
     const data = await this.readData()
-    console.log(data)
-    console.log(data[key])
 
     return data[key] ?? null
   },

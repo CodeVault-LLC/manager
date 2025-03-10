@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { loadAuthServices } from './services/auth.service'
 import { loadUserServices } from './services/user.service'
 import { ConfStorage } from './store'
+import { createAPI } from './services/api.service'
 
 function createWindow(): void {
   // Create the browser window.
@@ -50,6 +51,8 @@ app.whenReady().then(async () => {
     })
 
     await ConfStorage.validateExistence()
+
+    await createAPI()
 
     createWindow()
 

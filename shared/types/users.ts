@@ -27,3 +27,20 @@ export interface IUserTheme {
   sidebarText: string | undefined;
   sidebarBackground: string | undefined;
 }
+
+export interface IAvatarWithBuffer {
+  name: string;
+  type: string;
+  size: number;
+  lastModified: number;
+  buffer: number[];
+}
+
+export interface IRegistrationData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  avatar?: IAvatarWithBuffer | null;
+}

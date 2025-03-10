@@ -1,28 +1,37 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import { API_BASE_URL } from '@shared/constants'
 import { ConfStorage } from '../store'
 
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: false,
+export let api: AxiosInstance
 
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    Authorization: `Bearer ${ConfStorage.getSecureData('userToken')}`
-  }
-})
+export const createAPI = async (): Promise<AxiosInstance> => {
+  const token = await ConfStorage.getSecureData('userToken')
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      console.log('Unauthorized, redirecting to login...')
+  const instance = axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: false,
 
-      /*window.location.replace(
-        `${prefix}${updatedPath ? `?next_path=${updatedPath}` : ""}`
-      );*/
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`
     }
-    return Promise.reject(error)
-  }
-)
+  })
+
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response && error.response.status === 401) {
+        console.log('Unauthorized, redirecting to login...')
+
+        /*window.location.replace(
+          `${prefix}${updatedPath ? `?next_path=${updatedPath}` : ""}`
+        );*/
+      }
+      return Promise.reject(error)
+    }
+  )
+
+  api = instance
+  return instance
+}
