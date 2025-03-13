@@ -32,7 +32,7 @@ export class UserStore implements IUserStore {
       isLoading: observable.ref,
       userStatus: observable,
       isUserLoggedIn: observable.ref,
-      currentUser: observable,
+      currentUser: observable.ref,
       // action
       fetchCurrentUser: action,
       login: action,
@@ -52,7 +52,9 @@ export class UserStore implements IUserStore {
    */
   fetchCurrentUser = async () => {
     try {
-      if (this.currentUser === undefined) this.isLoading = true
+      if (this.isLoading) return
+      if (this.isUserLoggedIn) return this.currentUser
+      if (!this.currentUser?.id) this.isLoading = true
 
       const currentUser = await window.electron.ipcRenderer.invoke('user:adminDetails')
 

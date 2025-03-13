@@ -1,5 +1,4 @@
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@renderer/components/ui/avatar'
 import {
   DropdownMenu,
@@ -17,8 +16,9 @@ import {
   useSidebar
 } from '@renderer/components/ui/sidebar'
 import { useUser } from '@renderer/hooks'
+import { observer } from 'mobx-react'
 
-export function NavUser() {
+export const NavUser = observer(() => {
   const { isMobile } = useSidebar()
   const { currentUser } = useUser()
 
@@ -35,7 +35,9 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={currentUser.avatar_url} alt={currentUser.username} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {currentUser.username.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{currentUser.username}</span>
@@ -54,7 +56,9 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={currentUser.avatar_url} alt={currentUser.username} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {currentUser.username.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{currentUser.username}</span>
@@ -94,4 +98,4 @@ export function NavUser() {
       </SidebarMenuItem>
     </SidebarMenu>
   )
-}
+})

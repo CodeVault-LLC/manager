@@ -58,6 +58,8 @@ const loadAuthServices = () => {
 
         return { success: true }
       } catch (error: any) {
+        console.error('Failed to register', error)
+
         return { error: 'Registration failed: ' + (error.response?.data?.error || error.message) }
       }
     }

@@ -17,6 +17,7 @@ import {
 } from '@renderer/components/ui/dropdown-menu'
 import { Input } from '@renderer/components/ui/input'
 import { Switch } from '@renderer/components/ui/switch'
+import { UserEditFields } from '@renderer/components/UserEditFields'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
@@ -38,6 +39,18 @@ function RouteComponent() {
   return (
     <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
       <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile</CardTitle>
+            <CardDescription>Update your profile information.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <UserEditFields onSubmit={() => {}} />
+          </CardContent>
+          <CardFooter className="border-t p-6">
+            <Button type="submit">Save</Button>
+          </CardFooter>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>Project Name</CardTitle>
