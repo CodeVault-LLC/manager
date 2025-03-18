@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { EPageTypes } from '@shared/helpers'
 import { useUser } from '@renderer/hooks'
-import { useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { LoadingSpinner } from '@renderer/core/components/loader/loading-spinner'
 
 type TPageType = EPageTypes
@@ -13,13 +13,14 @@ type TAuthenticationWrapper = {
 }
 
 export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props) => {
+  const { pathname } = useLocation()
   const navigate = useNavigate()
 
   const { children, pageType = EPageTypes.AUTHENTICATED } = props
   const { isLoading: isUserLoading, currentUser, fetchCurrentUser, userStatus } = useUser()
 
   useEffect(() => {
-    if (userStatus?.status === 'NOT_AUTHENTICATED') {
+    if (userStatus?.status === 'NOT_AUTHENTICATED' && pathname !== '/register') {
       navigate({ to: '/login' })
       return
     }

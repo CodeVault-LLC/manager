@@ -57,7 +57,7 @@ export const FileService = {
       Bucket: 'avatars',
       Key: id,
       Body: file.buffer,
-      ACL: acl ?? 'private',
+      ACL: acl || 'private',
       ContentType: file.mimetype || 'application/octet-stream',
     });
 
@@ -147,5 +147,16 @@ export const FileService = {
     } catch (error) {
       throw new Error('Error retrieving file.');
     }
+  },
+
+  getFileUrl(id: string): string {
+    const S3_BASE_URL = 'http://localhost:9000';
+
+    const isS3ObjectId = /^\d+-.*$/.test(id);
+    if (isS3ObjectId) {
+      return `${S3_BASE_URL}/avatars/${id}`;
+    }
+
+    return `${S3_BASE_URL}/avatars/${id}`;
   },
 };

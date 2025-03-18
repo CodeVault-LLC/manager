@@ -1,16 +1,17 @@
 import { db } from '@/data-source.js';
+import { FileService } from '@/file/file.service';
 import { User, users } from '@/models/user/user.model.js';
 import { eq } from 'drizzle-orm';
 
 export const UserService = {
   sanitizeUser(user: User) {
-    const avatarUrl = `http://localhost:3000/users/${String(user.id)}/avatar`;
-
     return {
       id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       username: user.username,
-      avatarUrl,
+      avatar_url: FileService.getFileUrl(user.avatarId ?? ''),
     };
   },
 

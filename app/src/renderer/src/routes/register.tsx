@@ -22,7 +22,8 @@ const RegisterPage = observer(() => {
       username: e.currentTarget.username.value,
       email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
-      avatar: e.currentTarget.avatar.files?.[0] ?? null
+      avatar: e.currentTarget.avatar.files?.[0] ?? null,
+      password_confirmation: ''
     })
   }
 
