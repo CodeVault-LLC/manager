@@ -1,4 +1,12 @@
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react'
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Settings2,
+  Sparkles
+} from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@renderer/components/ui/avatar'
 import {
   DropdownMenu,
@@ -17,6 +25,7 @@ import {
 } from '@renderer/components/ui/sidebar'
 import { useUser } from '@renderer/hooks'
 import { observer } from 'mobx-react'
+import { Link } from '@tanstack/react-router'
 
 export const NavUser = observer(() => {
   const { isMobile } = useSidebar()
@@ -75,6 +84,12 @@ export const NavUser = observer(() => {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <Link to="/settings">
+                <DropdownMenuItem>
+                  <Settings2 />
+                  Settings
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>
                 <BadgeCheck />
                 Account

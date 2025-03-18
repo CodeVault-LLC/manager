@@ -1,14 +1,11 @@
 import * as React from 'react'
 import {
   AudioWaveform,
-  BookOpen,
-  Bot,
   Command,
   Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
-  Settings2,
   SquareTerminal
 } from 'lucide-react'
 
@@ -19,11 +16,23 @@ import {
   SidebarHeader,
   SidebarRail
 } from '@renderer/components/ui/sidebar'
-import { NavMain } from './sidebar-main'
+import { NavMain, NavMainProps } from './sidebar-main'
 import { TeamSwitcher } from './sidebar-workspace'
 import { NavUser } from './sidebar-user'
 
-const data = {
+const data: {
+  teams: {
+    name: string
+    logo: React.ComponentType
+    plan: string
+  }[]
+  navMain: NavMainProps['items']
+  projects: {
+    name: string
+    url: string
+    icon: React.ComponentType
+  }[]
+} = {
   teams: [
     {
       name: 'Acme Inc',
@@ -43,87 +52,71 @@ const data = {
   ],
   navMain: [
     {
+      title: 'Dashboard',
+      url: '/',
+      icon: PieChart,
+      isActive: false,
+      items: [
+        {
+          title: 'Overview',
+          url: '/'
+        },
+        {
+          title: 'Analytics',
+          url: '/'
+        },
+        {
+          title: 'Performance',
+          url: '/'
+        }
+      ]
+    },
+    {
+      title: 'Projects',
+      url: '/',
+      icon: Frame,
+      items: [
+        {
+          title: 'Design Engineering',
+          url: '/'
+        },
+        {
+          title: 'Sales & Marketing',
+          url: '/'
+        },
+        {
+          title: 'Travel',
+          url: '/'
+        }
+      ]
+    },
+    {
+      title: 'Tasks',
+      url: '/',
+      icon: Map
+    },
+    {
+      title: 'Calendar',
+      url: '/',
+      icon: AudioWaveform
+    },
+    {
       title: 'Playground',
-      url: '#',
+      url: '/',
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: 'History',
-          url: '#'
+          url: '/'
         },
         {
           title: 'Starred',
-          url: '#'
+          url: '/'
         },
         {
           title: 'Settings',
-          url: ''
-        }
-      ]
-    },
-    {
-      title: 'Models',
-      url: '#',
-      icon: Bot,
-      items: [
-        {
-          title: 'Genesis',
-          url: '#'
-        },
-        {
-          title: 'Explorer',
-          url: '#'
-        },
-        {
-          title: 'Quantum',
-          url: '#'
-        }
-      ]
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#'
-        },
-        {
-          title: 'Get Started',
-          url: '#'
-        },
-        {
-          title: 'Tutorials',
-          url: '#'
-        },
-        {
-          title: 'Changelog',
-          url: '#'
-        }
-      ]
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
           url: '/settings'
-        },
-        {
-          title: 'Team',
-          url: '#'
-        },
-        {
-          title: 'Billing',
-          url: '#'
-        },
-        {
-          title: 'Limits',
-          url: '#'
         }
       ]
     }
@@ -131,17 +124,17 @@ const data = {
   projects: [
     {
       name: 'Design Engineering',
-      url: '#',
+      url: '/',
       icon: Frame
     },
     {
       name: 'Sales & Marketing',
-      url: '#',
+      url: '/',
       icon: PieChart
     },
     {
       name: 'Travel',
-      url: '#',
+      url: '/',
       icon: Map
     }
   ]

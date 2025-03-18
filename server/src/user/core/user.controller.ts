@@ -3,6 +3,7 @@ import { UserService } from './user.service.js';
 import multer, { memoryStorage, StorageEngine } from 'multer';
 import { comparePassword, generateJWT, hashPassword } from '@/utils/jwt.js';
 import { FileService } from '@/file/file.service.js';
+import { SessionService } from '../session/session.service.js';
 
 const storage: StorageEngine = memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10000000 } });
@@ -85,6 +86,16 @@ router.post(
         process.env.JWT_EXPIRES_IN ?? '',
       );
 
+      // Create a new session
+      await SessionService.createSession({
+        userId: newUser.id,
+        userAgent: req.headers['user-agent'] as string,
+        deviceFingerprint: req.body.deviceFingerprint,
+        ipAddress: req?.ip?.toString() ?? '',
+        sessionToken: token,
+        isActive: true,
+      });
+
       res.status(201).json({ token });
     } catch (error) {
       next(error);
@@ -117,7 +128,42 @@ router.post(
         process.env.JWT_EXPIRES_IN ?? '',
       );
 
+      // Create a new session
+      await SessionService.createSession({
+        userId: user.id,
+        userAgent: req.headers['user-agent'] as string,
+        deviceFingerprint: req.body.deviceFingerprint,
+        ipAddress: req?.ip?.toString() ?? '',
+        sessionToken: token,
+        isActive: true,
+      });
+
       res.status(200).json({ token });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/logout',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const sessionToken = req.headers.authorization?.split(' ')[1];
+
+      if (!sessionToken) {
+        return res.status(400).json({ error: 'Missing session token' });
+      }
+
+      const session = await SessionService.retrieveSessionByToken(sessionToken);
+
+      if (!session) {
+        return res.status(404).json({ error: 'Session not found' });
+      }
+
+      await SessionService.removeSession(session.id);
+
+      res.status(204).end();
     } catch (error) {
       next(error);
     }

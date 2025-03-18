@@ -1,5 +1,4 @@
 import { ChevronRight, type LucideIcon } from 'lucide-react'
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,22 +14,22 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from '@renderer/components/ui/sidebar'
-import { Link } from '@tanstack/react-router'
+import { Link, LinkProps } from '@tanstack/react-router'
 
-export function NavMain({
-  items
-}: {
+export interface NavMainProps {
   items: {
     title: string
-    url: string
+    url: LinkProps['to']
     icon?: LucideIcon
     isActive?: boolean
     items?: {
       title: string
-      url: string
+      url: LinkProps['to']
     }[]
   }[]
-}) {
+}
+
+export function NavMain({ items }: NavMainProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

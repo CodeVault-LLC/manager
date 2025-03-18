@@ -2,7 +2,7 @@ import express, { json, type Express } from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
 import bodyParser from 'body-parser';
-import { type User } from './models/user.model.js';
+import { type User } from './models/user/user.model.js';
 import { userMiddleware } from './user/core/user.middleware.js';
 import { router as userRouter } from './user/core/user.controller.js';
 import { createBuckets } from './aws-client.js';

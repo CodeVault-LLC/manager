@@ -1,6 +1,5 @@
 import { db } from '@/data-source.js';
-import { User, users } from '@/models/user.model.js';
-import { comparePassword, generateJWT } from '@/utils/jwt';
+import { User, users } from '@/models/user/user.model.js';
 import { eq } from 'drizzle-orm';
 
 export const UserService = {
@@ -46,11 +45,12 @@ export const UserService = {
         username: data.username,
         email: data.email,
         password: data.password,
-        first_name: data.first_name,
-        last_name: data.last_name,
+        firstName: data.first_name,
+        lastName: data.last_name,
         timezone: data.timezone,
         avatarId: data.avatar_id,
-        is_active: true,
+        isActive: true,
+        isLocked: false,
       })
       .returning()
       .execute();

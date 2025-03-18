@@ -8,7 +8,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { workspaces } from './workspace.model';
-import { users } from './user.model';
+import { users } from './user/user.model';
 
 export const projects = pgTable('projects', {
   id: serial('id').primaryKey(),

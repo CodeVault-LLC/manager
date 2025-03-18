@@ -8,7 +8,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { users } from './user.model';
+import { users } from './user/user.model';
 import { projects } from './project.model';
 
 export const workspaces = pgTable('workspaces', {

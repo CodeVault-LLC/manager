@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { verifyToken } from '@/utils/jwt.js';
 import { UserService } from './user.service.js';
+import { SessionService } from '../session/session.service.js';
 
 export const userMiddleware = async (
   req: Request,
@@ -56,7 +57,13 @@ export const userMiddleware = async (
       return;
     }
 
-    const user = await UserService.retrieveUser(decodedToken.id);
+    const session = await SessionService.retrieveSessionByToken(token);
+    if (!session) {
+      res.status(401).send('Unauthorized');
+      return;
+    }
+
+    const user = await UserService.retrieveUser(session.userId);
     if (!user) {
       res.status(401).send('Unauthorized');
       return;
