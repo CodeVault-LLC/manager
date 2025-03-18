@@ -29,7 +29,7 @@ import { Link } from '@tanstack/react-router'
 
 export const NavUser = observer(() => {
   const { isMobile } = useSidebar()
-  const { currentUser } = useUser()
+  const { currentUser, signOut } = useUser()
 
   if (!currentUser) return null
 
@@ -104,7 +104,14 @@ export const NavUser = observer(() => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+
+                signOut()
+              }}
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>

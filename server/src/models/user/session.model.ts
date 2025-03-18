@@ -19,10 +19,13 @@ export const sessions = pgTable('sessions', {
   sessionToken: text('session_token').notNull().unique(),
 
   ipAddress: text('ip_address').notNull(),
-  userAgent: text('user_agent').notNull(),
+  systemInfo: text('system_info').notNull(),
+
   deviceFingerprint: text('device_fingerprint').notNull(),
 
   isActive: boolean('is_active').notNull().default(true),
+
+  lastUsedAt: timestamp('last_used_at').notNull().defaultNow(),
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

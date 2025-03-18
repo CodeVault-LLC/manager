@@ -16,9 +16,14 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const navigate = useNavigate()
 
   const { children, pageType = EPageTypes.AUTHENTICATED } = props
-  const { isLoading: isUserLoading, currentUser, fetchCurrentUser } = useUser()
+  const { isLoading: isUserLoading, currentUser, fetchCurrentUser, userStatus } = useUser()
 
   useEffect(() => {
+    if (userStatus?.status === 'NOT_AUTHENTICATED') {
+      navigate({ to: '/login' })
+      return
+    }
+
     if (!currentUser?.id && !isUserLoading) {
       fetchCurrentUser()
 
@@ -26,7 +31,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
 
     return
-  }, [currentUser, isUserLoading])
+  }, [currentUser, isUserLoading, userStatus])
 
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = '/'
@@ -51,8 +56,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   if (pageType === EPageTypes.PUBLIC) return <>{children}</>
 
   if (pageType === EPageTypes.NON_AUTHENTICATED) {
-    if (!currentUser?.id) return <>{children}</>
-    else {
+    if (!currentUser?.id) {
+      return <>{children}</>
+    } else {
       const currentRedirectRoute = getWorkspaceRedirectionUrl()
       navigate({ to: currentRedirectRoute })
       return <></>

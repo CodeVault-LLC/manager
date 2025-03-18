@@ -8,19 +8,25 @@ import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const LoginPage = observer(() => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const { login } = useUser()
+  const { login, currentUser } = useUser()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     await login(email, password)
   }
+
+  useEffect(() => {
+    if (currentUser?.id) {
+      window.location.href = '/'
+    }
+  }, [currentUser])
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>

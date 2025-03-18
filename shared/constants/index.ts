@@ -4,6 +4,7 @@ export enum EUserStatus {
   ERROR = "ERROR",
   AUTHENTICATION_NOT_DONE = "AUTHENTICATION_NOT_DONE",
   NOT_YET_READY = "NOT_YET_READY",
+  NOT_AUTHENTICATED = "NOT_AUTHENTICATED",
 }
 
 export type TUserStatus = {

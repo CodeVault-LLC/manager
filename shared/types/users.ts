@@ -44,3 +44,17 @@ export interface IRegistrationData {
   password_confirmation: string;
   avatar?: IAvatarWithBuffer | null;
 }
+
+export interface ISession {
+  id: number;
+  userId: number;
+  systemInfo: string;
+  isActive: boolean;
+  ipAddress: string;
+  lastUsedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  deviceFingerprint: string;
+  sessionToken: string;
+  isCurrentSession?: boolean;
+}

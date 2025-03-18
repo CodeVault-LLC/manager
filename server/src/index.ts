@@ -6,6 +6,7 @@ import { type User } from './models/user/user.model.js';
 import { userMiddleware } from './user/core/user.middleware.js';
 import { router as userRouter } from './user/core/user.controller.js';
 import { createBuckets } from './aws-client.js';
+import { type Session } from './models/schema.js';
 
 config();
 void createBuckets();
@@ -14,6 +15,7 @@ declare global {
   namespace Express {
     interface Request {
       user: User;
+      session: Session;
     }
   }
 }

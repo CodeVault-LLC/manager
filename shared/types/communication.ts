@@ -1,8 +1,6 @@
-import { IUser } from "./users";
-
-export interface ICommunicationResponse {
+export interface ICommunicationResponse<T = any> {
   success?: boolean;
   error?: string;
 
-  user?: IUser;
+  data?: T;
 }

@@ -4,13 +4,15 @@ import multer, { memoryStorage, StorageEngine } from 'multer';
 import { comparePassword, generateJWT, hashPassword } from '@/utils/jwt.js';
 import { FileService } from '@/file/file.service.js';
 import { SessionService } from '../session/session.service.js';
+import { sessionRouter } from '../session/session.controller.js';
 
 const storage: StorageEngine = memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10000000 } });
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const router = Router({ mergeParams: true });
 
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
+router.use('/sessions', sessionRouter);
 
 router.get('/me', (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -89,11 +91,12 @@ router.post(
       // Create a new session
       await SessionService.createSession({
         userId: newUser.id,
-        userAgent: req.headers['user-agent'] as string,
-        deviceFingerprint: req.body.deviceFingerprint,
+        systemInfo: req.headers['x-system'] as string,
+        deviceFingerprint: '',
         ipAddress: req?.ip?.toString() ?? '',
         sessionToken: token,
         isActive: true,
+        lastUsedAt: new Date(),
       });
 
       res.status(201).json({ token });
@@ -107,6 +110,10 @@ router.post(
   '/login',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if (req.user) {
+        return res.status(403).json({ error: 'User already logged in' });
+      }
+
       const email = req.body.email;
       const password = req.body.password;
 
@@ -131,11 +138,12 @@ router.post(
       // Create a new session
       await SessionService.createSession({
         userId: user.id,
-        userAgent: req.headers['user-agent'] as string,
-        deviceFingerprint: req.body.deviceFingerprint,
+        systemInfo: req.headers['x-system'] as string,
+        deviceFingerprint: '',
         ipAddress: req?.ip?.toString() ?? '',
         sessionToken: token,
         isActive: true,
+        lastUsedAt: new Date(),
       });
 
       res.status(200).json({ token });
@@ -146,7 +154,7 @@ router.post(
 );
 
 router.post(
-  '/logout',
+  '/signout',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const sessionToken = req.headers.authorization?.split(' ')[1];

@@ -1,37 +1,23 @@
-import axios, { AxiosInstance } from 'axios'
+import { app } from 'electron'
+import axios from 'axios'
 import { API_BASE_URL } from '@shared/constants'
-import { ConfStorage } from '../store'
+import { getSystemVersion } from '../utils/system.helper'
 
-export let api: AxiosInstance
-
-export const createAPI = async (): Promise<AxiosInstance> => {
-  const token = await ConfStorage.getSecureData('userToken')
-
-  const instance = axios.create({
-    baseURL: API_BASE_URL,
-    withCredentials: false,
-
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`
-    }
-  })
-
-  instance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response && error.response.status === 401) {
-        console.log('Unauthorized, redirecting to login...')
-
-        /*window.location.replace(
-          `${prefix}${updatedPath ? `?next_path=${updatedPath}` : ""}`
-        );*/
-      }
-      return Promise.reject(error)
-    }
-  )
-
-  api = instance
-  return instance
-}
+export let api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: false,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    'App-Version': app.getVersion(),
+    'App-Name': app.getName(),
+    'X-Requested-With': 'XMLHttpRequest',
+    'User-Agent': app.getName(),
+    'X-Platform': process.platform,
+    'X-Arch': process.arch,
+    'X-Node-Version': process.versions.node,
+    'X-Electron-Version': process.versions.electron,
+    'X-OS-Release': process.getSystemVersion(),
+    'X-System': getSystemVersion()
+  }
+})

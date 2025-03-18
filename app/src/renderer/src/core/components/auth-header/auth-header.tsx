@@ -11,9 +11,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@renderer/components/ui/breadcrumb'
+import { useUser } from '@renderer/hooks'
 
 export const InstanceHeader: FC = observer(() => {
   const { location } = useRouterState()
+  const { isUserLoggedIn } = useUser()
+
+  if (!isUserLoggedIn) return null
 
   const pathName = location.pathname.split('/')[1]
 
@@ -23,24 +27,8 @@ export const InstanceHeader: FC = observer(() => {
         return 'Home'
       case 'general':
         return 'General'
-      case 'ai':
-        return 'Artificial Intelligence'
-      case 'email':
-        return 'Email'
-      case 'authentication':
-        return 'Authentication'
-      case 'image':
-        return 'Image'
-      case 'google':
-        return 'Google'
-      case 'github':
-        return 'GitHub'
-      case 'gitlab':
-        return 'GitLab'
-      case 'workspace':
-        return 'Workspace'
-      case 'create':
-        return 'Create'
+      case 'settings':
+        return 'Settings'
       default:
         return pathName.toUpperCase()
     }

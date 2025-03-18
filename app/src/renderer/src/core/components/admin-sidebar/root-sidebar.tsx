@@ -19,6 +19,8 @@ import {
 import { NavMain, NavMainProps } from './sidebar-main'
 import { TeamSwitcher } from './sidebar-workspace'
 import { NavUser } from './sidebar-user'
+import { useUser } from '@renderer/hooks'
+import { observer } from 'mobx-react'
 
 const data: {
   teams: {
@@ -140,7 +142,11 @@ const data: {
   ]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export const AppSidebar = observer((props: { className?: string }) => {
+  const { isUserLoggedIn } = useUser()
+
+  if (!isUserLoggedIn) return null
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -156,4 +162,4 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
     </Sidebar>
   )
-}
+})

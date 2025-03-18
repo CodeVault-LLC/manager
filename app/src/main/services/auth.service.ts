@@ -11,7 +11,7 @@ const loadAuthServices = () => {
       try {
         const response = await api.post<{ token: string }>('/users/login/', { email, password })
         const token = response.data.token
-        if (token) ConfStorage.setSecureData('userToken', token)
+        if (token) await ConfStorage.setSecureData('userToken', token)
 
         return { success: true }
       } catch (error: any) {
@@ -54,7 +54,7 @@ const loadAuthServices = () => {
         })
 
         const token = response.data.token
-        if (token) ConfStorage.setSecureData('userToken', token)
+        if (token) await ConfStorage.setSecureData('userToken', token)
 
         return { success: true }
       } catch (error: any) {
@@ -64,6 +64,25 @@ const loadAuthServices = () => {
       }
     }
   )
+
+  ipcMain.handle('auth:signOut', async () => {
+    try {
+      const response = await api.post('/users/signout/')
+      console.log(response)
+
+      if (response.status === 204) {
+        await ConfStorage.deleteSecureData('userToken')
+
+        return { success: true }
+      }
+
+      return { error: 'Failed to sign out' }
+    } catch (error: any) {
+      console.error('Failed to sign out', error)
+
+      return { error: 'Failed to sign out: ' + (error.response?.data?.error || error.message) }
+    }
+  })
 }
 
 export { loadAuthServices }

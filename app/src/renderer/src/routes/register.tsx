@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
@@ -10,7 +11,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { observer } from 'mobx-react'
 
 const RegisterPage = observer(() => {
-  const { register } = useUser()
+  const { register, currentUser } = useUser()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,6 +25,12 @@ const RegisterPage = observer(() => {
       avatar: e.currentTarget.avatar.files?.[0] ?? null
     })
   }
+
+  useEffect(() => {
+    if (currentUser?.id) {
+      window.location.href = '/'
+    }
+  }, [currentUser])
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>

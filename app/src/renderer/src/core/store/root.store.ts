@@ -24,9 +24,11 @@ export abstract class CoreRootStore {
   }
 
   resetOnSignOut() {
-    localStorage.setItem('theme', 'light')
+    localStorage.setItem('theme', 'dark')
     this.user = new UserStore(this)
     this.theme = new ThemeStore(this)
     this.workspace = new WorkspaceStore(this)
+
+    window.location.href = '/'
   }
 }

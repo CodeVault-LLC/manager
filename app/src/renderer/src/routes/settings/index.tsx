@@ -6,6 +6,7 @@ import {
   CardTitle
 } from '@renderer/components/ui/card'
 import { UserEditFields } from '@renderer/components/UserEditFields'
+import { SessionList } from '@renderer/core/components/session'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
@@ -31,6 +32,8 @@ function RouteComponent() {
             />
           </CardContent>
         </Card>
+
+        <SessionList />
       </div>
     </AuthenticationWrapper>
   )

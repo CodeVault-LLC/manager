@@ -35,8 +35,9 @@ export const userMiddleware = async (
     }
 
     const authorizationHeader = req.headers.authorization;
+    const xSystemHeader = req.headers['x-system'] as string | undefined;
 
-    if (!authorizationHeader) {
+    if (!authorizationHeader || !xSystemHeader) {
       res.status(401).send('Unauthorized');
       return;
     }
@@ -69,7 +70,11 @@ export const userMiddleware = async (
       return;
     }
 
+    await SessionService.updateDateLastUsedAt(session.id);
+
     req.user = user;
+    req.session = session;
+
     next();
   } catch (error) {
     next(error);

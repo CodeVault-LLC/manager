@@ -1,10 +1,9 @@
-import { FC, ReactNode, useEffect } from 'react'
+import { FC, ReactNode } from 'react'
 import { observer } from 'mobx-react'
 import { InstanceHeader } from '../components/auth-header/auth-header'
 import { SidebarInset, SidebarProvider } from '@renderer/components/ui/sidebar'
 import { AppSidebar } from '../components/admin-sidebar'
 import { Toaster } from '@renderer/components/ui/sonner'
-import { useUser } from '@renderer/hooks'
 
 type TAdminLayout = {
   children: ReactNode
@@ -12,11 +11,6 @@ type TAdminLayout = {
 
 export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props
-  const { fetchCurrentUser } = useUser()
-
-  useEffect(() => {
-    fetchCurrentUser()
-  }, [])
 
   return (
     <div className="relative flex h-screen w-screen overflow-hidden">
