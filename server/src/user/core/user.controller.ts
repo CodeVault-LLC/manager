@@ -178,4 +178,55 @@ router.post(
   },
 );
 
+router.put(
+  '/',
+  upload.single('avatar'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {
+        first_name,
+        last_name,
+        email,
+        username,
+      }: {
+        first_name: string;
+        last_name: string;
+        email: string;
+        username: string;
+      } = req.body;
+      //const avatar = req.file;
+
+      if (!first_name || !last_name || !email || !username) {
+        return res.status(400).json({
+          error:
+            'Missing required fields: first_name, last_name, email, username',
+        });
+      }
+
+      /*if (avatar && !ALLOWED_MIME_TYPES.includes(avatar.mimetype)) {
+        return res.status(400).json({
+          error: 'Avatar must be a valid image file (png, jpeg, or jpg)',
+        });
+      }*/
+
+      /*const uploadedAvatar = await FileService.uploadAvatar({
+        file: avatar,
+        acl: 'public-read',
+      });*/
+
+      const updatedUser = await UserService.updateUser(req.user.id, {
+        id: req.user.id,
+        firstName: first_name,
+        lastName: last_name,
+        email,
+        username,
+      });
+
+      res.status(200).json(UserService.sanitizeUser(updatedUser));
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 export { router };

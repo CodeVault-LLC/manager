@@ -15,6 +15,8 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as SettingsIndexImport } from './routes/settings/index'
+import { Route as PoliciesTermsImport } from './routes/policies/terms'
+import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 
 // Create/Update Routes
 
@@ -39,6 +41,18 @@ const IndexRoute = IndexImport.update({
 const SettingsIndexRoute = SettingsIndexImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PoliciesTermsRoute = PoliciesTermsImport.update({
+  id: '/policies/terms',
+  path: '/policies/terms',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PoliciesPrivacyRoute = PoliciesPrivacyImport.update({
+  id: '/policies/privacy',
+  path: '/policies/privacy',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +81,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/policies/privacy': {
+      id: '/policies/privacy'
+      path: '/policies/privacy'
+      fullPath: '/policies/privacy'
+      preLoaderRoute: typeof PoliciesPrivacyImport
+      parentRoute: typeof rootRoute
+    }
+    '/policies/terms': {
+      id: '/policies/terms'
+      path: '/policies/terms'
+      fullPath: '/policies/terms'
+      preLoaderRoute: typeof PoliciesTermsImport
+      parentRoute: typeof rootRoute
+    }
     '/settings/': {
       id: '/settings/'
       path: '/settings'
@@ -83,6 +111,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/policies/privacy': typeof PoliciesPrivacyRoute
+  '/policies/terms': typeof PoliciesTermsRoute
   '/settings': typeof SettingsIndexRoute
 }
 
@@ -90,6 +120,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/policies/privacy': typeof PoliciesPrivacyRoute
+  '/policies/terms': typeof PoliciesTermsRoute
   '/settings': typeof SettingsIndexRoute
 }
 
@@ -98,15 +130,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/policies/privacy': typeof PoliciesPrivacyRoute
+  '/policies/terms': typeof PoliciesTermsRoute
   '/settings/': typeof SettingsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/settings'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/policies/privacy'
+    | '/policies/terms'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/settings'
-  id: '__root__' | '/' | '/login' | '/register' | '/settings/'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/policies/privacy'
+    | '/policies/terms'
+    | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/policies/privacy'
+    | '/policies/terms'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +167,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
+  PoliciesTermsRoute: typeof PoliciesTermsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
@@ -121,6 +176,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  PoliciesPrivacyRoute: PoliciesPrivacyRoute,
+  PoliciesTermsRoute: PoliciesTermsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
 
@@ -137,6 +194,8 @@ export const routeTree = rootRoute
         "/",
         "/login",
         "/register",
+        "/policies/privacy",
+        "/policies/terms",
         "/settings/"
       ]
     },
@@ -148,6 +207,12 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/policies/privacy": {
+      "filePath": "policies/privacy.tsx"
+    },
+    "/policies/terms": {
+      "filePath": "policies/terms.tsx"
     },
     "/settings/": {
       "filePath": "settings/index.tsx"

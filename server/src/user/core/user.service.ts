@@ -58,4 +58,15 @@ export const UserService = {
 
     return createdUser[0] as User;
   },
+
+  async updateUser(userId: number, data: Partial<User>): Promise<User> {
+    const updatedUser = await db
+      .update(users)
+      .set(data)
+      .where(eq(users.id, userId))
+      .returning()
+      .execute();
+
+    return updatedUser[0] as User;
+  },
 };
