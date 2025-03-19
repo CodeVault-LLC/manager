@@ -20,7 +20,7 @@ export class ThemeStore implements IThemeStore {
   isSidebarCollapsed: boolean | undefined = undefined
   theme: 'dark' | 'light' = 'dark'
 
-  constructor(private store: CoreRootStore) {
+  constructor(public store: CoreRootStore) {
     const root = window.document.documentElement
 
     const theme = localStorage.getItem('theme')

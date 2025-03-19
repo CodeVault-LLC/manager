@@ -25,9 +25,12 @@ export enum EErrorAlertType {
   INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
 }
 
-export enum EAuthenticationErrorCodes {
+export enum EErrorCodes {
   FORBIDDEN = "4030",
   UNAUTHORIZED = "4035",
+
+  // Network
+  NETWORK_ERROR = "4040",
 
   // Global
   INSTANCE_NOT_CONFIGURED = "5000",
@@ -92,8 +95,8 @@ export enum EAuthenticationErrorCodes {
   RATE_LIMIT_EXCEEDED = "5900",
 }
 
-export type TAuthErrorInfo = {
+export type TErrorInfo = {
   type: EErrorAlertType;
-  code: EAuthenticationErrorCodes;
+  code: EErrorCodes;
   title: string;
 };

@@ -13,6 +13,9 @@
     "baseUrl": ".",
     "paths": {
       "@shared/*": ["../shared/*"]
-    }
+    },
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"]
   }
 }

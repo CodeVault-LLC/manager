@@ -28,7 +28,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   // services
   instanceWorkspaceService
 
-  constructor(private store: CoreRootStore) {
+  constructor(public store: CoreRootStore) {
     makeObservable(this, {
       // observables
       workspaces: observable,

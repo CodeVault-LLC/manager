@@ -2,30 +2,33 @@ import { ipcMain } from 'electron'
 import { api } from './api.service'
 import { ConfStorage } from '../store'
 import { IRegistrationData } from '@shared/types'
-import { ICommunicationResponse } from '@shared/types/communication'
+import { TCommunicationResponse } from '@shared/types/communication'
+import { EErrorCodes } from '@shared/helpers'
 
 const loadAuthServices = () => {
   ipcMain.handle(
     'auth:login',
-    async (_, email: string, password: string): Promise<ICommunicationResponse> => {
+    async (_, email: string, password: string): Promise<TCommunicationResponse<boolean>> => {
       try {
         const response = await api.post<{ token: string }>('/users/login/', { email, password })
         const token = response.data.token
         if (token) await ConfStorage.setSecureData('userToken', token)
 
-        return { success: true }
+        return { data: true }
       } catch (error: any) {
-        if (error.response?.status === 403) return { error: 'Forbidden' }
-        if (error.response?.status === 404) return { error: 'User was not found' }
-
-        return { error: 'Login failed: ' + (error.response?.data?.error || error.message) }
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
+        }
       }
     }
   )
 
   ipcMain.handle(
     'auth:register',
-    async (_, data: IRegistrationData): Promise<ICommunicationResponse> => {
+    async (_, data: IRegistrationData): Promise<TCommunicationResponse<boolean>> => {
       try {
         const { avatar, ...rest } = data
 
@@ -40,7 +43,7 @@ const loadAuthServices = () => {
         }
 
         Object.entries(rest).forEach(([key, value]) => {
-          if (typeof value === 'string' || value instanceof Blob) {
+          if (typeof value === 'string' || (value as any) instanceof Blob) {
             formData.append(key, value)
           } else {
             formData.append(key, JSON.stringify(value))
@@ -56,31 +59,31 @@ const loadAuthServices = () => {
         const token = response.data.token
         if (token) await ConfStorage.setSecureData('userToken', token)
 
-        return { success: true }
+        return { data: true }
       } catch (error: any) {
-        console.error('Failed to register', error)
-
-        return { error: 'Registration failed: ' + (error.response?.data?.error || error.message) }
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
+        }
       }
     }
   )
 
-  ipcMain.handle('auth:signOut', async () => {
+  ipcMain.handle('auth:signOut', async (): Promise<TCommunicationResponse<boolean>> => {
     try {
-      const response = await api.post('/users/signout/')
-      console.log(response)
+      await api.post('/users/signout/')
 
-      if (response.status === 204) {
-        await ConfStorage.deleteSecureData('userToken')
-
-        return { success: true }
-      }
-
-      return { error: 'Failed to sign out' }
+      await ConfStorage.deleteSecureData('userToken')
+      return { data: true }
     } catch (error: any) {
-      console.error('Failed to sign out', error)
-
-      return { error: 'Failed to sign out: ' + (error.response?.data?.error || error.message) }
+      return {
+        error: {
+          code: EErrorCodes.FORBIDDEN,
+          message: 'You do not have permission to access this resource'
+        }
+      }
     }
   })
 }

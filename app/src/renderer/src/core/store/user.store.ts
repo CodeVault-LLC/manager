@@ -8,8 +8,8 @@ import {
 import { CoreRootStore } from './root.store'
 import { EUserStatus, TUserStatus } from '@shared/constants'
 import { toast } from 'sonner'
-import { EAuthenticationErrorCodes } from '@shared/helpers'
-import { ICommunicationResponse } from '@shared/types/communication'
+import { TCommunicationResponse } from '@shared/types/communication'
+import { EErrorCodes } from '@shared/helpers'
 
 export interface IUserStore {
   // observables
@@ -75,14 +75,15 @@ export class UserStore implements IUserStore {
     try {
       if (this.isLoading) return
       if (this.isUserLoggedIn) return
-
-      console.log(this.userStatus)
-
       if (this.userStatus?.status === EUserStatus.NOT_AUTHENTICATED) return
-      if (!this.currentUser?.id) this.isLoading = true
 
-      const currentUser: ICommunicationResponse<IUser> =
+      //console.log(this.userStatus)
+      this.isLoading = true
+
+      const currentUser: TCommunicationResponse<IUser> =
         await window.electron.ipcRenderer.invoke('user:adminDetails')
+
+      console.log(currentUser)
 
       if (currentUser?.data) {
         runInAction(() => {
@@ -92,7 +93,7 @@ export class UserStore implements IUserStore {
           this.isLoading = false
         })
       } else {
-        if (currentUser.error === EAuthenticationErrorCodes.UNAUTHORIZED) {
+        if (currentUser.error.code === EErrorCodes.UNAUTHORIZED) {
           runInAction(() => {
             this.isUserLoggedIn = false
             this.currentUser = undefined
@@ -138,13 +139,13 @@ export class UserStore implements IUserStore {
   login = async (email: string, password: string): Promise<boolean> => {
     try {
       this.isLoading = true
-      const currentUser: ICommunicationResponse = await window.electron.ipcRenderer.invoke(
+      const currentUser: TCommunicationResponse<boolean> = await window.electron.ipcRenderer.invoke(
         'auth:login',
         email,
         password
       )
 
-      if (currentUser?.success) {
+      if (currentUser?.data) {
         runInAction(() => {
           this.isLoading = false
           this.userStatus = undefined
@@ -162,7 +163,7 @@ export class UserStore implements IUserStore {
         throw new Error(currentUser?.error || 'Login failed')
       }
 
-      return currentUser.success || false
+      return currentUser.data || false
     } catch (error: any) {
       this.isLoading = false
       this.isUserLoggedIn = false
@@ -211,12 +212,12 @@ export class UserStore implements IUserStore {
         }
       }
 
-      const response: ICommunicationResponse = await window.electron.ipcRenderer.invoke(
+      const response: TCommunicationResponse<boolean> = await window.electron.ipcRenderer.invoke(
         'auth:register',
         dataToSend
       )
 
-      if (response?.success && !response?.error) {
+      if (response?.data) {
         runInAction(() => {
           this.isLoading = false
           this.userStatus = undefined
@@ -232,7 +233,7 @@ export class UserStore implements IUserStore {
         })
       }
 
-      return response.success || false
+      return response.data || false
     } catch (error: any) {
       this.isLoading = false
       this.isUserLoggedIn = false
@@ -267,7 +268,7 @@ export class UserStore implements IUserStore {
 
   fetchAllSessions = async () => {
     try {
-      const sessions: ICommunicationResponse<ISession[]> =
+      const sessions: TCommunicationResponse<ISession[]> =
         await window.electron.ipcRenderer.invoke('user:getAllSessions')
 
       if (sessions?.data) {
@@ -293,12 +294,12 @@ export class UserStore implements IUserStore {
 
   deleteSession = async (sessionId: number) => {
     try {
-      const response: ICommunicationResponse = await window.electron.ipcRenderer.invoke(
+      const response: TCommunicationResponse<boolean> = await window.electron.ipcRenderer.invoke(
         'user:deleteSession',
         sessionId
       )
 
-      if (response?.success) {
+      if (response?.data) {
         toast.success('Session deleted successfully')
         await this.fetchAllSessions()
       } else {
@@ -311,10 +312,10 @@ export class UserStore implements IUserStore {
 
   deleteAllSessions = async () => {
     try {
-      const response: ICommunicationResponse =
+      const response: TCommunicationResponse<boolean> =
         await window.electron.ipcRenderer.invoke('user:deleteAllSessions')
 
-      if (response?.success) {
+      if (response?.data) {
         toast.success('All sessions deleted successfully')
         await this.fetchAllSessions()
       } else {

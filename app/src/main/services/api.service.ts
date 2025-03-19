@@ -2,6 +2,8 @@ import { app } from 'electron'
 import axios from 'axios'
 import { API_BASE_URL } from '@shared/constants'
 import { getSystemVersion } from '../utils/system.helper'
+import { TCommunicationResponse } from '@shared/types/communication'
+import { EErrorCodes } from '@shared/helpers'
 
 export let api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,7 +19,62 @@ export let api = axios.create({
     'X-Arch': process.arch,
     'X-Node-Version': process.versions.node,
     'X-Electron-Version': process.versions.electron,
-    'X-OS-Release': process.getSystemVersion(),
     'X-System': getSystemVersion()
   }
 })
+
+api.interceptors.response.use(
+  (response) => response,
+  (error): Promise<TCommunicationResponse<null>> => {
+    if (!error.response) {
+      return Promise.reject({
+        error: {
+          code: EErrorCodes.NETWORK_ERROR,
+          message:
+            'Network error: Unable to connect to the server. Please check your internet connection.'
+        }
+      })
+    }
+
+    const status = error.response.status
+
+    switch (status) {
+      case 401:
+        return Promise.reject({
+          error: {
+            code: EErrorCodes.UNAUTHORIZED,
+            message: 'You are not authorized to access this resource'
+          }
+        })
+      case 403:
+        console.log('Yup, error happened')
+        return Promise.reject({
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
+        })
+      case 404:
+        return Promise.reject({
+          error: {
+            code: '4040',
+            message: 'The requested resource was not found on the server'
+          }
+        })
+      case 500:
+        return Promise.reject({
+          error: {
+            code: '5000',
+            message: `Server error: ${error.response?.data?.error || error.message}`
+          }
+        })
+      default:
+        return Promise.reject({
+          error: {
+            code: 'UNKNOWN_ERROR',
+            message: `An unexpected error occurred: ${error.response?.data?.error || error.message}`
+          }
+        })
+    }
+  }
+)

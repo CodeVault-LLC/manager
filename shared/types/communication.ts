@@ -1,6 +1,5 @@
-export interface ICommunicationResponse<T = any> {
-  success?: boolean;
-  error?: string;
+import { TErrorInfo } from "helpers";
 
-  data?: T;
-}
+export type TCommunicationResponse<TData> =
+  | { data: TData; error: never }
+  | { error: TErrorInfo; data?: never };
