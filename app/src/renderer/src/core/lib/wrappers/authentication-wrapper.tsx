@@ -1,9 +1,11 @@
 import { FC, ReactNode, useEffect } from 'react'
 import { observer } from 'mobx-react'
-import { EPageTypes } from '@shared/helpers'
+import { EErrorCodes, EPageTypes } from '@shared/helpers'
 import { useUser } from '@renderer/hooks'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { LoadingSpinner } from '@renderer/core/components/loader/loading-spinner'
+import { useError } from '@renderer/hooks/use-error'
+import { NetworkError } from '@renderer/core/components/errors/network-error'
 
 type TPageType = EPageTypes
 
@@ -18,6 +20,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   const { children, pageType = EPageTypes.AUTHENTICATED } = props
   const { isLoading: isUserLoading, currentUser, fetchCurrentUser, userStatus } = useUser()
+  const { getError } = useError()
 
   useEffect(() => {
     if (userStatus?.status === 'NOT_AUTHENTICATED' && pathname !== '/register') {
@@ -32,7 +35,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
 
     return
-  }, [currentUser, isUserLoading, userStatus])
+  }, [currentUser])
 
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = '/'
@@ -45,6 +48,10 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`*/
 
     return redirectionRoute
+  }
+
+  if (getError(EErrorCodes.NETWORK_ERROR)) {
+    return <NetworkError />
   }
 
   if (isUserLoading && !currentUser?.id)
@@ -65,19 +72,6 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       return <></>
     }
   }
-
-  /*if (pageType === EPageTypes.SET_PASSWORD) {
-    if (!currentUser?.id && !isUserLoading) {
-      navigate({ to: '/login' })
-      return <></>
-    } else {
-      if (currentUser) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl()
-        navigate({ to: currentRedirectRoute })
-        return <></>
-      } else return <>{children}</>
-    }
-  }*/
 
   if (pageType === EPageTypes.AUTHENTICATED) {
     if (currentUser?.id && !isUserLoading) {

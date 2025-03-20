@@ -96,7 +96,6 @@ export enum EErrorCodes {
 }
 
 export type TErrorInfo = {
-  type: EErrorAlertType;
   code: EErrorCodes;
-  title: string;
+  message: string;
 };

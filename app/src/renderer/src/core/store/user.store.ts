@@ -75,9 +75,9 @@ export class UserStore implements IUserStore {
     try {
       if (this.isLoading) return
       if (this.isUserLoggedIn) return
+      if (this.store.error.getError(EErrorCodes.UNAUTHORIZED)) return
       if (this.userStatus?.status === EUserStatus.NOT_AUTHENTICATED) return
 
-      //console.log(this.userStatus)
       this.isLoading = true
 
       const currentUser: TCommunicationResponse<IUser> =
@@ -93,6 +93,8 @@ export class UserStore implements IUserStore {
           this.isLoading = false
         })
       } else {
+        this.store.error.addError(currentUser.error)
+
         if (currentUser.error.code === EErrorCodes.UNAUTHORIZED) {
           runInAction(() => {
             this.isUserLoggedIn = false

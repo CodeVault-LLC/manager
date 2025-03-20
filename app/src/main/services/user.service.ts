@@ -9,10 +9,12 @@ const loadUserServices = () => {
     try {
       const response = await api.get<IUser>('/users/me/')
 
-      console.log(response)
-
       return { data: response.data }
     } catch (error: any) {
+      if (error.error) {
+        return error
+      }
+
       return {
         error: {
           code: EErrorCodes.FORBIDDEN,
@@ -24,7 +26,7 @@ const loadUserServices = () => {
 
   ipcMain.handle('user:getAllSessions', async (): Promise<TCommunicationResponse<ISession[]>> => {
     try {
-      const response = await api.get<ISession[]>('/users/sessions/all/')
+      const response = await api.get<ISession[]>('/users/sessions/all/')0
 
       return { data: response.data }
     } catch (error: any) {
