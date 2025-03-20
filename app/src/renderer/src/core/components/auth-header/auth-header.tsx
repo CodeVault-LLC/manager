@@ -12,10 +12,12 @@ import {
   BreadcrumbSeparator
 } from '@renderer/components/ui/breadcrumb'
 import { useUser } from '@renderer/hooks'
+import { useI18n } from '@renderer/hooks/use-i18n'
 
 export const InstanceHeader: FC = observer(() => {
   const { location } = useRouterState()
   const { isUserLoggedIn } = useUser()
+  const { t } = useI18n()
 
   if (!isUserLoggedIn) return null
 
@@ -24,11 +26,11 @@ export const InstanceHeader: FC = observer(() => {
   const getHeaderTitle = (pathName: string) => {
     switch (pathName) {
       case '':
-        return 'Home'
+        return t('navigation.home')
       case 'general':
         return 'General'
       case 'settings':
-        return 'Settings'
+        return t('navigation.settings')
       default:
         return pathName.toUpperCase()
     }

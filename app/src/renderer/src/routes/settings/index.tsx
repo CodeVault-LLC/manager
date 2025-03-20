@@ -8,6 +8,7 @@ import {
 import { UserEditFields } from '@renderer/components/UserEditFields'
 import { SessionList } from '@renderer/core/components/session'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
+import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -16,13 +17,15 @@ export const Route = createFileRoute('/settings/')({
 })
 
 function RouteComponent() {
+  const { t } = useI18n()
+
   return (
     <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
       <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Update your profile information.</CardDescription>
+            <CardTitle>{t('settings.profile.title')}</CardTitle>
+            <CardDescription>{t('settings.profile.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <UserEditFields

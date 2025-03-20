@@ -6,6 +6,7 @@ import { Input } from './ui/input'
 import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { Button } from './ui/button'
 import { useForm } from '@tanstack/react-form'
+import { useI18n } from '@renderer/hooks/use-i18n'
 
 type UserEditFieldsProps = {
   onSubmit: (values: Record<string, any>) => void
@@ -14,6 +15,7 @@ type UserEditFieldsProps = {
 }
 
 export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
+  const { t } = useI18n()
   const { isUserLoggedIn, currentUser } = useUser()
 
   const { Field, handleSubmit } = useForm({
@@ -41,10 +43,10 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
           name="firstName"
           children={({ state, handleChange, handleBlur }) => (
             <div className="flex flex-col w-full gap-4">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName">{t('forms.firstName.label')}</Label>
               <Input
                 defaultValue={state.value}
-                placeholder="John"
+                placeholder={t('forms.firstName.placeholder')}
                 required
                 autoComplete="given-name"
                 onChange={(e) => handleChange(e.target.value)}
@@ -58,10 +60,10 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
           name="lastName"
           children={({ state, handleChange, handleBlur }) => (
             <div className="flex flex-col w-full gap-4">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName">{t('forms.lastName.label')}</Label>
               <Input
                 defaultValue={state.value}
-                placeholder="Doe"
+                placeholder={t('forms.lastName.placeholder')}
                 required
                 autoComplete="family-name"
                 onChange={(e) => handleChange(e.target.value)}
@@ -76,11 +78,11 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
         name="username"
         children={({ state, handleChange, handleBlur }) => (
           <div className="grid gap-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t('forms.username.label')}</Label>
             <Input
               defaultValue={state.value}
               type="text"
-              placeholder="johndoe"
+              placeholder={t('forms.username.placeholder')}
               name="username"
               autoComplete="username"
               required
@@ -95,11 +97,11 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
         name="email"
         children={({ state, handleChange, handleBlur }) => (
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('forms.email.label')}</Label>
             <Input
               defaultValue={state.value}
               type="email"
-              placeholder="m@example.com"
+              placeholder={t('forms.email.placeholder')}
               name="email"
               autoComplete="email"
               required
@@ -114,11 +116,11 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
         name="password"
         children={({ state, handleChange, handleBlur }) => (
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('forms.password.label')}</Label>
             <PasswordInput
               defaultValue={state.value}
               id="password"
-              placeholder="********"
+              placeholder={t('forms.password.placeholder')}
               required
               name="password"
               onChange={(e) => handleChange(e.target.value)}
@@ -136,7 +138,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
       )}
 
       <Button type="submit" className="w-full">
-        {props.buttonLabel || isUserLoggedIn ? 'Save' : 'Register'}
+        {props.buttonLabel || isUserLoggedIn ? t('common.save') : t('user.register')}
       </Button>
     </form>
   )

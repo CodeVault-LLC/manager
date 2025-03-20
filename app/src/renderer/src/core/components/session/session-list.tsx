@@ -14,8 +14,10 @@ import { observer } from 'mobx-react'
 import { useEffect } from 'react'
 import { SessionModal } from './session-modal'
 import { prettifyToHumanReadableDate } from '@shared/helpers/date.helper'
+import { useI18n } from '@renderer/hooks/use-i18n'
 
 export const SessionList = observer(() => {
+  const { t } = useI18n()
   const { sessions, fetchAllSessions, signOut, deleteSession } = useUser()
 
   useEffect(() => {
@@ -27,8 +29,8 @@ export const SessionList = observer(() => {
       <CardHeader>
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-col gap-2">
-            <CardTitle>Sessions</CardTitle>
-            <CardDescription>Manage your active sessions.</CardDescription>
+            <CardTitle>{t('settings.sessions.title')}</CardTitle>
+            <CardDescription>{t('settings.sessions.description')}</CardDescription>
           </div>
 
           <SessionModal />
@@ -40,10 +42,7 @@ export const SessionList = observer(() => {
             <div className="flex flex-col items-center justify-center gap-2 p-4 text-sm text-gray-500 dark:text-gray-400">
               <div className="flex flex-row items-center gap-2">
                 <Globe className="h-4 w-4" />
-                No active sessions found.
-              </div>
-              <div className="text-xs text-gray-400 dark:text-gray-500">
-                You can log in from other devices to create new sessions.
+                {t('user.sessions.noSessions')}
               </div>
             </div>
           )}
@@ -67,7 +66,7 @@ export const SessionList = observer(() => {
                             Current
                           </Badge>
                         </TooltipTrigger>
-                        <TooltipContent>This is your current session.</TooltipContent>
+                        <TooltipContent>{t('settings.sessions.currentTooltip')}</TooltipContent>
                       </Tooltip>
                     )}
                   </div>
@@ -92,7 +91,7 @@ export const SessionList = observer(() => {
                     }
                   }}
                 >
-                  {session.isCurrentSession ? 'Logout' : 'Revoke'}
+                  {session.isCurrentSession ? t('user.logout') : t('user.sessions.revoke')}
                 </Button>
               </div>
             ))}

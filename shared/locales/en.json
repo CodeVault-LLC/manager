@@ -1,3 +1,61 @@
 {
-  "hello": "Hello world!"
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "navigation": {
+    "home": "Home",
+    "settings": "Settings"
+  },
+  "user": {
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "alreadyAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "sessions": {
+      "noSessions": "No active sessions found.",
+      "revokeAll": "Revoke all",
+      "revokeAllSessions": "Revoke all sessions",
+      "revokeAllSessionsWarning": "This will log you out from all devices except your current one. This action cannot be undone.",
+      "revoke": "Revoke"
+    }
+  },
+  "settings": {
+    "profile": {
+      "title": "Profile",
+      "description": "Update your profile information"
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "Manage your active sessions",
+      "currentTooltip": "This is your current session"
+    }
+  },
+  "forms": {
+    "firstName": {
+      "label": "First Name",
+      "placeholder": "Enter your first name"
+    },
+    "lastName": {
+      "label": "Last Name",
+      "placeholder": "Enter your last name"
+    },
+    "username": {
+      "label": "Username",
+      "placeholder": "Enter your username"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter your email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password"
+    },
+    "confirmPassword": {
+      "label": "Confirm Password",
+      "placeholder": "Confirm your password"
+    }
+  }
 }

@@ -9,8 +9,10 @@ import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { observer } from 'mobx-react'
+import { useI18n } from '@renderer/hooks/use-i18n'
 
 const RegisterPage = observer(() => {
+  const { t } = useI18n()
   const { register, currentUser } = useUser()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,33 +42,57 @@ const RegisterPage = observer(() => {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
               <div className="text-center text-sm">
-                Already have an account?{' '}
+                {t('user.alreadyAccount')}{' '}
                 <Link to="/login" className="underline underline-offset-4">
-                  Login
+                  {t('user.login')}
                 </Link>
               </div>
             </div>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" type="text" placeholder="John" required />
+                <Label htmlFor="firstName">{t('forms.firstName.label')}</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder={t('forms.firstName.placeholder')}
+                  required
+                />
 
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" type="text" placeholder="Doe" required />
+                <Label htmlFor="lastName">{t('forms.lastName.label')}</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder={t('forms.lastName.placeholder')}
+                  required
+                />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
-                <Input id="username" type="text" placeholder="johndoe" required />
+                <Label htmlFor="username">{t('forms.username.label')}</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder={t('forms.username.placeholder')}
+                  required
+                />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+                <Label htmlFor="email">{t('forms.email.label')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t('forms.email.placeholder')}
+                  required
+                />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <PasswordInput id="password" placeholder="********" required />
+                <Label htmlFor="password">{t('forms.password.label')}</Label>
+                <PasswordInput
+                  id="password"
+                  placeholder={t('forms.password.placeholder')}
+                  required
+                />
               </div>
 
               <div className="grid gap-2">

@@ -26,8 +26,10 @@ import {
 import { useUser } from '@renderer/hooks'
 import { observer } from 'mobx-react'
 import { Link } from '@tanstack/react-router'
+import { useI18n } from '@renderer/hooks/use-i18n'
 
 export const NavUser = observer(() => {
+  const { t } = useI18n()
   const { isMobile } = useSidebar()
   const { currentUser, signOut } = useUser()
 
@@ -87,7 +89,7 @@ export const NavUser = observer(() => {
               <Link to="/settings">
                 <DropdownMenuItem>
                   <Settings2 />
-                  Settings
+                  {t('navigation.settings')}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem>
@@ -113,7 +115,7 @@ export const NavUser = observer(() => {
               }}
             >
               <LogOut />
-              Log out
+              {t('user.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

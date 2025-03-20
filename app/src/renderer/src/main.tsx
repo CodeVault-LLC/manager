@@ -9,6 +9,11 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: unknown
+
+    i18n: {
+      getLocale: () => Translations;
+      setLocale: (lang: Locale) => Translations;
+    }
   }
 }
 

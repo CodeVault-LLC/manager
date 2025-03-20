@@ -9,10 +9,12 @@ import {
   DialogTrigger
 } from '@renderer/components/ui/dialog'
 import { useUser } from '@renderer/hooks'
+import { useI18n } from '@renderer/hooks/use-i18n'
 import { observer } from 'mobx-react'
 import { useState } from 'react'
 
 export const SessionModal = observer(() => {
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
   const { sessions, deleteAllSessions } = useUser()
 
@@ -23,20 +25,17 @@ export const SessionModal = observer(() => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="ml-auto" size="sm" disabled={sessions.length === 1}>
-          Logout all sessions
+          {t('user.sessions.revokeAllSessions')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Revoke All Sessions</DialogTitle>
-          <DialogDescription>
-            This will log you out from all devices except your current one. This action cannot be
-            undone.
-          </DialogDescription>
+          <DialogTitle>{t('user.sessions.revokeAllSessions')}</DialogTitle>
+          <DialogDescription>{t('user.sessions.revokeAllSessionsWarning')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             variant="destructive"
@@ -46,7 +45,7 @@ export const SessionModal = observer(() => {
             }}
             disabled={sessions.length === 1}
           >
-            Revoke All
+            {t('user.sessions.revokeAll')}
           </Button>
         </DialogFooter>
       </DialogContent>

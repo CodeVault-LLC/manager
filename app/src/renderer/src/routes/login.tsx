@@ -4,6 +4,7 @@ import { Label } from '@renderer/components/ui/label'
 import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useUser } from '@renderer/hooks'
+import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
@@ -11,6 +12,7 @@ import { observer } from 'mobx-react'
 import { useState, useEffect } from 'react'
 
 const LoginPage = observer(() => {
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -34,38 +36,38 @@ const LoginPage = observer(() => {
         <form className="flex flex-col gap-6" onSubmit={onSubmit}>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2">
-              <h1 className="text-xl font-bold">Welcome to Manager App</h1>
+              <h1 className="text-xl font-bold">Manager App</h1>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{' '}
+                {t('user.noAccount')}{' '}
                 <Link to="/register" className="underline underline-offset-4">
-                  Sign up
+                  {t('user.register')}
                 </Link>
               </div>
             </div>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('forms.email.label')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder={t('forms.email.placeholder')}
                   required
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('forms.password.label')}</Label>
                 <PasswordInput
                   id="password"
-                  placeholder="********"
+                  placeholder={t('forms.password.placeholder')}
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   value={password}
                 />
               </div>
               <Button type="submit" className="w-full">
-                Login
+                {t('user.login')}
               </Button>
             </div>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
