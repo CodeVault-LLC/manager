@@ -2,8 +2,8 @@ import { ipcMain } from 'electron'
 import { api } from './api.service'
 import { ConfStorage } from '../store'
 import { IRegistrationData } from '@shared/types'
-import { TCommunicationResponse } from '@shared/types/communication'
 import { EErrorCodes } from '@shared/helpers'
+import { TCommunicationResponse } from '@shared/types/ipc'
 
 const loadAuthServices = () => {
   ipcMain.handle(

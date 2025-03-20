@@ -19,11 +19,11 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const navigate = useNavigate()
 
   const { children, pageType = EPageTypes.AUTHENTICATED } = props
-  const { isLoading: isUserLoading, currentUser, fetchCurrentUser, userStatus } = useUser()
-  const { getError } = useError()
+  const { isLoading: isUserLoading, currentUser, fetchCurrentUser } = useUser()
+  const { getError, errors } = useError()
 
   useEffect(() => {
-    if (userStatus?.status === 'NOT_AUTHENTICATED' && pathname !== '/register') {
+    if (getError(EErrorCodes.UNAUTHORIZED) && pathname !== '/register') {
       navigate({ to: '/login' })
       return
     }
@@ -35,7 +35,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
 
     return
-  }, [currentUser])
+  }, [currentUser, errors])
 
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = '/'

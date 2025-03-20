@@ -2,7 +2,7 @@ import { ISession, IUser } from '@shared/types/users'
 import { ipcMain } from 'electron'
 import { api } from './api.service'
 import { EErrorCodes } from '@shared/helpers'
-import { TCommunicationResponse } from '@shared/types/communication'
+import { TCommunicationResponse } from '@shared/types/ipc'
 
 const loadUserServices = () => {
   ipcMain.handle('user:adminDetails', async (): Promise<TCommunicationResponse<IUser>> => {
@@ -26,7 +26,7 @@ const loadUserServices = () => {
 
   ipcMain.handle('user:getAllSessions', async (): Promise<TCommunicationResponse<ISession[]>> => {
     try {
-      const response = await api.get<ISession[]>('/users/sessions/all/')0
+      const response = await api.get<ISession[]>('/users/sessions/all/')
 
       return { data: response.data }
     } catch (error: any) {

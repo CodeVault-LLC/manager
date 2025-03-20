@@ -4,6 +4,6 @@ import { IErrorStore } from '@renderer/core/store/error.store'
 
 export const useError = (): IErrorStore => {
   const context = useContext(StoreContext)
-  if (context === undefined) throw new Error('useUser must be used within StoreProvider')
+  if (context === undefined) throw new Error('useError must be used within StoreProvider')
   return context.error
 }

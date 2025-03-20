@@ -12,6 +12,7 @@ export interface IErrorStore {
   getErrors: () => TErrorInfo[]
   addError: (error: TErrorInfo) => void
   getError: (code: EErrorCodes) => TErrorInfo | undefined
+  removeError: (code: EErrorCodes) => void
 }
 
 export class ErrorStore implements IErrorStore {
@@ -22,8 +23,8 @@ export class ErrorStore implements IErrorStore {
   constructor(public store: CoreRootStore) {
     makeObservable(this, {
       // observables
-      isCurrentError: observable.ref,
-      errors: observable.ref
+      isCurrentError: observable,
+      errors: observable.shallow
     })
   }
 
@@ -43,23 +44,16 @@ export class ErrorStore implements IErrorStore {
     const errorIndex = this.errors.findIndex((err) => err.code === error.code)
 
     if (errorIndex !== -1) {
-      this.errors[errorIndex] = error
+      this.errors = this.errors.map((err, idx) => (idx === errorIndex ? error : err))
     } else {
-      this.errors.push(error)
+      this.errors = [...this.errors, error]
     }
 
     this.isCurrentError = true
   }
 
   removeError = (code: EErrorCodes) => {
-    const errorIndex = this.errors.findIndex((error) => error.code === code)
-
-    if (errorIndex !== -1) {
-      this.errors.splice(errorIndex, 1)
-    }
-
-    if (this.errors.length === 0) {
-      this.isCurrentError = false
-    }
+    this.errors = this.errors.filter((error) => error.code !== code)
+    this.isCurrentError = this.errors.length > 0
   }
 }

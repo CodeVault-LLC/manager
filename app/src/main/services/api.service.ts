@@ -2,8 +2,8 @@ import { app } from 'electron'
 import axios from 'axios'
 import { API_BASE_URL } from '@shared/constants'
 import { getSystemVersion } from '../utils/system.helper'
-import { TCommunicationResponse } from '@shared/types/communication'
 import { EErrorCodes } from '@shared/helpers'
+import { TCommunicationResponse } from '@shared/types/ipc'
 
 export let api = axios.create({
   baseURL: API_BASE_URL,
@@ -37,6 +37,8 @@ api.interceptors.response.use(
     }
 
     const status = error.response.status
+
+    console.error(`ERROR API [${status}]: ${error.response?.data?.error || error.message}`)
 
     switch (status) {
       case 401:

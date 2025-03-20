@@ -32,6 +32,7 @@ export abstract class CoreRootStore {
     this.user = new UserStore(this)
     this.theme = new ThemeStore(this)
     this.workspace = new WorkspaceStore(this)
+    this.error = new ErrorStore(this)
 
     window.location.href = '/'
   }
