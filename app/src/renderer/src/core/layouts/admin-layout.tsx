@@ -20,7 +20,9 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
           <InstanceHeader />
           <Toaster />
 
-          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-y-auto">{children}</main>
+          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden">
+            <div className="flex flex-1 flex-col overflow-auto">{children}</div>
+          </main>
         </SidebarInset>
       </SidebarProvider>
       {/*<NewUserPopup />*/}
