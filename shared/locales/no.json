@@ -30,6 +30,10 @@
       "title": "Økter",
       "description": "Administrer dine aktive økter",
       "currentTooltip": "Dette er din nåværende økt"
+    },
+    "integrations": {
+      "title": "Integrasjoner",
+      "description": "Administrer dine integrasjoner"
     }
   },
   "forms": {

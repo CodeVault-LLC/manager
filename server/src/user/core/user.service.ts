@@ -1,23 +1,37 @@
 import { db } from '@/data-source.js';
 import { FileService } from '@/file/file.service';
+import { GoogleAccount } from '@/models/schema';
 import { User, users } from '@/models/user/user.model.js';
+import { IGoogleUserLite } from '@shared/types/google';
 import { eq } from 'drizzle-orm';
+import { GoogleService } from '../google/google.service';
 
 export const UserService = {
-  sanitizeUser(user: User) {
-    return {
+  sanitizeUser(user: User, google: GoogleAccount | null) {
+    const sanitizedUser = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       username: user.username,
       avatar_url: FileService.getFileUrl(user.avatarId ?? ''),
+
+      google: null as IGoogleUserLite | null,
     };
+
+    if (google) {
+      sanitizedUser.google = GoogleService.sanitizeGoogleData(google);
+    }
+
+    return sanitizedUser;
   },
 
-  async retrieveUser(userId: number): Promise<User | undefined> {
+  async retrieveUser(userId: number) {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
+      with: {
+        googleAccount: true,
+      },
     });
 
     return user;

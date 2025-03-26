@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { workspaces } from './workspace.model';
 import { users } from './user/user.model';
+import { notes } from './user/notes.model';
 
 export const projects = pgTable('projects', {
   id: serial('id').primaryKey(),
@@ -31,7 +32,7 @@ export const projects = pgTable('projects', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-export const projectsRelations = relations(projects, ({ one }) => ({
+export const projectsRelations = relations(projects, ({ one, many }) => ({
   updatedBy: one(users, {
     fields: [projects.updatedById],
     references: [users.id],
@@ -41,6 +42,8 @@ export const projectsRelations = relations(projects, ({ one }) => ({
     fields: [projects.workspaceId],
     references: [workspaces.id],
   }),
+
+  notes: many(notes),
 }));
 
 export type Project = typeof projects.$inferSelect;

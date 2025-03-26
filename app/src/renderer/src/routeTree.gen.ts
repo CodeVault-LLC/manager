@@ -15,6 +15,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as SettingsIndexImport } from './routes/settings/index'
+import { Route as NotesIndexImport } from './routes/notes/index'
 import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 
@@ -41,6 +42,12 @@ const IndexRoute = IndexImport.update({
 const SettingsIndexRoute = SettingsIndexImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NotesIndexRoute = NotesIndexImport.update({
+  id: '/notes/',
+  path: '/notes/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -95,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliciesTermsImport
       parentRoute: typeof rootRoute
     }
+    '/notes/': {
+      id: '/notes/'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/settings/': {
       id: '/settings/'
       path: '/settings'
@@ -113,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
+  '/notes': typeof NotesIndexRoute
   '/settings': typeof SettingsIndexRoute
 }
 
@@ -122,6 +137,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
+  '/notes': typeof NotesIndexRoute
   '/settings': typeof SettingsIndexRoute
 }
 
@@ -132,6 +148,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
+  '/notes/': typeof NotesIndexRoute
   '/settings/': typeof SettingsIndexRoute
 }
 
@@ -143,6 +160,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/policies/privacy'
     | '/policies/terms'
+    | '/notes'
     | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -151,6 +169,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/policies/privacy'
     | '/policies/terms'
+    | '/notes'
     | '/settings'
   id:
     | '__root__'
@@ -159,6 +178,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/policies/privacy'
     | '/policies/terms'
+    | '/notes/'
     | '/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -169,6 +189,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
+  NotesIndexRoute: typeof NotesIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
@@ -178,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
+  NotesIndexRoute: NotesIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
 
@@ -196,6 +218,7 @@ export const routeTree = rootRoute
         "/register",
         "/policies/privacy",
         "/policies/terms",
+        "/notes/",
         "/settings/"
       ]
     },
@@ -213,6 +236,9 @@ export const routeTree = rootRoute
     },
     "/policies/terms": {
       "filePath": "policies/terms.tsx"
+    },
+    "/notes/": {
+      "filePath": "notes/index.tsx"
     },
     "/settings/": {
       "filePath": "settings/index.tsx"

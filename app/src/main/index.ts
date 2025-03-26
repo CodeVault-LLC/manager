@@ -1,13 +1,83 @@
 import { app, shell, BrowserWindow } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { loadAuthServices } from './services/auth.service'
 import { loadUserServices } from './services/user.service'
 import { ConfStorage } from './store'
+import { loadNoteServices } from './services/note.service'
+import { loadGoogleServices } from './services/integrations/google.service'
+import handleDeepLink from './deep-link'
+
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (_, argv) => {
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+
+      const deepLink = argv.find((arg) => arg.startsWith('managerapp://'))
+      if (deepLink) {
+        handleDeepLink(deepLink)
+      }
+    }
+  })
+
+  app.whenReady().then(async () => {
+    try {
+      electronApp.setAppUserModelId('com.electron')
+
+      // Register protocol for deep linking (Windows & Linux)
+      if (process.defaultApp) {
+        if (process.argv.length >= 2) {
+          app.setAsDefaultProtocolClient('managerapp', process.execPath, [
+            path.resolve(process.argv[1])
+          ])
+        }
+      } else {
+        app.setAsDefaultProtocolClient('managerapp')
+      }
+
+      app.on('browser-window-created', (_, window) => {
+        optimizer.watchWindowShortcuts(window)
+      })
+
+      await ConfStorage.validateExistence()
+
+      createWindow()
+
+      app.on('activate', function () {
+        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+      })
+
+      loadAuthServices()
+      loadGoogleServices()
+      loadUserServices()
+      loadNoteServices()
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  // Handle Deep Links (macOS)
+  app.on('open-url', (event, url) => {
+    event.preventDefault()
+    handleDeepLink(url)
+  })
+
+  // Handle Deep Links (Windows/Linux)
+  if (process.platform !== 'darwin') {
+    const deepLink = process.argv.find((arg) => arg.startsWith('managerapp://'))
+    if (deepLink) {
+      handleDeepLink(deepLink)
+    }
+  }
+}
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -29,38 +99,9 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(async () => {
-  try {
-    electronApp.setAppUserModelId('com.electron')
-
-    app.on('browser-window-created', (_, window) => {
-      optimizer.watchWindowShortcuts(window)
-    })
-
-    await ConfStorage.validateExistence()
-    //await setupStorageIPC()
-
-    createWindow()
-
-    app.on('activate', function () {
-      if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
-
-    loadAuthServices()
-    loadUserServices()
-  } catch (error) {
-    console.error(error)
-  }
-})

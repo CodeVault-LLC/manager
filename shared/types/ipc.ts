@@ -1,5 +1,7 @@
 import { TErrorInfo } from "helpers";
 import { IRegistrationData, ISession, IUser } from "./users";
+import { INote, TNotePage } from "./note";
+import { IGoogleUserLite } from "./google";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -13,6 +15,10 @@ export interface IpcHandlers {
     sessionId: string
   ) => Promise<TCommunicationResponse<boolean>>;
 
+  "note:all": () => Promise<TCommunicationResponse<TNotePage[]>>;
+  "note:getNote": (id: number) => Promise<TCommunicationResponse<INote>>;
+  "note:createNote": (note: INote) => Promise<TCommunicationResponse<INote>>;
+
   "auth:login": (
     email: string,
     password: string
@@ -21,4 +27,10 @@ export interface IpcHandlers {
     data: IRegistrationData
   ) => Promise<TCommunicationResponse<boolean>>;
   "auth:signOut": () => Promise<TCommunicationResponse<boolean>>;
+
+  "auth:google": () => Promise<TCommunicationResponse<boolean>>;
+}
+
+export interface IpcEmittedEvents {
+  "auth:google:callback": (response: boolean) => void;
 }

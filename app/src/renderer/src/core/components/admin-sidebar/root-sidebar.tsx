@@ -93,14 +93,23 @@ const data: {
       ]
     },
     {
-      title: 'Tasks',
+      title: 'Notes',
       url: '/',
-      icon: Map
-    },
-    {
-      title: 'Calendar',
-      url: '/',
-      icon: AudioWaveform
+      icon: SquareTerminal,
+      items: [
+        {
+          title: 'All Notes',
+          url: '/notes'
+        },
+        {
+          title: 'Starred',
+          url: '/'
+        },
+        {
+          title: 'Trash',
+          url: '/'
+        }
+      ]
     },
     {
       title: 'Playground',

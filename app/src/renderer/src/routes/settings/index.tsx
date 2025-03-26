@@ -6,6 +6,7 @@ import {
   CardTitle
 } from '@renderer/components/ui/card'
 import { UserEditFields } from '@renderer/components/UserEditFields'
+import { IntegrationList } from '@renderer/core/components/integration'
 import { SessionList } from '@renderer/core/components/session'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useI18n } from '@renderer/hooks/use-i18n'
@@ -35,6 +36,8 @@ function RouteComponent() {
             />
           </CardContent>
         </Card>
+
+        <IntegrationList />
 
         <SessionList />
       </div>

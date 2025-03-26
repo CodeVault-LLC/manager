@@ -1,3 +1,5 @@
+import { IGoogleUserLite } from "./google";
+
 export interface IUserLite {
   id: string;
   avatar_url: string;
@@ -15,6 +17,8 @@ export interface IUser extends IUserLite {
   user_timezone: string;
   username: string;
   theme: IUserTheme;
+
+  google: IGoogleUserLite | null;
 }
 
 export interface IUserTheme {

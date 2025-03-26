@@ -30,6 +30,10 @@
       "title": "Sessions",
       "description": "Manage your active sessions",
       "currentTooltip": "This is your current session"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Manage your integrations"
     }
   },
   "forms": {

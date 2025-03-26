@@ -22,6 +22,10 @@ export const userMiddleware = async (
         path: /^\/users\/\d+\/avatar$/,
         method: 'GET',
       },
+      {
+        path: /^\/users\/google\/callback\/?$/,
+        method: 'GET',
+      },
     ];
 
     const isIgnoredPath = ignoredPaths.some(

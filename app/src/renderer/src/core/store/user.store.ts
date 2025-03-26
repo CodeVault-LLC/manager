@@ -31,6 +31,9 @@ export interface IUserStore {
   fetchAllSessions: () => Promise<void>
   deleteSession: (sessionId: number) => Promise<void>
   deleteAllSessions: () => Promise<void>
+
+  // Integrations
+  authenticateGoogle: () => Promise<void>
 }
 
 export class UserStore implements IUserStore {
@@ -81,6 +84,7 @@ export class UserStore implements IUserStore {
       this.isLoading = true
 
       const currentUser = await ipcClient.invoke('user:adminDetails')
+      console.log(currentUser)
 
       if (currentUser?.data) {
         runInAction(() => {
@@ -309,6 +313,53 @@ export class UserStore implements IUserStore {
         await this.fetchAllSessions()
       } else {
         toast.error(response?.error || 'Failed to delete all sessions')
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
+
+  authenticateGoogle: () => Promise<void> = async () => {
+    const onAuthSuccess = (response: any) => {
+      if (response?.data) {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.userStatus = undefined
+        })
+
+        this.fetchCurrentUser()
+      } else {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.currentUser = undefined
+          this.userStatus = {
+            status: EUserStatus.ERROR,
+            message: response?.error || 'Google authentication failed'
+          }
+        })
+
+        toast.error(response?.error || 'Google authentication failed')
+      }
+
+      ipcClient.removeAll('auth:google:callback')
+    }
+
+    try {
+      const response = await ipcClient.invoke('auth:google')
+
+      if (response?.data) {
+        ipcClient.on('auth:google:callback', onAuthSuccess)
+      } else {
+        runInAction(() => {
+          this.currentUser = undefined
+          this.isUserLoggedIn = false
+          this.userStatus = {
+            status: EUserStatus.ERROR,
+            message: response?.error || 'Google authentication failed'
+          }
+        })
+
+        toast.error(response?.error || 'Google authentication failed')
       }
     } catch (error: any) {
       console.error(error)

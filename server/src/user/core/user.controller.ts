@@ -5,6 +5,9 @@ import { comparePassword, generateJWT, hashPassword } from '@/utils/jwt.js';
 import { FileService } from '@/file/file.service.js';
 import { SessionService } from '../session/session.service.js';
 import { sessionRouter } from '../session/session.controller.js';
+import { notesRouter } from '../notes/notes.controller.js';
+import { configuration } from '@/config/config.js';
+import { googleRouter } from '../google/google.controller.js';
 
 const storage: StorageEngine = memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10000000 } });
@@ -12,11 +15,19 @@ const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const router = Router({ mergeParams: true });
 
+router.use('/google', googleRouter);
 router.use('/sessions', sessionRouter);
+router.use('/notes', notesRouter);
 
 router.get('/me', (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(200).json(UserService.sanitizeUser(req.user));
+    console.log(req.user);
+
+    res
+      .status(200)
+      .json(
+        UserService.sanitizeUser(req.user, req.user?.googleAccount ?? null),
+      );
   } catch (error) {
     next(error);
   }
@@ -43,25 +54,29 @@ router.post(
       const avatar = req.file;
 
       if (!email || !password || !username || !first_name || !last_name) {
-        return res.status(400).json({
+        res.status(400).json({
           error:
             'Missing required fields: email, password, username, first_name, last_name',
         });
+        return;
       }
 
       if (!avatar) {
-        return res.status(400).json({ error: 'Missing avatar' });
+        res.status(400).json({ error: 'Missing avatar' });
+        return;
       }
 
       if (!ALLOWED_MIME_TYPES.includes(avatar.mimetype)) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Avatar must be a valid image file (png, jpeg, or jpg)',
         });
+        return;
       }
 
       const existingUser = await UserService.retrieveUserByEmail(email);
       if (existingUser) {
-        return res.status(409).json({ error: 'User already exists' });
+        res.status(409).json({ error: 'User already exists' });
+        return;
       }
 
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -84,8 +99,8 @@ router.post(
 
       const token = generateJWT(
         newUser.id,
-        process.env.JWT_SECRET ?? '',
-        process.env.JWT_EXPIRES_IN ?? '',
+        configuration.required.JWT_SECRET ?? '',
+        configuration.required.JWT_EXPIRES_IN ?? '',
       );
 
       // Create a new session
@@ -111,7 +126,8 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (req.user) {
-        return res.status(403).json({ error: 'User already logged in' });
+        res.status(403).json({ error: 'User already logged in' });
+        return;
       }
 
       const email = req.body.email;
@@ -120,19 +136,21 @@ router.post(
       const user = await UserService.retrieveUserByEmail(email);
 
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: 'User not found' });
+        return;
       }
 
       const isPasswordValid = comparePassword(password, user?.password ?? '');
 
       if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Invalid password' });
+        res.status(401).json({ error: 'Invalid password' });
+        return;
       }
 
       const token = generateJWT(
         user.id,
-        process.env.JWT_SECRET ?? '',
-        process.env.JWT_EXPIRES_IN ?? '',
+        configuration.required.JWT_SECRET ?? '',
+        configuration.required.JWT_EXPIRES_IN ?? '',
       );
 
       // Create a new session
@@ -160,13 +178,15 @@ router.post(
       const sessionToken = req.headers.authorization?.split(' ')[1];
 
       if (!sessionToken) {
-        return res.status(400).json({ error: 'Missing session token' });
+        res.status(400).json({ error: 'Missing session token' });
+        return;
       }
 
       const session = await SessionService.retrieveSessionByToken(sessionToken);
 
       if (!session) {
-        return res.status(404).json({ error: 'Session not found' });
+        res.status(404).json({ error: 'Session not found' });
+        return;
       }
 
       await SessionService.removeSession(session.id);
@@ -197,10 +217,11 @@ router.put(
       //const avatar = req.file;
 
       if (!first_name || !last_name || !email || !username) {
-        return res.status(400).json({
+        res.status(400).json({
           error:
             'Missing required fields: first_name, last_name, email, username',
         });
+        return;
       }
 
       /*if (avatar && !ALLOWED_MIME_TYPES.includes(avatar.mimetype)) {
@@ -222,7 +243,14 @@ router.put(
         username,
       });
 
-      res.status(200).json(UserService.sanitizeUser(updatedUser));
+      res
+        .status(200)
+        .json(
+          UserService.sanitizeUser(
+            updatedUser,
+            req.user?.googleAccount ?? null,
+          ),
+        );
     } catch (error) {
       next(error);
     }

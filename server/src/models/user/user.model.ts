@@ -10,6 +10,8 @@ import {
 import { workspaces } from '../workspace.model';
 import { projects } from '../project.model';
 import { sessions } from './session.model';
+import { notes } from './notes.model';
+import { googleAccounts } from './google.model';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -35,10 +37,16 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   workspaces: many(workspaces),
   projects: many(projects),
   sessions: many(sessions),
+  notes: many(notes),
+
+  googleAccount: one(googleAccounts, {
+    fields: [users.id],
+    references: [googleAccounts.userId],
+  }),
 }));
 
 export type User = typeof users.$inferSelect;
