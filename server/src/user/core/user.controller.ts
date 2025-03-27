@@ -198,7 +198,7 @@ router.post(
   },
 );
 
-router.put(
+router.patch(
   '/',
   upload.single('avatar'),
   async (req: Request, res: Response, next: NextFunction) => {

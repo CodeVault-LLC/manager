@@ -8,6 +8,7 @@ import { ConfStorage } from './store'
 import { loadNoteServices } from './services/note.service'
 import { loadGoogleServices } from './services/integrations/google.service'
 import handleDeepLink from './deep-link'
+import { loadSystemServices } from './services/system.service'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -19,7 +20,7 @@ if (!gotTheLock) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
 
-      const deepLink = argv.find((arg) => arg.startsWith('managerapp://'))
+      const deepLink = argv.find(arg => arg.startsWith('managerapp://'))
       if (deepLink) {
         handleDeepLink(deepLink)
       }
@@ -57,6 +58,7 @@ if (!gotTheLock) {
       loadGoogleServices()
       loadUserServices()
       loadNoteServices()
+      loadSystemServices()
     } catch (error) {
       console.error(error)
     }
@@ -70,7 +72,7 @@ if (!gotTheLock) {
 
   // Handle Deep Links (Windows/Linux)
   if (process.platform !== 'darwin') {
-    const deepLink = process.argv.find((arg) => arg.startsWith('managerapp://'))
+    const deepLink = process.argv.find(arg => arg.startsWith('managerapp://'))
     if (deepLink) {
       handleDeepLink(deepLink)
     }
@@ -94,7 +96,7 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  mainWindow.webContents.setWindowOpenHandler(details => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })

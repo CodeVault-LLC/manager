@@ -11,15 +11,24 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SettingsImport } from './routes/settings'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
-import { Route as SettingsIndexImport } from './routes/settings/index'
 import { Route as NotesIndexImport } from './routes/notes/index'
+import { Route as SettingsSecurityImport } from './routes/settings/security'
+import { Route as SettingsGeneralImport } from './routes/settings/general'
+import { Route as SettingsConnectionsImport } from './routes/settings/connections'
 import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 
 // Create/Update Routes
+
+const SettingsRoute = SettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const RegisterRoute = RegisterImport.update({
   id: '/register',
@@ -39,16 +48,28 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SettingsIndexRoute = SettingsIndexImport.update({
-  id: '/settings/',
-  path: '/settings/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const NotesIndexRoute = NotesIndexImport.update({
   id: '/notes/',
   path: '/notes/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const SettingsSecurityRoute = SettingsSecurityImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsGeneralRoute = SettingsGeneralImport.update({
+  id: '/general',
+  path: '/general',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsConnectionsRoute = SettingsConnectionsImport.update({
+  id: '/connections',
+  path: '/connections',
+  getParentRoute: () => SettingsRoute,
 } as any)
 
 const PoliciesTermsRoute = PoliciesTermsImport.update({
@@ -88,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsImport
+      parentRoute: typeof rootRoute
+    }
     '/policies/privacy': {
       id: '/policies/privacy'
       path: '/policies/privacy'
@@ -102,6 +130,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliciesTermsImport
       parentRoute: typeof rootRoute
     }
+    '/settings/connections': {
+      id: '/settings/connections'
+      path: '/connections'
+      fullPath: '/settings/connections'
+      preLoaderRoute: typeof SettingsConnectionsImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/general': {
+      id: '/settings/general'
+      path: '/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof SettingsGeneralImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/security': {
+      id: '/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof SettingsSecurityImport
+      parentRoute: typeof SettingsImport
+    }
     '/notes/': {
       id: '/notes/'
       path: '/notes'
@@ -109,36 +158,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotesIndexImport
       parentRoute: typeof rootRoute
     }
-    '/settings/': {
-      id: '/settings/'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsIndexImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
 // Create and export the route tree
 
+interface SettingsRouteChildren {
+  SettingsConnectionsRoute: typeof SettingsConnectionsRoute
+  SettingsGeneralRoute: typeof SettingsGeneralRoute
+  SettingsSecurityRoute: typeof SettingsSecurityRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsConnectionsRoute: SettingsConnectionsRoute,
+  SettingsGeneralRoute: SettingsGeneralRoute,
+  SettingsSecurityRoute: SettingsSecurityRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/security': typeof SettingsSecurityRoute
   '/notes': typeof NotesIndexRoute
-  '/settings': typeof SettingsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/security': typeof SettingsSecurityRoute
   '/notes': typeof NotesIndexRoute
-  '/settings': typeof SettingsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -146,10 +210,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/security': typeof SettingsSecurityRoute
   '/notes/': typeof NotesIndexRoute
-  '/settings/': typeof SettingsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -158,28 +225,37 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
+    | '/settings'
     | '/policies/privacy'
     | '/policies/terms'
+    | '/settings/connections'
+    | '/settings/general'
+    | '/settings/security'
     | '/notes'
-    | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/register'
+    | '/settings'
     | '/policies/privacy'
     | '/policies/terms'
+    | '/settings/connections'
+    | '/settings/general'
+    | '/settings/security'
     | '/notes'
-    | '/settings'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/register'
+    | '/settings'
     | '/policies/privacy'
     | '/policies/terms'
+    | '/settings/connections'
+    | '/settings/general'
+    | '/settings/security'
     | '/notes/'
-    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 
@@ -187,20 +263,20 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
   NotesIndexRoute: typeof NotesIndexRoute
-  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
   NotesIndexRoute: NotesIndexRoute,
-  SettingsIndexRoute: SettingsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -216,10 +292,10 @@ export const routeTree = rootRoute
         "/",
         "/login",
         "/register",
+        "/settings",
         "/policies/privacy",
         "/policies/terms",
-        "/notes/",
-        "/settings/"
+        "/notes/"
       ]
     },
     "/": {
@@ -231,17 +307,34 @@ export const routeTree = rootRoute
     "/register": {
       "filePath": "register.tsx"
     },
+    "/settings": {
+      "filePath": "settings.tsx",
+      "children": [
+        "/settings/connections",
+        "/settings/general",
+        "/settings/security"
+      ]
+    },
     "/policies/privacy": {
       "filePath": "policies/privacy.tsx"
     },
     "/policies/terms": {
       "filePath": "policies/terms.tsx"
     },
+    "/settings/connections": {
+      "filePath": "settings/connections.tsx",
+      "parent": "/settings"
+    },
+    "/settings/general": {
+      "filePath": "settings/general.tsx",
+      "parent": "/settings"
+    },
+    "/settings/security": {
+      "filePath": "settings/security.tsx",
+      "parent": "/settings"
+    },
     "/notes/": {
       "filePath": "notes/index.tsx"
-    },
-    "/settings/": {
-      "filePath": "settings/index.tsx"
     }
   }
 }

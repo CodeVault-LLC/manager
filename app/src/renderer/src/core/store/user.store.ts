@@ -24,6 +24,7 @@ export interface IUserStore {
   fetchCurrentUser: () => Promise<void>
   login: (email: string, password: string) => Promise<boolean>
   register: (data: IRegistrationData) => Promise<boolean>
+  updateUser: (data: Partial<IUser>) => Promise<void>
   reset: () => void
   signOut: () => void
 
@@ -192,11 +193,13 @@ export class UserStore implements IUserStore {
       this.isLoading = true
 
       // Handle file conversion for IPC transfer
-      let dataToSend = { ...data } as IRegistrationData & { avatar?: IAvatarWithBuffer }
+      let dataToSend = { ...data } as IRegistrationData & {
+        avatar?: IAvatarWithBuffer
+      }
 
       // If there's an avatar file, prepare it for IPC transfer
       if (data.avatar instanceof File && data.avatar.size > 0) {
-        const fileBuffer = await new Promise<ArrayBuffer>((resolve) => {
+        const fileBuffer = await new Promise<ArrayBuffer>(resolve => {
           const reader = new FileReader()
           reader.onload = () => resolve(reader.result as ArrayBuffer)
 
@@ -252,6 +255,36 @@ export class UserStore implements IUserStore {
     }
   }
 
+  /**
+   * @description Update the current user
+   * @param data any
+   */
+  updateUser = async (data: Partial<IUser>): Promise<void> => {
+    try {
+      this.isLoading = true
+
+      const response = await ipcClient.invoke('user:update', data)
+
+      if (response?.data) {
+        runInAction(() => {
+          this.currentUser = response.data
+          this.isLoading = false
+        })
+      } else {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.currentUser = undefined
+          this.isLoading = false
+          toast.error(response?.error || 'Update failed')
+        })
+      }
+    } catch (error: any) {
+      this.isLoading = false
+      this.isUserLoggedIn = false
+      toast.error(error?.message || 'Update failed')
+    }
+  }
+
   reset = async () => {
     this.isUserLoggedIn = false
     this.currentUser = undefined
@@ -291,7 +324,10 @@ export class UserStore implements IUserStore {
 
   deleteSession = async (sessionId: number) => {
     try {
-      const response = await ipcClient.invoke('user:deleteSession', sessionId.toString())
+      const response = await ipcClient.invoke(
+        'user:deleteSession',
+        sessionId.toString()
+      )
 
       if (response?.data) {
         toast.success('Session deleted successfully')

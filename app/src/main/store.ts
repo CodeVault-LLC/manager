@@ -17,14 +17,13 @@ export const ConfStorage = {
       const content = await fs.readFile(STORAGE_FILE, 'utf8')
       const data = JSON.parse(content)
 
-      console.log('Previous config file found:', api.defaults.headers.Authorization)
-
       api.defaults.headers.Authorization = `Bearer ${data.userToken}`
-
-      console.log('Authorization header set:', api.defaults.headers.Authorization)
     } catch {
-      console.log('Config file not found, creating new one...')
-      await fs.writeFile(STORAGE_FILE, JSON.stringify({ userToken: '' }, null, 2), 'utf8')
+      await fs.writeFile(
+        STORAGE_FILE,
+        JSON.stringify({ userToken: '' }, null, 2),
+        'utf8'
+      )
     }
   },
 
@@ -55,11 +54,9 @@ export const ConfStorage = {
     await this.writeData(data)
 
     if (key === 'userToken') {
-      console.log('Setting user token:', value)
       api.defaults.headers.Authorization = `Bearer ${value}`
     }
 
-    // Emit a specific event for this key
     storageEvents.emit(`storage-key-changed:${key}`, value)
 
     return value
@@ -112,7 +109,7 @@ export const ConfStorage = {
 
 // Add IPC handlers for storage
 export function setupStorageIPC() {
-  storageEvents.on('storage-updated', async (data) => {
+  storageEvents.on('storage-updated', async data => {
     const windows = require('electron').BrowserWindow.getAllWindows()
     for (const win of windows) {
       if (win.webContents) {

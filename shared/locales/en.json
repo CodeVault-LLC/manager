@@ -1,7 +1,9 @@
 {
   "common": {
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "language": "Language",
+    "theme": "Theme"
   },
   "navigation": {
     "home": "Home",
@@ -22,6 +24,11 @@
     }
   },
   "settings": {
+    "navigation": {
+      "general": "General",
+      "security": "Security & Login",
+      "connections": "Connected Apps"
+    },
     "profile": {
       "title": "Profile",
       "description": "Update your profile information"
@@ -34,6 +41,21 @@
     "integrations": {
       "title": "Integrations",
       "description": "Manage your integrations"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the appearance of the application",
+      "theme": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "language": {
+        "label": "Language",
+        "english": "English",
+        "norwegian": "Norwegian"
+      }
     }
   },
   "forms": {

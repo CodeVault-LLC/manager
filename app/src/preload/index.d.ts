@@ -4,5 +4,9 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: unknown
+    i18n: {
+      getLocale: () => unknown
+      setLocale: (lang: string) => unknown
+    }
   }
 }

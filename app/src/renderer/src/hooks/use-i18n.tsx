@@ -1,5 +1,7 @@
 import { TranslationKeys, Translations } from '@shared/types/i18n'
 import { useEffect, useState } from 'react'
+import { useSystem } from './use-theme'
+import { autorun } from 'mobx'
 
 declare global {
   interface Window {
@@ -11,10 +13,15 @@ declare global {
 }
 
 export const useI18n = () => {
+  const { system } = useSystem()
   const [locale, setLocale] = useState<Translations | null>(null)
 
   useEffect(() => {
-    setLocale(window.i18n.getLocale())
+    autorun(() => {
+      if (system.language) {
+        changeLanguage(system.language)
+      }
+    })
   }, [])
 
   const changeLanguage = (lang: string) => {
@@ -31,7 +38,7 @@ export const useI18n = () => {
 
     let translation = getNestedValue(locale, key) || key
     if (params) {
-      Object.keys(params).forEach((param) => {
+      Object.keys(params).forEach(param => {
         translation = translation.replace(`{${param}}`, params[param])
       })
     }

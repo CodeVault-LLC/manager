@@ -7,7 +7,11 @@ import {
   Settings2,
   Sparkles
 } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@renderer/components/ui/avatar'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from '@renderer/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,13 +49,18 @@ export const NavUser = observer(() => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={currentUser.avatar_url} alt={currentUser.username} />
+                <AvatarImage
+                  src={currentUser.avatar_url}
+                  alt={currentUser.username}
+                />
                 <AvatarFallback className="rounded-lg">
                   {currentUser.username.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{currentUser.username}</span>
+                <span className="truncate font-semibold">
+                  {currentUser.username}
+                </span>
                 <span className="truncate text-xs">{currentUser.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -66,13 +75,18 @@ export const NavUser = observer(() => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={currentUser.avatar_url} alt={currentUser.username} />
+                  <AvatarImage
+                    src={currentUser.avatar_url}
+                    alt={currentUser.username}
+                  />
                   <AvatarFallback className="rounded-lg">
                     {currentUser.username.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{currentUser.username}</span>
+                  <span className="truncate font-semibold">
+                    {currentUser.username}
+                  </span>
                   <span className="truncate text-xs">{currentUser.email}</span>
                 </div>
               </div>
@@ -86,7 +100,7 @@ export const NavUser = observer(() => {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link to="/settings">
+              <Link to="/settings/general">
                 <DropdownMenuItem>
                   <Settings2 />
                   {t('navigation.settings')}
@@ -107,7 +121,7 @@ export const NavUser = observer(() => {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault()
                 e.stopPropagation()
 

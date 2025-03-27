@@ -9,30 +9,38 @@ import { useForm } from '@tanstack/react-form'
 import { useI18n } from '@renderer/hooks/use-i18n'
 
 type UserEditFieldsProps = {
-  onSubmit: (values: Record<string, any>) => void
+  onSubmit?: <T>(values: T) => Promise<void>
   buttonLabel?: string
   avatar?: boolean
+
+  password?: boolean
 }
 
-export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
+export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
   const { t } = useI18n()
   const { isUserLoggedIn, currentUser } = useUser()
 
   const { Field, handleSubmit } = useForm({
     defaultValues: {
-      firstName: currentUser?.first_name,
-      lastName: currentUser?.last_name,
+      first_name: currentUser?.first_name,
+      last_name: currentUser?.last_name,
       username: currentUser?.username,
       email: currentUser?.email,
       password: ''
     },
-    onSubmit: props.onSubmit
+    onSubmit: async ({ value }) => {
+      if (props.onSubmit) {
+        await props.onSubmit(value)
+      } else {
+        console.log('values', value)
+      }
+    }
   })
 
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={(e) => {
+      onSubmit={e => {
         e.preventDefault()
         e.stopPropagation()
         handleSubmit()
@@ -40,16 +48,16 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
     >
       <div className="flex flex-row items-center gap-4">
         <Field
-          name="firstName"
+          name="first_name"
           children={({ state, handleChange, handleBlur }) => (
-            <div className="flex flex-col w-full gap-4">
+            <div className="flex flex-col w-full gap-2">
               <Label htmlFor="firstName">{t('forms.firstName.label')}</Label>
               <Input
                 defaultValue={state.value}
                 placeholder={t('forms.firstName.placeholder')}
                 required
                 autoComplete="given-name"
-                onChange={(e) => handleChange(e.target.value)}
+                onChange={e => handleChange(e.target.value)}
                 onBlur={handleBlur}
               />
             </div>
@@ -57,16 +65,16 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
         />
 
         <Field
-          name="lastName"
+          name="last_name"
           children={({ state, handleChange, handleBlur }) => (
-            <div className="flex flex-col w-full gap-4">
+            <div className="flex flex-col w-full gap-2">
               <Label htmlFor="lastName">{t('forms.lastName.label')}</Label>
               <Input
                 defaultValue={state.value}
                 placeholder={t('forms.lastName.placeholder')}
                 required
                 autoComplete="family-name"
-                onChange={(e) => handleChange(e.target.value)}
+                onChange={e => handleChange(e.target.value)}
                 onBlur={handleBlur}
               />
             </div>
@@ -86,7 +94,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
               name="username"
               autoComplete="username"
               required
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={e => handleChange(e.target.value)}
               onBlur={handleBlur}
             />
           </div>
@@ -105,30 +113,32 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
               name="email"
               autoComplete="email"
               required
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={e => handleChange(e.target.value)}
               onBlur={handleBlur}
             />
           </div>
         )}
       />
 
-      <Field
-        name="password"
-        children={({ state, handleChange, handleBlur }) => (
-          <div className="grid gap-2">
-            <Label htmlFor="password">{t('forms.password.label')}</Label>
-            <PasswordInput
-              defaultValue={state.value}
-              id="password"
-              placeholder={t('forms.password.placeholder')}
-              required
-              name="password"
-              onChange={(e) => handleChange(e.target.value)}
-              onBlur={handleBlur}
-            />
-          </div>
-        )}
-      />
+      {props.password && (
+        <Field
+          name="password"
+          children={({ state, handleChange, handleBlur }) => (
+            <div className="grid gap-2">
+              <Label htmlFor="password">{t('forms.password.label')}</Label>
+              <PasswordInput
+                defaultValue={state.value}
+                id="password"
+                placeholder={t('forms.password.placeholder')}
+                required
+                name="password"
+                onChange={e => handleChange(e.target.value)}
+                onBlur={handleBlur}
+              />
+            </div>
+          )}
+        />
+      )}
 
       {props.avatar && (
         <div className="grid gap-2">
@@ -138,7 +148,9 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
       )}
 
       <Button type="submit" className="w-full">
-        {props.buttonLabel || isUserLoggedIn ? t('common.save') : t('user.register')}
+        {props.buttonLabel || isUserLoggedIn
+          ? t('common.save')
+          : t('user.register')}
       </Button>
     </form>
   )

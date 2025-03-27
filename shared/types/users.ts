@@ -16,20 +16,8 @@ export interface IUser extends IUserLite {
   is_active: boolean;
   user_timezone: string;
   username: string;
-  theme: IUserTheme;
 
   google: IGoogleUserLite | null;
-}
-
-export interface IUserTheme {
-  text: string | undefined;
-  theme: string | undefined;
-  palette: string | undefined;
-  primary: string | undefined;
-  background: string | undefined;
-  darkPalette: boolean | undefined;
-  sidebarText: string | undefined;
-  sidebarBackground: string | undefined;
 }
 
 export interface IAvatarWithBuffer {

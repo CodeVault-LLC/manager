@@ -14,7 +14,7 @@ export const loadLocale = (lang: Locale): Translations => {
 }
 
 export const exposeToMainWorld = () => {
-  let currentLang: Locale = 'no'
+  let currentLang: Locale = 'en'
 
   // Expose i18n functions to the renderer
   contextBridge.exposeInMainWorld('i18n', {

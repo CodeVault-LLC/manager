@@ -4,6 +4,7 @@ import { createRouter } from './router'
 import { RouterProvider } from '@tanstack/react-router'
 import { StoreProvider } from './utils/store-context'
 import { ElectronAPI } from '@electron-toolkit/preload'
+import { Locale, Translations } from '@shared/types/i18n'
 
 declare global {
   interface Window {
@@ -11,8 +12,8 @@ declare global {
     api: unknown
 
     i18n: {
-      getLocale: () => Translations;
-      setLocale: (lang: Locale) => Translations;
+      getLocale: () => Translations
+      setLocale: (lang: Locale) => Translations
     }
   }
 }

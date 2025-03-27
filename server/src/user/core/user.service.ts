@@ -10,9 +10,10 @@ export const UserService = {
   sanitizeUser(user: User, google: GoogleAccount | null) {
     const sanitizedUser = {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      first_name: user.firstName,
+      last_name: user.lastName,
       email: user.email,
+      timezone: user.timezone,
       username: user.username,
       avatar_url: FileService.getFileUrl(user.avatarId ?? ''),
 

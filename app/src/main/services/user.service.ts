@@ -5,54 +5,85 @@ import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 
 const loadUserServices = () => {
-  ipcMain.handle('user:adminDetails', async (): Promise<TCommunicationResponse<IUser>> => {
-    try {
-      const response = await api.get<IUser>('/users/me/')
+  ipcMain.handle(
+    'user:adminDetails',
+    async (): Promise<TCommunicationResponse<IUser>> => {
+      try {
+        const response = await api.get<IUser>('/users/me/')
 
-      return { data: response.data }
-    } catch (error: any) {
-      if (error.error) {
-        return error
-      }
+        return { data: response.data }
+      } catch (error: any) {
+        if (error.error) {
+          return error
+        }
 
-      return {
-        error: {
-          code: EErrorCodes.FORBIDDEN,
-          message: 'You do not have permission to access this resource'
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
         }
       }
     }
-  })
+  )
 
-  ipcMain.handle('user:getAllSessions', async (): Promise<TCommunicationResponse<ISession[]>> => {
-    try {
-      const response = await api.get<ISession[]>('/users/sessions/all/')
+  ipcMain.handle(
+    'user:update',
+    async (_, user: IUser): Promise<TCommunicationResponse<IUser>> => {
+      try {
+        const response = await api.patch<IUser>('/users/', user)
 
-      return { data: response.data }
-    } catch (error: any) {
-      return {
-        error: {
-          code: EErrorCodes.FORBIDDEN,
-          message: 'You do not have permission to access this resource'
+        return { data: response.data }
+      } catch (error: any) {
+        if (error.error) {
+          return error
+        }
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
         }
       }
     }
-  })
+  )
 
-  ipcMain.handle('user:deleteAllSessions', async (): Promise<TCommunicationResponse<boolean>> => {
-    try {
-      await api.delete<void>('/users/sessions/all/')
+  ipcMain.handle(
+    'user:getAllSessions',
+    async (): Promise<TCommunicationResponse<ISession[]>> => {
+      try {
+        const response = await api.get<ISession[]>('/users/sessions/all/')
 
-      return { data: true }
-    } catch (error: any) {
-      return {
-        error: {
-          code: EErrorCodes.FORBIDDEN,
-          message: 'You do not have permission to access this resource'
+        return { data: response.data }
+      } catch (error: any) {
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
         }
       }
     }
-  })
+  )
+
+  ipcMain.handle(
+    'user:deleteAllSessions',
+    async (): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        await api.delete<void>('/users/sessions/all/')
+
+        return { data: true }
+      } catch (error: any) {
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
+        }
+      }
+    }
+  )
 
   ipcMain.handle(
     'user:deleteSession',

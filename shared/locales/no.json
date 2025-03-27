@@ -1,7 +1,9 @@
 {
   "common": {
     "cancel": "Avbryt",
-    "save": "Lagre"
+    "save": "Lagre",
+    "language": "Språk",
+    "theme": "Tema"
   },
   "navigation": {
     "home": "Hjem",
@@ -22,6 +24,12 @@
     }
   },
   "settings": {
+    "navigation": {
+      "general": "General",
+      "security": "Sikkerhet & innlogging",
+      "connections": "Tilkoblede apper"
+    },
+
     "profile": {
       "title": "Profil",
       "description": "Oppdater din profilinformasjon"
