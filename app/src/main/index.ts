@@ -20,7 +20,7 @@ if (!gotTheLock) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
 
-      const deepLink = argv.find(arg => arg.startsWith('managerapp://'))
+      const deepLink = argv.find((arg) => arg.startsWith('managerapp://'))
       if (deepLink) {
         handleDeepLink(deepLink)
       }
@@ -72,7 +72,7 @@ if (!gotTheLock) {
 
   // Handle Deep Links (Windows/Linux)
   if (process.platform !== 'darwin') {
-    const deepLink = process.argv.find(arg => arg.startsWith('managerapp://'))
+    const deepLink = process.argv.find((arg) => arg.startsWith('managerapp://'))
     if (deepLink) {
       handleDeepLink(deepLink)
     }
@@ -96,7 +96,7 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler(details => {
+  mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })

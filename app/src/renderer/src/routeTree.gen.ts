@@ -21,6 +21,7 @@ import { Route as SettingsGeneralImport } from './routes/settings/general'
 import { Route as SettingsConnectionsImport } from './routes/settings/connections'
 import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
+import { Route as PoliciesFaqImport } from './routes/policies/faq'
 
 // Create/Update Routes
 
@@ -84,6 +85,12 @@ const PoliciesPrivacyRoute = PoliciesPrivacyImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PoliciesFaqRoute = PoliciesFaqImport.update({
+  id: '/policies/faq',
+  path: '/policies/faq',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -114,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsImport
+      parentRoute: typeof rootRoute
+    }
+    '/policies/faq': {
+      id: '/policies/faq'
+      path: '/policies/faq'
+      fullPath: '/policies/faq'
+      preLoaderRoute: typeof PoliciesFaqImport
       parentRoute: typeof rootRoute
     }
     '/policies/privacy': {
@@ -184,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
   '/settings/connections': typeof SettingsConnectionsRoute
@@ -197,6 +212,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
   '/settings/connections': typeof SettingsConnectionsRoute
@@ -211,6 +227,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
   '/settings/connections': typeof SettingsConnectionsRoute
@@ -226,6 +243,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
     | '/settings/connections'
@@ -238,6 +256,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
     | '/settings/connections'
@@ -250,6 +269,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
     | '/settings/connections'
@@ -264,6 +284,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRouteWithChildren
+  PoliciesFaqRoute: typeof PoliciesFaqRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
   NotesIndexRoute: typeof NotesIndexRoute
@@ -274,6 +295,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRouteWithChildren,
+  PoliciesFaqRoute: PoliciesFaqRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
   NotesIndexRoute: NotesIndexRoute,
@@ -293,6 +315,7 @@ export const routeTree = rootRoute
         "/login",
         "/register",
         "/settings",
+        "/policies/faq",
         "/policies/privacy",
         "/policies/terms",
         "/notes/"
@@ -314,6 +337,9 @@ export const routeTree = rootRoute
         "/settings/general",
         "/settings/security"
       ]
+    },
+    "/policies/faq": {
+      "filePath": "policies/faq.tsx"
     },
     "/policies/privacy": {
       "filePath": "policies/privacy.tsx"
