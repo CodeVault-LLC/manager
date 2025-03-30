@@ -17,4 +17,10 @@ export interface IGoogleUserLite {
   picture: string;
   given_name: string;
   email_verified: boolean;
+  status: GoogleAccountStatus;
+}
+
+export enum GoogleAccountStatus {
+  ACTIVE = "ACTIVE",
+  REVOKED = "REVOKED",
 }

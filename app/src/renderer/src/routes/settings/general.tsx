@@ -54,7 +54,7 @@ const RouteComponent = observer(() => {
 
           <Select
             value={system.theme}
-            onValueChange={value => {
+            onValueChange={(value) => {
               const theme = value as ETheme
 
               setTheme(theme)
@@ -66,11 +66,11 @@ const RouteComponent = observer(() => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {system.themes.map(theme => (
+                {system.themes.map((theme) => (
                   <SelectItem key={theme.id} value={theme.id}>
                     <div className="flex items-center gap-2">
                       {theme.id === ETheme.SYSTEM ? (
-                        <span>{t('settings.appearance.system')}</span>
+                        <span>{t('settings.appearance.theme.system')}</span>
                       ) : (
                         <>
                           <span>{theme.name}</span>
@@ -95,7 +95,7 @@ const RouteComponent = observer(() => {
 
           <Select
             value={system.language}
-            onValueChange={value => {
+            onValueChange={(value) => {
               const theme = value as ETheme
 
               setLanguage(theme)
@@ -107,7 +107,7 @@ const RouteComponent = observer(() => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {system.languages.map(language => (
+                {system.languages.map((language) => (
                   <SelectItem key={language.code} value={language.code}>
                     <div className="flex items-center gap-2">
                       <span>{language.flag}</span>

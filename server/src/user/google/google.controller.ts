@@ -3,15 +3,27 @@ import { getGoogleAuthURL, GoogleService } from './google.service';
 import { configuration } from '@/config';
 import url from 'url';
 import { verifyToken } from '@/utils/jwt';
+import { GoogleAccountStatus } from '@/models/schema';
+import { UserService } from '../core/user.service';
 
 const router = Router({ mergeParams: true });
 
+/**
+ * @swagger
+ * tags:
+ *  name: Google
+ * description: Google authentication
+ */
 router.get('/auth', (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.user.googleAccount && req.user.googleAccount.id) {
-      return next(
-        new Error('User is already authenticated with Google. Please log in.'),
-      );
+    if (
+      !req.user.googleAccount?.id ||
+      req.user.googleAccount?.status !== GoogleAccountStatus.REVOKED
+    ) {
+      res.status(400).json({
+        error: 'Google account is already connected or not found',
+      });
+      return;
     }
 
     const authURL = getGoogleAuthURL(req.user.id);
@@ -37,7 +49,6 @@ router.get(
         return;
       }
 
-      // The state includes a jwt token and a random string. Extract the random string, but ensure it exists within the state, then extract the jwt token.
       const state = q.state as string;
       const jwt = state.split(configuration.dynamic.GOOGLE_STATE)[1];
       if (!jwt) {
@@ -59,8 +70,15 @@ router.get(
       }
 
       const userId = decodedJwt.id.split(configuration.dynamic.GOOGLE_STATE)[0];
-
       if (!userId) {
+        res.redirect(
+          `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+        );
+        return;
+      }
+
+      const user = await UserService.retrieveUser(parseInt(userId));
+      if (!user) {
         res.redirect(
           `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
         );
@@ -70,6 +88,13 @@ router.get(
       const code = q.code as string;
 
       const userInformation = await GoogleService.getUserInfo(code);
+
+      if (user.googleAccount?.status === GoogleAccountStatus.REVOKED) {
+        await UserService.updateUserGoogleAccountStatus(
+          user.id,
+          GoogleAccountStatus.ACTIVE,
+        );
+      }
 
       const id = await GoogleService.createUserWithGoogle(
         parseInt(userId),
@@ -88,6 +113,34 @@ router.get(
       res.redirect(
         `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
       );
+    }
+  },
+);
+
+router.post(
+  '/revoke',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const googleAccount = req.user;
+      if (!googleAccount) {
+        res.status(400).json({ error: 'No Google account found' });
+        return;
+      }
+
+      if (googleAccount.googleAccount?.status !== GoogleAccountStatus.ACTIVE) {
+        res.status(400).json({
+          error: 'Google account is not active or already revoked',
+        });
+        return;
+      }
+
+      await GoogleService.deleteGoogleAccount(googleAccount.id);
+
+      res
+        .status(200)
+        .json({ message: 'Google account disconnected successfully' });
+    } catch (error) {
+      next(error);
     }
   },
 );

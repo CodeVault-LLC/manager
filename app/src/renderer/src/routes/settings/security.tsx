@@ -27,14 +27,14 @@ const RouteComponent = observer(() => {
 
   const findSessionIcon = (session: ISession) => {
     if (session.systemInfo.includes('Windows')) {
-      return <WindowsIcon className="size-16" />
+      return <WindowsIcon className="size-4" />
     } else if (session.systemInfo.includes('Linux')) {
-      return <WindowsIcon className="size-8" />
+      return <WindowsIcon className="size-4" />
     } else if (session.systemInfo.includes('Mac')) {
-      return <WindowsIcon className="size-8" />
+      return <WindowsIcon className="size-4" />
     }
 
-    return <WindowsIcon className="size-8" />
+    return <WindowsIcon className="size-4" />
   }
 
   return (

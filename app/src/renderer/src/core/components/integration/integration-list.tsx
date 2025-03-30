@@ -6,6 +6,11 @@ import { Badge } from '@renderer/components/ui/badge'
 import { Separator } from '@renderer/components/ui/separator'
 import { Settings } from 'lucide-react'
 import { Google } from '@renderer/components/brands/google'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@renderer/components/ui/tooltip'
 
 export const IntegrationList = observer(() => {
   const { t } = useI18n()
@@ -15,12 +20,11 @@ export const IntegrationList = observer(() => {
     {
       name: 'Google',
       icon: <Google className="size-8" />,
-      status: '',
+      status: currentUser?.google?.status,
       description: 'Connect your Google account to sync your data.',
       action: () => {
         authenticateGoogle()
-      },
-      activated: currentUser?.google?.name !== undefined
+      }
     },
     {
       name: 'Apple',
@@ -38,8 +42,7 @@ export const IntegrationList = observer(() => {
       description: 'Connect your Apple account to sync your data.',
       action: () => {
         console.log('Test')
-      },
-      activated: false
+      }
     },
     {
       name: 'Microsoft',
@@ -60,8 +63,7 @@ export const IntegrationList = observer(() => {
       description: 'Connect your Microsoft account to sync your data.',
       action: () => {
         console.log('Test')
-      },
-      activated: false
+      }
     }
   ]
 
@@ -86,14 +88,28 @@ export const IntegrationList = observer(() => {
 
               {integration.status === 'comingSoon' && (
                 <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 shadow-none rounded-full">
-                  Coming Soon
+                  {t('common.comingSoon')}
                 </Badge>
               )}
 
-              {integration.activated && (
+              {integration.status === 'ACTIVE' && (
                 <Badge className="bg-green-600/10 dark:bg-green-600/20 hover:bg-green-600/10 text-green-500 shadow-none rounded-full">
-                  Connected
+                  {t('common.connected')}
                 </Badge>
+              )}
+
+              {integration.status === 'REVOKED' && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 shadow-none rounded-full">
+                      {t('common.revoked')}
+                    </Badge>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    {t('settings.integrations.revokedTooltip')}
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
 
@@ -108,7 +124,7 @@ export const IntegrationList = observer(() => {
                 <Separator className="my-2" />
 
                 <div className="flex flex-row items-center justify-between">
-                  {integration.activated && (
+                  {integration.status !== 'ACTIVE' && (
                     <Button
                       variant="outline"
                       size={'sm'}
@@ -119,7 +135,7 @@ export const IntegrationList = observer(() => {
                     </Button>
                   )}
 
-                  {integration.activated ? (
+                  {integration.status === 'ACTIVE' ? (
                     <Button
                       variant="outline"
                       size={'sm'}
@@ -127,6 +143,14 @@ export const IntegrationList = observer(() => {
                       disabled={true}
                     >
                       Disconnect
+                    </Button>
+                  ) : integration.status === 'REVOKED' ? (
+                    <Button
+                      variant="outline"
+                      size={'sm'}
+                      onClick={() => console.log('Reconnect')}
+                    >
+                      {t('common.reauthorize')}
                     </Button>
                   ) : (
                     <Button

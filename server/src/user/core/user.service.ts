@@ -2,9 +2,9 @@ import { db } from '@/data-source.js';
 import { FileService } from '@/file/file.service';
 import { GoogleAccount } from '@/models/schema';
 import { User, users } from '@/models/user/user.model.js';
-import { IGoogleUserLite } from '@shared/types/google';
 import { eq } from 'drizzle-orm';
 import { GoogleService } from '../google/google.service';
+import { IGoogleUserLite } from '@shared/types/google';
 
 export const UserService = {
   sanitizeUser(user: User, google: GoogleAccount | null) {

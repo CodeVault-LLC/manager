@@ -2,9 +2,16 @@ import { configuration } from '@/config';
 import { google } from 'googleapis';
 import { IUserInfoResponse, IGoogleUserLite } from '@shared/types/google';
 import { db } from '@/data-source';
-import { GoogleAccount, googleAccounts, googleSession } from '@/models/schema';
+import {
+  GoogleAccount,
+  googleAccounts,
+  GoogleAccountStatus,
+  googleSession,
+} from '@/models/schema';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { generateJWT } from '@/utils/jwt';
+import { eq } from 'drizzle-orm';
+import https from 'node:https';
 
 export let googleOauth2Client: OAuth2Client = {} as OAuth2Client;
 
@@ -58,6 +65,7 @@ export const GoogleService = {
       email: user.email,
       picture: user.picture,
       given_name: user.givenName,
+      status: user.status as GoogleAccountStatus,
       email_verified: user.emailVerified,
     };
   },
@@ -94,7 +102,7 @@ export const GoogleService = {
       sessionId: credentials.id_token as string,
       accessToken: credentials.access_token as string,
       refreshToken: credentials.refresh_token as string,
-      expiresIn: credentials.expiry_date as number,
+      expiresIn: credentials.expiry_date as unknown as string,
     });
   },
 
@@ -118,13 +126,10 @@ export const GoogleService = {
         throw new Error('Invalid ID token');
       }
 
-      // Get user info from Google
       const { data }: { data: IUserInfoResponse } =
         await googleOauth2Client.request({
           url: 'https://www.googleapis.com/oauth2/v3/userinfo',
         });
-
-      console.log('Google user data:', data);
 
       return {
         tokens: tokens,
@@ -135,5 +140,57 @@ export const GoogleService = {
       console.error('Error getting tokens from Google:', error);
       throw new Error('Failed to get tokens from Google');
     }
+  },
+
+  async deleteGoogleAccount(googleAccountId: number) {
+    const googleSessionData = await db
+      .select()
+      .from(googleSession)
+      .where(eq(googleSession.googleAccountId, googleAccountId))
+      .execute();
+
+    if (googleSessionData.length === 0) {
+      throw new Error('No active session found for this Google account');
+    }
+
+    let postData = 'token=' + googleSessionData[0].accessToken;
+
+    let postOptions = {
+      host: 'oauth2.googleapis.com',
+      port: '443',
+      path: '/revoke',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+      },
+    };
+
+    const postReq = https.request(postOptions, function (res) {
+      res.setEncoding('utf8');
+      res.on('data', (d) => {
+        console.log('Response: ' + d);
+      });
+    });
+
+    postReq.on('error', (error) => {
+      console.log(error);
+    });
+
+    postReq.write(postData);
+    postReq.end();
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(googleAccounts)
+        .set({ status: 'INACTIVE' })
+        .where(eq(googleAccounts.id, googleAccountId))
+        .execute();
+
+      await tx
+        .delete(googleSession)
+        .where(eq(googleSession.googleAccountId, googleAccountId))
+        .execute();
+    });
   },
 };

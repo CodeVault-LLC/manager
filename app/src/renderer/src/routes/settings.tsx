@@ -73,7 +73,7 @@ function RouteComponent() {
       <div className="flex flex-row items-center justify-between">
         <Tabs defaultValue={tab} className="w-full">
           <TabsList className="w-full p-0 bg-background justify-start border-b rounded-none">
-            {tabs.map(tab => (
+            {tabs.map((tab) => (
               <Link key={tab.value} to={tab.link}>
                 <TabsTrigger
                   value={tab.value}
@@ -85,7 +85,7 @@ function RouteComponent() {
             ))}
           </TabsList>
 
-          <div className="mt-8 w-full">
+          <div className="mt-8 w-full p-4">
             <Outlet />
           </div>
         </Tabs>

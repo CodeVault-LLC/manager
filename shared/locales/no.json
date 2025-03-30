@@ -3,7 +3,11 @@
     "cancel": "Avbryt",
     "save": "Lagre",
     "language": "Språk",
-    "theme": "Tema"
+    "theme": "Tema",
+    "revoked": "Tilbakekalt",
+    "comingSoon": "Kommer snart",
+    "connected": "Tilkoblet",
+    "reauthorize": "Reautorisere"
   },
   "navigation": {
     "home": "Hjem",
@@ -41,7 +45,8 @@
     },
     "integrations": {
       "title": "Integrasjoner",
-      "description": "Administrer dine integrasjoner"
+      "description": "Administrer dine integrasjoner",
+      "revokedTooltip": "Denne integrasjonen har blitt tilbakekalt, klikk for å reautorisere"
     }
   },
   "forms": {

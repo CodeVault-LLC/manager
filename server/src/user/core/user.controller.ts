@@ -21,8 +21,6 @@ router.use('/notes', notesRouter);
 
 router.get('/me', (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(req.user);
-
     res
       .status(200)
       .json(

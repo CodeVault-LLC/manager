@@ -3,7 +3,11 @@
     "cancel": "Cancel",
     "save": "Save",
     "language": "Language",
-    "theme": "Theme"
+    "theme": "Theme",
+    "revoked": "Revoked",
+    "comingSoon": "Coming Soon",
+    "connected": "Connected",
+    "reauthorize": "Reauthorize"
   },
   "navigation": {
     "home": "Home",
@@ -40,7 +44,8 @@
     },
     "integrations": {
       "title": "Integrations",
-      "description": "Manage your integrations"
+      "description": "Manage your integrations",
+      "revokedTooltip": "This integration has been revoked, click to reauthorize"
     },
     "appearance": {
       "title": "Appearance",
