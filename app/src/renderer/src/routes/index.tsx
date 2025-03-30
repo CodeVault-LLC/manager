@@ -5,7 +5,6 @@ import {
 } from '@renderer/components/ui/avatar'
 import { Button } from '@renderer/components/ui/button'
 import AdminUpcoming from '@renderer/core/components/admin-upcoming/admin-upcoming'
-import { YrCard } from '@renderer/core/components/admin-widgets/yr-card'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'

@@ -11,7 +11,7 @@ type TAdminLayout = {
   children: ReactNode
 }
 
-export const AdminLayout: FC<TAdminLayout> = observer(props => {
+export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props
   const { changeLanguage } = useI18n()
   const { getInitialData, system } = useSystem()
@@ -33,8 +33,10 @@ export const AdminLayout: FC<TAdminLayout> = observer(props => {
           <InstanceHeader />
           <Toaster />
 
-          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden">
-            <div className="flex flex-1 flex-col overflow-auto">{children}</div>
+          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden bg-indigo-500">
+            <div className="flex flex-1 flex-col overflow-auto bg-foreground">
+              {children}
+            </div>
           </main>
         </SidebarInset>
       </SidebarProvider>

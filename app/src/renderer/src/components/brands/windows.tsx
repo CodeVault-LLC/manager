@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { BrandIconProps } from './utilities'
 
-export const WindowsIcon: FC<BrandIconProps> = props => {
+export const WindowsIcon: FC<BrandIconProps> = (props) => {
   return (
     <svg
       {...props}

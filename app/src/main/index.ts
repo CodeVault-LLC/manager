@@ -6,9 +6,9 @@ import { loadAuthServices } from './services/auth.service'
 import { loadUserServices } from './services/user.service'
 import { ConfStorage } from './store'
 import { loadNoteServices } from './services/note.service'
-import { loadGoogleServices } from './services/integrations/google.service'
 import handleDeepLink from './deep-link'
 import { loadSystemServices } from './services/system.service'
+import { loadIntegrations } from './services/integrations'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -55,7 +55,7 @@ if (!gotTheLock) {
       })
 
       loadAuthServices()
-      loadGoogleServices()
+      loadIntegrations()
       loadUserServices()
       loadNoteServices()
       loadSystemServices()

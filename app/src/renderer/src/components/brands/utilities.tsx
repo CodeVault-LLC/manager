@@ -1,4 +1,3 @@
 export type BrandIconProps = {
-  width: number
-  height: number
+  className: string
 }
