@@ -148,7 +148,7 @@ export const IntegrationList = observer(() => {
                     <Button
                       variant="outline"
                       size={'sm'}
-                      onClick={() => console.log('Reconnect')}
+                      onClick={integration.action}
                     >
                       {t('common.reauthorize')}
                     </Button>

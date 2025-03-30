@@ -44,7 +44,7 @@ router.get(
 
       if (q.error) {
         res.redirect(
-          `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+          `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
         );
         return;
       }
@@ -53,7 +53,7 @@ router.get(
       const jwt = state.split(configuration.dynamic.GOOGLE_STATE)[1];
       if (!jwt) {
         res.redirect(
-          `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+          `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
         );
         return;
       }
@@ -64,7 +64,7 @@ router.get(
 
       if (!decodedJwt) {
         res.redirect(
-          `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+          `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
         );
         return;
       }
@@ -72,15 +72,17 @@ router.get(
       const userId = decodedJwt.id.split(configuration.dynamic.GOOGLE_STATE)[0];
       if (!userId) {
         res.redirect(
-          `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+          `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
         );
         return;
       }
 
       const user = await UserService.retrieveUser(parseInt(userId));
       if (!user) {
+        console.log('User not found:', userId);
+
         res.redirect(
-          `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+          `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
         );
         return;
       }
@@ -90,10 +92,20 @@ router.get(
       const userInformation = await GoogleService.getUserInfo(code);
 
       if (user.googleAccount?.status === GoogleAccountStatus.REVOKED) {
-        await UserService.updateUserGoogleAccountStatus(
+        await GoogleService.updateUserGoogleAccountStatus(
           user.id,
           GoogleAccountStatus.ACTIVE,
         );
+
+        await GoogleService.createUserWithSession(
+          user.googleAccount.id,
+          userInformation.tokens,
+        );
+
+        res.redirect(
+          `${configuration.required.FRONTEND_URL}auth/google/callback?success=true`,
+        );
+        return;
       }
 
       const id = await GoogleService.createUserWithGoogle(
@@ -105,13 +117,13 @@ router.get(
       await GoogleService.createUserWithSession(id, userInformation.tokens);
 
       res.redirect(
-        `${configuration.required.FRONTEND_URL}/auth/google/callback?success=true`,
+        `${configuration.required.FRONTEND_URL}auth/google/callback?success=true`,
       );
     } catch (error) {
       console.error('Error during Google authentication:', error);
 
       res.redirect(
-        `${configuration.required.FRONTEND_URL}/auth/google/callback?success=false`,
+        `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
       );
     }
   },

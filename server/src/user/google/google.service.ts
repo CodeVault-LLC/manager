@@ -193,4 +193,15 @@ export const GoogleService = {
         .execute();
     });
   },
+
+  async updateUserGoogleAccountStatus(
+    googleAccountId: number,
+    status: GoogleAccountStatus,
+  ) {
+    await db
+      .update(googleAccounts)
+      .set({ status: status })
+      .where(eq(googleAccounts.id, googleAccountId))
+      .execute();
+  },
 };
