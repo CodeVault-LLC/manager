@@ -195,13 +195,13 @@ export const GoogleService = {
   },
 
   async updateUserGoogleAccountStatus(
-    googleAccountId: number,
+    googleAccountId: string,
     status: GoogleAccountStatus,
   ) {
     await db
       .update(googleAccounts)
       .set({ status: status })
-      .where(eq(googleAccounts.id, googleAccountId))
+      .where(eq(googleAccounts.googleId, googleAccountId))
       .execute();
   },
 };
