@@ -35,6 +35,7 @@ export interface IUserStore {
 
   // Integrations
   authenticateGoogle: () => Promise<void>
+  revokeGoogle: () => Promise<void>
 }
 
 export class UserStore implements IUserStore {
@@ -199,7 +200,7 @@ export class UserStore implements IUserStore {
 
       // If there's an avatar file, prepare it for IPC transfer
       if (data.avatar instanceof File && data.avatar.size > 0) {
-        const fileBuffer = await new Promise<ArrayBuffer>(resolve => {
+        const fileBuffer = await new Promise<ArrayBuffer>((resolve) => {
           const reader = new FileReader()
           reader.onload = () => resolve(reader.result as ArrayBuffer)
 
@@ -361,9 +362,8 @@ export class UserStore implements IUserStore {
         runInAction(() => {
           this.isUserLoggedIn = false
           this.userStatus = undefined
+          this.fetchCurrentUser()
         })
-
-        this.fetchCurrentUser()
       } else {
         runInAction(() => {
           this.isUserLoggedIn = false
@@ -396,6 +396,26 @@ export class UserStore implements IUserStore {
         })
 
         toast.error(response?.error || 'Google authentication failed')
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
+
+  revokeGoogle: () => Promise<void> = async () => {
+    try {
+      const response = await ipcClient.invoke('auth:google:revoke')
+
+      if (response?.data) {
+        runInAction(() => {
+          this.currentUser = undefined
+          this.isUserLoggedIn = false
+        })
+
+        toast.success('Google account disconnected successfully')
+        await this.fetchCurrentUser()
+      } else {
+        toast.error(response?.error || 'Failed to disconnect Google account')
       }
     } catch (error: any) {
       console.error(error)

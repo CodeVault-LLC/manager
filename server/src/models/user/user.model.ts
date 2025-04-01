@@ -12,6 +12,7 @@ import { projects } from '../project.model';
 import { sessions } from './session.model';
 import { notes } from './notes.model';
 import { googleAccounts } from './google.model';
+import { userMangas } from '../entertainment/manga.model';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -42,6 +43,9 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   projects: many(projects),
   sessions: many(sessions),
   notes: many(notes),
+
+  // Entertainment
+  mangas: many(userMangas),
 
   googleAccount: one(googleAccounts, {
     fields: [users.id],

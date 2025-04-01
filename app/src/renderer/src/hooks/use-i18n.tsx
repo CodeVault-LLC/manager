@@ -25,6 +25,8 @@ export const useI18n = () => {
   }, [])
 
   const changeLanguage = (lang: string) => {
+    if (!window.i18n) return
+
     setLocale(window.i18n.setLocale(lang))
   }
 
@@ -38,7 +40,7 @@ export const useI18n = () => {
 
     let translation = getNestedValue(locale, key) || key
     if (params) {
-      Object.keys(params).forEach(param => {
+      Object.keys(params).forEach((param) => {
         translation = translation.replace(`{${param}}`, params[param])
       })
     }

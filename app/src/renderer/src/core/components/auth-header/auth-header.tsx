@@ -31,6 +31,8 @@ export const InstanceHeader: FC = observer(() => {
         return 'General'
       case 'settings':
         return t('navigation.settings')
+      case 'entertainment':
+        return t('navigation.entertainment')
       default:
         return pathName.toUpperCase()
     }
@@ -69,7 +71,9 @@ export const InstanceHeader: FC = observer(() => {
               <>
                 {breadcrumbItems.map((item, index) => (
                   <BreadcrumbItem key={index}>
-                    <BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
+                    <BreadcrumbLink href={item.href}>
+                      {item.title}
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
                 ))}
 

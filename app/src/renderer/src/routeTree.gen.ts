@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
+import { Route as EntertainmentImport } from './routes/entertainment'
 import { Route as IndexImport } from './routes/index'
 import { Route as NotesIndexImport } from './routes/notes/index'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
@@ -22,6 +23,7 @@ import { Route as SettingsConnectionsImport } from './routes/settings/connection
 import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 import { Route as PoliciesFaqImport } from './routes/policies/faq'
+import { Route as EntertainmentMangaImport } from './routes/entertainment/manga'
 
 // Create/Update Routes
 
@@ -40,6 +42,12 @@ const RegisterRoute = RegisterImport.update({
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const EntertainmentRoute = EntertainmentImport.update({
+  id: '/entertainment',
+  path: '/entertainment',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -91,6 +99,12 @@ const PoliciesFaqRoute = PoliciesFaqImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const EntertainmentMangaRoute = EntertainmentMangaImport.update({
+  id: '/manga',
+  path: '/manga',
+  getParentRoute: () => EntertainmentRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -100,6 +114,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/entertainment': {
+      id: '/entertainment'
+      path: '/entertainment'
+      fullPath: '/entertainment'
+      preLoaderRoute: typeof EntertainmentImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -122,6 +143,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsImport
       parentRoute: typeof rootRoute
+    }
+    '/entertainment/manga': {
+      id: '/entertainment/manga'
+      path: '/manga'
+      fullPath: '/entertainment/manga'
+      preLoaderRoute: typeof EntertainmentMangaImport
+      parentRoute: typeof EntertainmentImport
     }
     '/policies/faq': {
       id: '/policies/faq'
@@ -177,6 +205,18 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface EntertainmentRouteChildren {
+  EntertainmentMangaRoute: typeof EntertainmentMangaRoute
+}
+
+const EntertainmentRouteChildren: EntertainmentRouteChildren = {
+  EntertainmentMangaRoute: EntertainmentMangaRoute,
+}
+
+const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(
+  EntertainmentRouteChildren,
+)
+
 interface SettingsRouteChildren {
   SettingsConnectionsRoute: typeof SettingsConnectionsRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
@@ -195,9 +235,11 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/entertainment/manga': typeof EntertainmentMangaRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -209,9 +251,11 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/entertainment/manga': typeof EntertainmentMangaRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -224,9 +268,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/entertainment/manga': typeof EntertainmentMangaRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -240,9 +286,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/entertainment'
     | '/login'
     | '/register'
     | '/settings'
+    | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -253,9 +301,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/entertainment'
     | '/login'
     | '/register'
     | '/settings'
+    | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -266,9 +316,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/entertainment'
     | '/login'
     | '/register'
     | '/settings'
+    | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -281,6 +333,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EntertainmentRoute: typeof EntertainmentRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRouteWithChildren
@@ -292,6 +345,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EntertainmentRoute: EntertainmentRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRouteWithChildren,
@@ -312,6 +366,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/entertainment",
         "/login",
         "/register",
         "/settings",
@@ -323,6 +378,12 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/entertainment": {
+      "filePath": "entertainment.tsx",
+      "children": [
+        "/entertainment/manga"
+      ]
     },
     "/login": {
       "filePath": "login.tsx"
@@ -337,6 +398,10 @@ export const routeTree = rootRoute
         "/settings/general",
         "/settings/security"
       ]
+    },
+    "/entertainment/manga": {
+      "filePath": "entertainment/manga.tsx",
+      "parent": "/entertainment"
     },
     "/policies/faq": {
       "filePath": "policies/faq.tsx"

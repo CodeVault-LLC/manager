@@ -32,6 +32,7 @@ export interface IpcHandlers {
   "auth:signOut": () => Promise<TCommunicationResponse<boolean>>;
 
   "auth:google": () => Promise<TCommunicationResponse<boolean>>;
+  "auth:google:revoke": () => Promise<TCommunicationResponse<boolean>>;
 
   "system:initial": () => Promise<
     TCommunicationResponse<{ theme: ETheme; language: string }>

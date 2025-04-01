@@ -6,12 +6,15 @@ import {
   GoogleAccount,
   googleAccounts,
   GoogleAccountStatus,
+  GoogleSession,
   googleSession,
 } from '@/models/schema';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { generateJWT } from '@/utils/jwt';
 import { eq } from 'drizzle-orm';
 import https from 'node:https';
+import { z } from 'zod';
+import { Response } from 'express';
 
 export let googleOauth2Client: OAuth2Client = {} as OAuth2Client;
 
@@ -143,17 +146,34 @@ export const GoogleService = {
   },
 
   async deleteGoogleAccount(googleAccountId: number) {
-    const googleSessionData = await db
-      .select()
-      .from(googleSession)
-      .where(eq(googleSession.googleAccountId, googleAccountId))
-      .execute();
+    const googleSessionData = await db.query.googleSession.findMany({
+      where: eq(googleSession.googleAccountId, googleAccountId),
+    });
 
     if (googleSessionData.length === 0) {
       throw new Error('No active session found for this Google account');
     }
 
-    let postData = 'token=' + googleSessionData[0].accessToken;
+    for (const session of googleSessionData) {
+      await GoogleService.revokeGoogleAccessKey(session);
+    }
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(googleAccounts)
+        .set({ status: GoogleAccountStatus.REVOKED })
+        .where(eq(googleAccounts.id, googleAccountId))
+        .execute();
+
+      await tx
+        .delete(googleSession)
+        .where(eq(googleSession.googleAccountId, googleAccountId))
+        .execute();
+    });
+  },
+
+  async revokeGoogleAccessKey(googleSession: GoogleSession) {
+    let postData = 'token=' + googleSession.accessToken;
 
     let postOptions = {
       host: 'oauth2.googleapis.com',
@@ -169,7 +189,24 @@ export const GoogleService = {
     const postReq = https.request(postOptions, function (res) {
       res.setEncoding('utf8');
       res.on('data', (d) => {
-        console.log('Response: ' + d);
+        const parsedData = z.object({
+          error: z.string().optional(),
+          error_description: z.string().optional(),
+        });
+
+        const parsedResponse = parsedData.safeParse(JSON.parse(d));
+        if (!parsedResponse.success) {
+          console.error('Error parsing response:', parsedResponse.error);
+          return;
+        }
+
+        if (parsedResponse.data.error) {
+          console.error('Error revoking token:', parsedResponse.data.error);
+          return;
+        }
+
+        console.log('Token revoked successfully:', parsedResponse.data);
+        return parsedResponse.data;
       });
     });
 
@@ -179,19 +216,6 @@ export const GoogleService = {
 
     postReq.write(postData);
     postReq.end();
-
-    await db.transaction(async (tx) => {
-      await tx
-        .update(googleAccounts)
-        .set({ status: 'INACTIVE' })
-        .where(eq(googleAccounts.id, googleAccountId))
-        .execute();
-
-      await tx
-        .delete(googleSession)
-        .where(eq(googleSession.googleAccountId, googleAccountId))
-        .execute();
-    });
   },
 
   async updateUserGoogleAccountStatus(
@@ -203,5 +227,26 @@ export const GoogleService = {
       .set({ status: status })
       .where(eq(googleAccounts.googleId, googleAccountId))
       .execute();
+  },
+
+  closeGoogleCallback(res: Response, location: string) {
+    res.setHeader('Content-Type', 'text/html');
+    res.write(`
+      <html>
+      <head></head>
+      <body>
+        <script>
+        if (window.opener) {
+          window.opener.location.href = '${configuration.required.FRONTEND_URL}auth/google/callback?success=true';
+          window.close();
+        } else {
+          window.location.href = '${configuration.required.FRONTEND_URL}auth/google/callback?success=true';
+        }
+        </script>
+        <p>Redirecting...</p>
+      </body>
+      </html>
+    `);
+    res.end();
   },
 };

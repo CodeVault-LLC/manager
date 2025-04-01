@@ -41,7 +41,10 @@ router.get('/callback', async (req: Request, res: Response) => {
     const q = url.parse(req.url, true).query;
 
     if (q.error) {
-      res.redirect(
+      console.error('Google authentication error:', q.error);
+
+      GoogleService.closeGoogleCallback(
+        res,
         `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
       );
       return;
@@ -50,7 +53,8 @@ router.get('/callback', async (req: Request, res: Response) => {
     const state = q.state as string;
     const jwt = state.split(configuration.dynamic.GOOGLE_STATE)[1];
     if (!jwt) {
-      res.redirect(
+      GoogleService.closeGoogleCallback(
+        res,
         `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
       );
       return;
@@ -61,7 +65,8 @@ router.get('/callback', async (req: Request, res: Response) => {
     } | null;
 
     if (!decodedJwt) {
-      res.redirect(
+      GoogleService.closeGoogleCallback(
+        res,
         `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
       );
       return;
@@ -69,7 +74,8 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const userId = decodedJwt.id.split(configuration.dynamic.GOOGLE_STATE)[0];
     if (!userId) {
-      res.redirect(
+      GoogleService.closeGoogleCallback(
+        res,
         `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
       );
       return;
@@ -77,11 +83,11 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     const user = await UserService.retrieveUser(parseInt(userId));
     if (!user) {
-      console.log('User not found:', userId);
-
-      res.redirect(
+      GoogleService.closeGoogleCallback(
+        res,
         `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
-      );
+      ),
+        console.log('User not found:', userId);
       return;
     }
 
@@ -102,7 +108,8 @@ router.get('/callback', async (req: Request, res: Response) => {
         userInformation.tokens,
       );
 
-      res.redirect(
+      GoogleService.closeGoogleCallback(
+        res,
         `${configuration.required.FRONTEND_URL}auth/google/callback?success=true`,
       );
       return;
@@ -116,15 +123,16 @@ router.get('/callback', async (req: Request, res: Response) => {
 
     await GoogleService.createUserWithSession(id, userInformation.tokens);
 
-    res.redirect(
+    GoogleService.closeGoogleCallback(
+      res,
       `${configuration.required.FRONTEND_URL}auth/google/callback?success=true`,
     );
   } catch (error) {
-    console.error('Error during Google authentication:', error);
-
-    res.redirect(
+    GoogleService.closeGoogleCallback(
+      res,
       `${configuration.required.FRONTEND_URL}auth/google/callback?success=false`,
     );
+    console.error('Error during Google authentication:', error);
   }
 });
 
@@ -132,24 +140,22 @@ router.post(
   '/revoke',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const googleAccount = req.user;
-      if (!googleAccount) {
+      const user = req.user;
+      if (!user) {
         res.status(400).json({ error: 'No Google account found' });
         return;
       }
 
-      if (googleAccount.googleAccount?.status !== GoogleAccountStatus.ACTIVE) {
+      if (user.googleAccount?.status !== GoogleAccountStatus.ACTIVE) {
         res.status(400).json({
           error: 'Google account is not active or already revoked',
         });
         return;
       }
 
-      await GoogleService.deleteGoogleAccount(googleAccount.id);
+      await GoogleService.deleteGoogleAccount(user.googleAccount.id);
 
-      res
-        .status(200)
-        .json({ message: 'Google account disconnected successfully' });
+      res.status(200).json({ revoked: true });
     } catch (error) {
       next(error);
     }

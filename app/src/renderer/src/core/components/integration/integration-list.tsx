@@ -12,11 +12,20 @@ import {
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
 
+type Integration = {
+  name: string
+  icon: JSX.Element
+  status: string | undefined
+  description: string
+  action: () => void
+  revoke?: () => void
+}
+
 export const IntegrationList = observer(() => {
   const { t } = useI18n()
-  const { currentUser, authenticateGoogle } = useUser()
+  const { currentUser, authenticateGoogle, revokeGoogle } = useUser()
 
-  const integrations = [
+  const integrations: Integration[] = [
     {
       name: 'Google',
       icon: <Google className="size-8" />,
@@ -24,6 +33,9 @@ export const IntegrationList = observer(() => {
       description: 'Connect your Google account to sync your data.',
       action: () => {
         authenticateGoogle()
+      },
+      revoke: () => {
+        revokeGoogle()
       }
     },
     {
@@ -124,7 +136,7 @@ export const IntegrationList = observer(() => {
                 <Separator className="my-2" />
 
                 <div className="flex flex-row items-center justify-between">
-                  {integration.status !== 'ACTIVE' && (
+                  {integration.status === 'ACTIVE' && (
                     <Button
                       variant="outline"
                       size={'sm'}
@@ -139,10 +151,9 @@ export const IntegrationList = observer(() => {
                     <Button
                       variant="outline"
                       size={'sm'}
-                      onClick={() => console.log('Disconnect')}
-                      disabled={true}
+                      onClick={integration.revoke}
                     >
-                      Disconnect
+                      {t('common.revoke')}
                     </Button>
                   ) : integration.status === 'REVOKED' ? (
                     <Button

@@ -7,11 +7,13 @@
     "revoked": "Tilbakekalt",
     "comingSoon": "Kommer snart",
     "connected": "Tilkoblet",
-    "reauthorize": "Reautorisere"
+    "reauthorize": "Reautorisere",
+    "revoke": "Tilbakekall"
   },
   "navigation": {
     "home": "Hjem",
-    "settings": "Innstillinger"
+    "settings": "Innstillinger",
+    "entertainment": "Underholdning"
   },
   "user": {
     "logout": "Logg ut",
@@ -73,6 +75,12 @@
     "confirmPassword": {
       "label": "Bekreft passord",
       "placeholder": "Bekreft ditt passord"
+    }
+  },
+  "entertainment": {
+    "manga": {
+      "title": "Manga",
+      "description": "Finn og les manga fra forskjellige kilder."
     }
   }
 }

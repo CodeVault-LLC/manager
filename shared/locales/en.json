@@ -7,11 +7,13 @@
     "revoked": "Revoked",
     "comingSoon": "Coming Soon",
     "connected": "Connected",
-    "reauthorize": "Reauthorize"
+    "reauthorize": "Reauthorize",
+    "revoke": "Revoke"
   },
   "navigation": {
     "home": "Home",
-    "settings": "Settings"
+    "settings": "Settings",
+    "entertainment": "Entertainment"
   },
   "user": {
     "logout": "Logout",
@@ -87,6 +89,12 @@
     "confirmPassword": {
       "label": "Confirm Password",
       "placeholder": "Confirm your password"
+    }
+  },
+  "entertainment": {
+    "manga": {
+      "title": "Manga",
+      "description": "Find and read manga from various sources."
     }
   }
 }

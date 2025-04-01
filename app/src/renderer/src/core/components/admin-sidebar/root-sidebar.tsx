@@ -1,13 +1,5 @@
 import * as React from 'react'
-import {
-  AudioWaveform,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  SquareTerminal
-} from 'lucide-react'
+import { Frame, PieChart, SquareTerminal } from 'lucide-react'
 
 import {
   Sidebar,
@@ -29,27 +21,12 @@ const data: {
     plan: string
   }[]
   navMain: NavMainProps['items']
-  projects: {
-    name: string
-    url: string
-    icon: React.ComponentType
-  }[]
 } = {
   teams: [
     {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise'
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup'
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free'
+      name: 'Design Engineering',
+      logo: Frame,
+      plan: 'Team'
     }
   ],
   navMain: [
@@ -62,91 +39,21 @@ const data: {
         {
           title: 'Overview',
           url: '/'
-        },
-        {
-          title: 'Analytics',
-          url: '/'
-        },
-        {
-          title: 'Performance',
-          url: '/'
         }
       ]
     },
     {
-      title: 'Projects',
-      url: '/',
-      icon: Frame,
-      items: [
-        {
-          title: 'Design Engineering',
-          url: '/'
-        },
-        {
-          title: 'Sales & Marketing',
-          url: '/'
-        },
-        {
-          title: 'Travel',
-          url: '/'
-        }
-      ]
-    },
-    {
-      title: 'Notes',
-      url: '/',
+      // Entertainment (e.g. games, movies, etc.)
+      title: 'Entertainment',
+      url: '/entertainment',
       icon: SquareTerminal,
+      isActive: false,
       items: [
         {
-          title: 'All Notes',
-          url: '/notes'
-        },
-        {
-          title: 'Starred',
-          url: '/'
-        },
-        {
-          title: 'Trash',
-          url: '/'
+          title: 'Manga',
+          url: '/entertainment/manga'
         }
       ]
-    },
-    {
-      title: 'Playground',
-      url: '/',
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: 'History',
-          url: '/'
-        },
-        {
-          title: 'Starred',
-          url: '/'
-        },
-        {
-          title: 'Settings',
-          url: '/settings'
-        }
-      ]
-    }
-  ],
-  projects: [
-    {
-      name: 'Design Engineering',
-      url: '/',
-      icon: Frame
-    },
-    {
-      name: 'Sales & Marketing',
-      url: '/',
-      icon: PieChart
-    },
-    {
-      name: 'Travel',
-      url: '/',
-      icon: Map
     }
   ]
 }

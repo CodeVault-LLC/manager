@@ -28,11 +28,32 @@ const loadGoogleServices = () => {
       }
     }
   )
+
+  ipcMain.handle(
+    'auth:google:revoke',
+    async (): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        const revokeResponse = await api.post<{ revoked: boolean }>(
+          '/users/google/revoke'
+        )
+        const revoked = revokeResponse.data.revoked
+
+        return {
+          data: revoked
+        }
+      } catch (error: any) {
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'You do not have permission to access this resource'
+          }
+        }
+      }
+    }
+  )
 }
 
 const handleGoogleAuthCallback = (urlObj: URL) => {
-  console.log(urlObj)
-
   const success = urlObj.searchParams.get('success')
   console.log('success', success)
 
