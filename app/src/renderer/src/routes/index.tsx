@@ -5,6 +5,7 @@ import {
 } from '@renderer/components/ui/avatar'
 import { Button } from '@renderer/components/ui/button'
 import AdminUpcoming from '@renderer/core/components/admin-upcoming/admin-upcoming'
+import { SystemWidget } from '@renderer/core/components/system/system-widget'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
@@ -34,6 +35,8 @@ const WorkspaceManagementPage = observer(() => {
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
+      <SystemWidget />
+
       <div className="grid auto-rows-min gap-6 p-4 md:grid-cols-3 md:p-6">
         {/*
         WAITING FOR GEO LOCATION TO BE FINISHED

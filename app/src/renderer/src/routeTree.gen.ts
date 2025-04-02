@@ -24,6 +24,8 @@ import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 import { Route as PoliciesFaqImport } from './routes/policies/faq'
 import { Route as EntertainmentMangaImport } from './routes/entertainment/manga'
+import { Route as EntertainmentMangaIndexImport } from './routes/entertainment/manga/index'
+import { Route as EntertainmentMangaIdImport } from './routes/entertainment/manga/$id'
 
 // Create/Update Routes
 
@@ -103,6 +105,18 @@ const EntertainmentMangaRoute = EntertainmentMangaImport.update({
   id: '/manga',
   path: '/manga',
   getParentRoute: () => EntertainmentRoute,
+} as any)
+
+const EntertainmentMangaIndexRoute = EntertainmentMangaIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EntertainmentMangaRoute,
+} as any)
+
+const EntertainmentMangaIdRoute = EntertainmentMangaIdImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => EntertainmentMangaRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -200,17 +214,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/entertainment/manga/$id': {
+      id: '/entertainment/manga/$id'
+      path: '/$id'
+      fullPath: '/entertainment/manga/$id'
+      preLoaderRoute: typeof EntertainmentMangaIdImport
+      parentRoute: typeof EntertainmentMangaImport
+    }
+    '/entertainment/manga/': {
+      id: '/entertainment/manga/'
+      path: '/'
+      fullPath: '/entertainment/manga/'
+      preLoaderRoute: typeof EntertainmentMangaIndexImport
+      parentRoute: typeof EntertainmentMangaImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface EntertainmentMangaRouteChildren {
+  EntertainmentMangaIdRoute: typeof EntertainmentMangaIdRoute
+  EntertainmentMangaIndexRoute: typeof EntertainmentMangaIndexRoute
+}
+
+const EntertainmentMangaRouteChildren: EntertainmentMangaRouteChildren = {
+  EntertainmentMangaIdRoute: EntertainmentMangaIdRoute,
+  EntertainmentMangaIndexRoute: EntertainmentMangaIndexRoute,
+}
+
+const EntertainmentMangaRouteWithChildren =
+  EntertainmentMangaRoute._addFileChildren(EntertainmentMangaRouteChildren)
+
 interface EntertainmentRouteChildren {
-  EntertainmentMangaRoute: typeof EntertainmentMangaRoute
+  EntertainmentMangaRoute: typeof EntertainmentMangaRouteWithChildren
 }
 
 const EntertainmentRouteChildren: EntertainmentRouteChildren = {
-  EntertainmentMangaRoute: EntertainmentMangaRoute,
+  EntertainmentMangaRoute: EntertainmentMangaRouteWithChildren,
 }
 
 const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(
@@ -239,7 +280,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
-  '/entertainment/manga': typeof EntertainmentMangaRoute
+  '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -247,6 +288,8 @@ export interface FileRoutesByFullPath {
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
   '/notes': typeof NotesIndexRoute
+  '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
+  '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -255,7 +298,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
-  '/entertainment/manga': typeof EntertainmentMangaRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -263,6 +305,8 @@ export interface FileRoutesByTo {
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
   '/notes': typeof NotesIndexRoute
+  '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
+  '/entertainment/manga': typeof EntertainmentMangaIndexRoute
 }
 
 export interface FileRoutesById {
@@ -272,7 +316,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
-  '/entertainment/manga': typeof EntertainmentMangaRoute
+  '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -280,6 +324,8 @@ export interface FileRoutesById {
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
   '/notes/': typeof NotesIndexRoute
+  '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
+  '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -298,6 +344,8 @@ export interface FileRouteTypes {
     | '/settings/general'
     | '/settings/security'
     | '/notes'
+    | '/entertainment/manga/$id'
+    | '/entertainment/manga/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -305,7 +353,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
-    | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -313,6 +360,8 @@ export interface FileRouteTypes {
     | '/settings/general'
     | '/settings/security'
     | '/notes'
+    | '/entertainment/manga/$id'
+    | '/entertainment/manga'
   id:
     | '__root__'
     | '/'
@@ -328,6 +377,8 @@ export interface FileRouteTypes {
     | '/settings/general'
     | '/settings/security'
     | '/notes/'
+    | '/entertainment/manga/$id'
+    | '/entertainment/manga/'
   fileRoutesById: FileRoutesById
 }
 
@@ -401,7 +452,11 @@ export const routeTree = rootRoute
     },
     "/entertainment/manga": {
       "filePath": "entertainment/manga.tsx",
-      "parent": "/entertainment"
+      "parent": "/entertainment",
+      "children": [
+        "/entertainment/manga/$id",
+        "/entertainment/manga/"
+      ]
     },
     "/policies/faq": {
       "filePath": "policies/faq.tsx"
@@ -426,6 +481,14 @@ export const routeTree = rootRoute
     },
     "/notes/": {
       "filePath": "notes/index.tsx"
+    },
+    "/entertainment/manga/$id": {
+      "filePath": "entertainment/manga/$id.tsx",
+      "parent": "/entertainment/manga"
+    },
+    "/entertainment/manga/": {
+      "filePath": "entertainment/manga/index.tsx",
+      "parent": "/entertainment/manga"
     }
   }
 }
