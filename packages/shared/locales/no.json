@@ -1,0 +1,86 @@
+{
+  "common": {
+    "cancel": "Avbryt",
+    "save": "Lagre",
+    "language": "Språk",
+    "theme": "Tema",
+    "revoked": "Tilbakekalt",
+    "comingSoon": "Kommer snart",
+    "connected": "Tilkoblet",
+    "reauthorize": "Reautorisere",
+    "revoke": "Tilbakekall"
+  },
+  "navigation": {
+    "home": "Hjem",
+    "settings": "Innstillinger",
+    "entertainment": "Underholdning"
+  },
+  "user": {
+    "logout": "Logg ut",
+    "login": "Logg inn",
+    "register": "Registrer",
+    "alreadyAccount": "Har du allerede en konto?",
+    "noAccount": "Har du ingen konto?",
+    "sessions": {
+      "noSessions": "Ingen aktive økter funnet.",
+      "revokeAll": "Tilbakekall alle",
+      "revokeAllSessions": "Tilbakekall alle økter",
+      "revokeAllSessionsWarning": "Dette vil logge deg ut fra alle enheter bortsett fra den du bruker nå. Denne handlingen kan ikke angres.",
+      "revoke": "Tilbakekall"
+    }
+  },
+  "settings": {
+    "navigation": {
+      "general": "General",
+      "security": "Sikkerhet & innlogging",
+      "connections": "Tilkoblede apper"
+    },
+
+    "profile": {
+      "title": "Profil",
+      "description": "Oppdater din profilinformasjon"
+    },
+    "sessions": {
+      "title": "Økter",
+      "description": "Administrer dine aktive økter",
+      "currentTooltip": "Dette er din nåværende økt"
+    },
+    "integrations": {
+      "title": "Integrasjoner",
+      "description": "Administrer dine integrasjoner",
+      "revokedTooltip": "Denne integrasjonen har blitt tilbakekalt, klikk for å reautorisere"
+    }
+  },
+  "forms": {
+    "firstName": {
+      "label": "Fornavn",
+      "placeholder": "Skriv inn ditt fornavn"
+    },
+    "lastName": {
+      "label": "Etternavn",
+      "placeholder": "Skriv inn ditt etternavn"
+    },
+    "username": {
+      "label": "Brukernavn",
+      "placeholder": "Skriv inn ditt brukernavn"
+    },
+    "email": {
+      "label": "E-post",
+      "placeholder": "Skriv inn din e-post"
+    },
+    "password": {
+      "label": "Passord",
+      "placeholder": "Skriv inn ditt passord"
+    },
+    "confirmPassword": {
+      "label": "Bekreft passord",
+      "placeholder": "Bekreft ditt passord"
+    }
+  },
+  "entertainment": {
+    "manga": {
+      "title": "Manga",
+      "description": "Finn og les manga fra forskjellige kilder."
+    }
+  }
+}

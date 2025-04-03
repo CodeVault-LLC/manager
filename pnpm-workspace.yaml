@@ -1,5 +1,5 @@
 packages:
-  - "app/**"
-  - "server/**"
-  - "shared/**"
+  - "packages/app/**"
+  - "packages/**"
+  - "packages/**"
 hoist: false

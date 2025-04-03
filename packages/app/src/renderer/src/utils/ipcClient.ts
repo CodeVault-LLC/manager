@@ -1,0 +1,40 @@
+import { IpcHandlers, IpcEmittedEvents } from '@shared/types/ipc'
+import { store } from './store-context'
+import { EErrorCodes } from '@shared/helpers'
+import { IpcRendererListener } from '@electron-toolkit/preload'
+
+export const ipcClient = {
+  // Wrapper for invoking IPC methods
+  invoke: async <T extends keyof IpcHandlers>(
+    channel: T,
+    ...args: Parameters<IpcHandlers[T]>
+  ): Promise<Awaited<ReturnType<IpcHandlers[T]>>> => {
+    if (store.error.getError(EErrorCodes.NETWORK_ERROR)) {
+      return Promise.reject(new Error('Network error')) as Promise<
+        Awaited<ReturnType<IpcHandlers[T]>>
+      >
+    }
+
+    try {
+      return await window.electron.ipcRenderer.invoke(channel, ...args)
+    } catch (error) {
+      console.error(`IPC Invoke Error [${channel}]:`, error)
+      throw error
+    }
+  },
+
+  // Wrapper for listening to emitted events
+  on: <T extends keyof IpcEmittedEvents>(channel: T, listener: IpcRendererListener): void => {
+    window.electron.ipcRenderer.on(channel, listener)
+  },
+
+  // Remove a specific listener
+  off: <T extends keyof IpcEmittedEvents>(channel: T, listener: IpcRendererListener): void => {
+    window.electron.ipcRenderer.removeListener(channel, listener)
+  },
+
+  // Remove all listeners for a given event
+  removeAll: <T extends keyof IpcEmittedEvents>(channel: T): void => {
+    window.electron.ipcRenderer.removeAllListeners(channel)
+  }
+}
