@@ -1,3 +1,5 @@
+import cp from 'node:child_process'
+
 export const getSystemVersion = () => {
   const os = process.platform
   const version = process.getSystemVersion()
@@ -48,4 +50,78 @@ export const getSystemVersion = () => {
   }
 
   return `Unknown OS ${version}`
+}
+
+type DiskInformation = {
+  caption: string
+  freeSpace: number
+  size: number
+}
+
+export const getDiskInformation = async (): Promise<DiskInformation[]> => {
+  if (process.platform === 'win32') {
+    return new Promise((resolve, reject) => {
+      cp.exec(
+        'wmic logicaldisk get size,freespace,caption',
+        (error, stdout) => {
+          if (error) {
+            reject(error)
+          } else {
+            const lines = stdout.trim().split('\n').slice(1)
+            const disks = lines.map((line) => {
+              const [caption, freeSpace, size] = line.trim().split(/\s+/)
+              return {
+                caption,
+                freeSpace: parseInt(freeSpace),
+                size: parseInt(size)
+              }
+            })
+            resolve(disks)
+          }
+        }
+      )
+    })
+  } else if (process.platform === 'darwin') {
+    return new Promise((resolve, reject) => {
+      cp.exec('df -H', (error, stdout) => {
+        if (error) {
+          reject(error)
+        } else {
+          const lines = stdout.trim().split('\n').slice(1)
+          const disks = lines.map((line) => {
+            const [filesystem, size, used, available, capacity, mountpoint] =
+              line.trim().split(/\s+/)
+            return {
+              caption: mountpoint,
+              freeSpace: parseInt(available),
+              size: parseInt(size)
+            }
+          })
+          resolve(disks)
+        }
+      })
+    })
+  } else if (process.platform === 'linux') {
+    return new Promise((resolve, reject) => {
+      cp.exec('df -h', (error, stdout) => {
+        if (error) {
+          reject(error)
+        } else {
+          const lines = stdout.trim().split('\n').slice(1)
+          const disks = lines.map((line) => {
+            const [filesystem, size, used, available, capacity, mountpoint] =
+              line.trim().split(/\s+/)
+            return {
+              caption: mountpoint,
+              freeSpace: parseInt(available),
+              size: parseInt(size)
+            }
+          })
+          resolve(disks)
+        }
+      })
+    })
+  } else {
+    return Promise.reject(new Error('Unsupported platform'))
+  }
 }

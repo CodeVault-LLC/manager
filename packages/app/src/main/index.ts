@@ -9,6 +9,7 @@ import { loadNoteServices } from './services/note.service'
 import handleDeepLink from './deep-link'
 import { loadSystemServices } from './services/system.service'
 import { loadIntegrations } from './services/integrations'
+import { loadSystemSockets } from './sockets/system.socket'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -53,6 +54,8 @@ if (!gotTheLock) {
       app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
+
+      loadSystemSockets()
 
       loadAuthServices()
       loadIntegrations()

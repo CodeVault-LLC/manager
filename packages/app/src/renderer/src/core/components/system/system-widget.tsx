@@ -1,20 +1,31 @@
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { Progress } from '@renderer/components/ui/progress'
 import { FC } from 'react'
+import { LoadingSpinner } from '../loader/loading-spinner'
+import { observer } from 'mobx-react'
+import { useSystem } from '@renderer/hooks'
 
-export const SystemWidget: FC = () => {
+export const SystemWidget: FC = observer(() => {
+  const { systemStatistics } = useSystem()
+
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
               CPU Load
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              <h3 className="text-xl sm:text-2xl font-medium">72,540%</h3>
+              {systemStatistics?.cpu ? (
+                <h3 className="textlg sm:text-2xl font-medium">
+                  {systemStatistics?.cpu}%
+                </h3>
+              ) : (
+                <LoadingSpinner className="size-6" />
+              )}
             </div>
-            <Progress value={72} className="mt-6" />
+            <Progress value={systemStatistics?.cpu} className="mt-6" />
           </div>
         </CardContent>
       </Card>
@@ -23,12 +34,18 @@ export const SystemWidget: FC = () => {
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Sessions
+              Memory Usage
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              <h3 className="text-xl sm:text-2xl font-medium">29.4%</h3>
+              {systemStatistics?.memory ? (
+                <h3 className="textlg sm:text-2xl font-medium">
+                  {systemStatistics?.memory}%
+                </h3>
+              ) : (
+                <LoadingSpinner className="size-6" />
+              )}
             </div>
-            <Progress value={72} className="mt-6" />
+            <Progress value={systemStatistics?.memory} className="mt-6" />
           </div>
         </CardContent>
       </Card>
@@ -37,12 +54,21 @@ export const SystemWidget: FC = () => {
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Avg. Click Rate
+              Disk Usage
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              <h3 className="text-xl sm:text-2xl font-medium">56.8%</h3>
+              {systemStatistics?.disk[0]?.load ? (
+                <h3 className="text-xl sm:text-2xl font-medium">
+                  {systemStatistics?.disk[0]?.load}%
+                </h3>
+              ) : (
+                <LoadingSpinner className="size-6" />
+              )}
             </div>
-            <Progress value={72} className="mt-6" />
+            <Progress
+              value={systemStatistics?.disk[0]?.load}
+              className="mt-6"
+            />
           </div>
         </CardContent>
       </Card>
@@ -51,15 +77,25 @@ export const SystemWidget: FC = () => {
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Pageviews
+              Uptime
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              <h3 className="text-xl sm:text-2xl font-medium">92,913</h3>
+              {systemStatistics?.uptime ? (
+                <h3 className="text-lg sm:text-2xl font-medium">
+                  {Math.floor(systemStatistics?.uptime / 60)}m
+                </h3>
+              ) : (
+                <LoadingSpinner className="size-6" />
+              )}
             </div>
-            <Progress value={72} className="mt-6" />
+            <Progress
+              value={systemStatistics?.uptime}
+              max={100}
+              className="mt-6"
+            />
           </div>
         </CardContent>
       </Card>
     </div>
   )
-}
+})

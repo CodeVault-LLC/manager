@@ -23,3 +23,11 @@ export enum ETheme {
   DARK = "dark",
   SYSTEM = "system",
 }
+
+export interface ISystemStatistics {
+  cpu: number;
+  memory: number;
+  disk: { name: string; load: number }[];
+  uptime: number;
+  pid: number;
+}

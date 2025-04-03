@@ -38,7 +38,9 @@ api.interceptors.response.use(
 
     const status = error.response.status
 
-    console.error(`ERROR API [${status}]: ${error.response?.data?.error || error.message}`)
+    console.error(
+      `ERROR API [${status}]: ${error.response?.data?.error || error.message}`
+    )
 
     switch (status) {
       case 401:
@@ -60,21 +62,21 @@ api.interceptors.response.use(
         return Promise.reject({
           error: {
             code: '4040',
-            message: 'The requested resource was not found on the server'
+            message: 'Unable to find the requested resource'
           }
         })
       case 500:
         return Promise.reject({
           error: {
             code: '5000',
-            message: `Server error: ${error.response?.data?.error || error.message}`
+            message: 'Unable to process your request. Please try again later.'
           }
         })
       default:
         return Promise.reject({
           error: {
             code: 'UNKNOWN_ERROR',
-            message: `An unexpected error occurred: ${error.response?.data?.error || error.message}`
+            message: 'Unable to process your request. Please try again later.'
           }
         })
     }

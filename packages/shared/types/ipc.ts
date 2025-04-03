@@ -1,7 +1,7 @@
 import { TErrorInfo } from "helpers";
 import { IRegistrationData, ISession, IUser } from "./users";
 import { INote, TNotePage } from "./note";
-import { ETheme, ISystem } from "./system";
+import { ETheme, ISystem, ISystemStatistics } from "./system";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -44,4 +44,5 @@ export interface IpcHandlers {
 
 export interface IpcEmittedEvents {
   "auth:google:callback": (response: boolean) => void;
+  "system:statistics": (data: ISystemStatistics) => void;
 }

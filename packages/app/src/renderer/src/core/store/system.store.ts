@@ -1,13 +1,16 @@
 import { action, observable, makeObservable } from 'mobx'
 // root store
 import { CoreRootStore } from './root.store'
-import { ETheme, ISystem } from '@shared/types/system'
+import { ETheme, ISystem, ISystemStatistics } from '@shared/types/system'
 import { ipcClient } from '@renderer/utils/ipcClient'
 
 export interface ISystemStore {
   // observables
   isNewUserPopup: boolean
   system: ISystem
+
+  systemStatistics: ISystemStatistics
+
   // actions
   hydrate: (data: any) => void
   toggleNewUserPopup: () => void
@@ -37,14 +40,29 @@ export class SystemStore implements ISystemStore {
     ]
   }
 
+  systemStatistics: ISystemStatistics = {
+    cpu: 0,
+    memory: 0,
+    disk: [],
+    uptime: 0,
+    pid: 0
+  }
+
   constructor(public store: CoreRootStore) {
     makeObservable(this, {
       // observables
       isNewUserPopup: observable.ref,
       system: observable.shallow,
+      systemStatistics: observable.shallow,
+
       // action
       toggleNewUserPopup: action,
       setTheme: action
+    })
+
+    ipcClient.on('system:statistics', (data) => {
+      console.log('System statistics', data)
+      this.systemStatistics = data as unknown as ISystemStatistics
     })
   }
 
