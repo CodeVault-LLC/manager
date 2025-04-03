@@ -1,6 +1,7 @@
 import {
   boolean,
   integer,
+  json,
   pgEnum,
   pgTable,
   serial,
@@ -61,6 +62,8 @@ export const googleSession = pgTable('google_session', {
   googleAccountId: integer('google_accounts_id')
     .notNull()
     .references(() => googleAccounts.id),
+
+  scopes: json('scopes').notNull(),
 
   sessionId: text('session_id').notNull(),
   accessToken: text('access_token').notNull(),

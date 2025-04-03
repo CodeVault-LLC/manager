@@ -40,7 +40,23 @@ export const initGoogleClient = () => {
   }
 };
 
-const scopes = ['openid', 'profile', 'email'];
+const scopes = [
+  'openid',
+  'profile',
+  'email',
+
+  // Google Chat (Get all spaces, messages, and members)
+  'https://www.googleapis.com/auth/chat.spaces.readonly',
+  'https://www.googleapis.com/auth/chat.messages',
+
+  // Google Todo (Get all tasks)
+  'https://www.googleapis.com/auth/tasks',
+  'https://www.googleapis.com/auth/tasks.readonly',
+
+  // Google Workspace (See meetings)
+  'https://www.googleapis.com/auth/calendar.readonly',
+  'https://www.googleapis.com/auth/calendar.events.readonly',
+];
 
 export const getGoogleAuthURL = (userId: number) => {
   const jwt = generateJWT(
@@ -100,8 +116,13 @@ export const GoogleService = {
   },
 
   createUserWithSession: async (googleId: number, credentials: Credentials) => {
+    const allowedScopes = credentials?.scope?.split(' ') ?? [];
+
     await db.insert(googleSession).values({
       googleAccountId: googleId,
+
+      scopes: allowedScopes,
+
       sessionId: credentials.id_token as string,
       accessToken: credentials.access_token as string,
       refreshToken: credentials.refresh_token as string,
