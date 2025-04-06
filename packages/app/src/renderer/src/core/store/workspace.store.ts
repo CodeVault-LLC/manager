@@ -1,6 +1,9 @@
-import set from 'lodash/set'
 import { action, observable, runInAction, makeObservable, computed } from 'mobx'
-import { IWorkspace, TLoader, TPaginationInfo } from '../../../../../../shared/types'
+import {
+  IWorkspace,
+  TLoader,
+  TPaginationInfo
+} from '../../../../../../shared/types'
 import { CoreRootStore } from './root.store'
 
 export interface IWorkspaceStore {
@@ -84,9 +87,10 @@ export class WorkspaceStore implements IWorkspaceStore {
       runInAction(() => {
         const { results, ...paginationInfo } = paginatedWorkspaceData
         results.forEach((workspace: IWorkspace) => {
-          set(this.workspaces, [workspace.id], workspace)
+          this.workspaces[workspace.id] = workspace
         })
-        set(this, 'paginationInfo', paginationInfo)
+
+        this.paginationInfo = paginationInfo
       })
       return paginatedWorkspaceData.results
     } catch (error) {
@@ -102,7 +106,8 @@ export class WorkspaceStore implements IWorkspaceStore {
    * @returns Promise<IWorkspace[]>instanceWorkspaceService
    */
   fetchNextWorkspaces = async (): Promise<IWorkspace[]> => {
-    if (!this.paginationInfo || this.paginationInfo.next_page_results === false) return []
+    if (!this.paginationInfo || this.paginationInfo.next_page_results === false)
+      return []
     try {
       this.loader = 'pagination'
       const paginatedWorkspaceData = await this.instanceWorkspaceService.list(
@@ -111,9 +116,9 @@ export class WorkspaceStore implements IWorkspaceStore {
       runInAction(() => {
         const { results, ...paginationInfo } = paginatedWorkspaceData
         results.forEach((workspace: IWorkspace) => {
-          set(this.workspaces, [workspace.id], workspace)
+          this.workspaces[workspace.id] = workspace
         })
-        set(this, 'paginationInfo', paginationInfo)
+        this.paginationInfo = paginationInfo
       })
       return paginatedWorkspaceData.results
     } catch (error) {
@@ -135,7 +140,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       this.loader = 'mutation'
       const workspace = await this.instanceWorkspaceService.create(data)
       runInAction(() => {
-        set(this.workspaces, [workspace.id], workspace)
+        this.workspaces[workspace.id] = workspace
       })
       return workspace
     } catch (error) {

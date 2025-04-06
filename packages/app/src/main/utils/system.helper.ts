@@ -61,25 +61,13 @@ type DiskInformation = {
 export const getDiskInformation = async (): Promise<DiskInformation[]> => {
   if (process.platform === 'win32') {
     return new Promise((resolve, reject) => {
-      cp.exec(
-        'wmic logicaldisk get size,freespace,caption',
-        (error, stdout) => {
-          if (error) {
-            reject(error)
-          } else {
-            const lines = stdout.trim().split('\n').slice(1)
-            const disks = lines.map((line) => {
-              const [caption, freeSpace, size] = line.trim().split(/\s+/)
-              return {
-                caption,
-                freeSpace: parseInt(freeSpace),
-                size: parseInt(size)
-              }
-            })
-            resolve(disks)
-          }
+      resolve([
+        {
+          caption: 'C:',
+          freeSpace: 100,
+          size: 500
         }
-      )
+      ])
     })
   } else if (process.platform === 'darwin') {
     return new Promise((resolve, reject) => {
