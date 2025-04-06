@@ -2,6 +2,7 @@ import { TErrorInfo } from "helpers";
 import { IRegistrationData, ISession, IUser } from "./users";
 import { INote, TNotePage } from "./note";
 import { ETheme, ISystem, ISystemStatistics } from "./system";
+import { IDashboardWidget } from "./widget";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -40,6 +41,13 @@ export interface IpcHandlers {
   "system:setSystem": (
     system: ISystem
   ) => Promise<TCommunicationResponse<boolean>>;
+
+  "dashboard:widgets": () => Promise<
+    TCommunicationResponse<IDashboardWidget[]>
+  >;
+  "dashboard:widget": (
+    widget_name: string
+  ) => Promise<TCommunicationResponse<IDashboardWidget>>;
 }
 
 export interface IpcEmittedEvents {

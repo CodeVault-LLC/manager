@@ -1,5 +1,5 @@
 import { configuration } from '@/config';
-import { google } from 'googleapis';
+import { chat_v1, google } from 'googleapis';
 import { IUserInfoResponse, IGoogleUserLite } from '@shared/types/google';
 import { db } from '@/data-source';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/models/schema';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { generateJWT } from '@/utils/jwt';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import https from 'node:https';
 import { z } from 'zod';
 import { Response } from 'express';
@@ -269,5 +269,59 @@ export const GoogleService = {
       </html>
     `);
     res.end();
+  },
+
+  async getRecentGoogleChats(googleAccountId: number) {
+    const session = await db.query.googleSession.findFirst({
+      where: eq(googleSession.googleAccountId, googleAccountId),
+    });
+
+    if (!session) {
+      throw new Error('No active session found for this Google account');
+    }
+
+    // Check if we have a scope
+    const requiredScope =
+      'https://www.googleapis.com/auth/chat.spaces.readonly';
+
+    if (!session.scopes.includes(requiredScope)) {
+      throw new Error(
+        `Google account does not have the required scope: ${requiredScope}`,
+      );
+    }
+
+    const chat = google.chat({
+      version: 'v1',
+      auth: googleOauth2Client,
+    });
+
+    const spacesResponse = await chat.spaces.list({
+      pageSize: 10,
+    });
+
+    const spaces = spacesResponse.data.spaces || [];
+
+    const recentChats: {
+      space: chat_v1.Schema$Space;
+      message: chat_v1.Schema$Message;
+    }[] = [];
+
+    for (const space of spaces) {
+      const messagesResponse = await chat.spaces.messages.list({
+        parent: space.name,
+        pageSize: 10,
+      });
+
+      const messages = messagesResponse.data.messages || [];
+
+      for (const message of messages) {
+        recentChats.push({
+          space: space,
+          message: message,
+        });
+      }
+    }
+
+    return recentChats;
   },
 };

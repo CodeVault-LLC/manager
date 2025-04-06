@@ -5,8 +5,11 @@ import url from 'url';
 import { verifyToken } from '@/utils/jwt';
 import { GoogleAccountStatus } from '@/models/schema';
 import { UserService } from '../core/user.service';
+import { googleChatRouter } from './chat/google-chat.controller';
 
 const router = Router({ mergeParams: true });
+
+router.use('/chat', googleChatRouter);
 
 /**
  * @swagger

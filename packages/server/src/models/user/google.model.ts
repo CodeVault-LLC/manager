@@ -63,7 +63,7 @@ export const googleSession = pgTable('google_session', {
     .notNull()
     .references(() => googleAccounts.id),
 
-  scopes: json('scopes').notNull(),
+  scopes: json('scopes').notNull().$type<string[]>(),
 
   sessionId: text('session_id').notNull(),
   accessToken: text('access_token').notNull(),

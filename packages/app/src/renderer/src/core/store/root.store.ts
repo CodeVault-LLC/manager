@@ -5,6 +5,7 @@ import { IUserStore, UserStore } from './user.store'
 import { IWorkspaceStore, WorkspaceStore } from './workspace.store'
 import { ErrorStore, IErrorStore } from './error.store'
 import { INoteStore, NoteStore } from './notes.store'
+import { DashboardStore, IDashboardStore } from './dashboard.store'
 
 enableStaticRendering(typeof window === 'undefined')
 
@@ -14,6 +15,7 @@ export abstract class CoreRootStore {
   workspace: IWorkspaceStore
   error: IErrorStore
   notes: INoteStore
+  dashboard: IDashboardStore
 
   constructor() {
     this.system = new SystemStore(this)
@@ -21,6 +23,7 @@ export abstract class CoreRootStore {
     this.workspace = new WorkspaceStore(this)
     this.error = new ErrorStore(this)
     this.notes = new NoteStore(this)
+    this.dashboard = new DashboardStore(this)
   }
 
   hydrate(initialData: any) {
@@ -29,6 +32,7 @@ export abstract class CoreRootStore {
     this.workspace.hydrate(initialData.workspace)
     this.error.hydrate(initialData.error)
     this.notes.hydrate(initialData.notes)
+    this.dashboard.hydrate(initialData.dashboard)
   }
 
   resetOnSignOut() {
@@ -38,6 +42,7 @@ export abstract class CoreRootStore {
     this.workspace = new WorkspaceStore(this)
     this.error = new ErrorStore(this)
     this.notes = new NoteStore(this)
+    this.dashboard = new DashboardStore(this)
 
     window.location.href = '/'
   }

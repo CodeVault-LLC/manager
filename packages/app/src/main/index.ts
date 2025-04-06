@@ -10,6 +10,7 @@ import handleDeepLink from './deep-link'
 import { loadSystemServices } from './services/system.service'
 import { loadIntegrations } from './services/integrations'
 import { loadSystemSockets } from './sockets/system.socket'
+import { loadDashboardServices } from './services/dashboard.service'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -61,6 +62,7 @@ if (!gotTheLock) {
       loadIntegrations()
       loadUserServices()
       loadNoteServices()
+      loadDashboardServices()
       loadSystemServices()
     } catch (error) {
       console.error(error)

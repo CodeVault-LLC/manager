@@ -5,6 +5,7 @@ import {
 } from '@renderer/components/ui/avatar'
 import { Button } from '@renderer/components/ui/button'
 import AdminUpcoming from '@renderer/core/components/admin-upcoming/admin-upcoming'
+import { RenderWidgets } from '@renderer/core/components/admin-widgets/render-widgets'
 import { SystemWidget } from '@renderer/core/components/system/system-widget'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
@@ -45,6 +46,8 @@ const WorkspaceManagementPage = observer(() => {
           <YrCard />
         </div>
         */}
+
+        <RenderWidgets />
 
         {/* Recent Chats */}
         <ul className="flex flex-col gap-4 md:col-span-2">
