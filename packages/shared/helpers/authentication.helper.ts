@@ -29,6 +29,8 @@ export enum EErrorCodes {
   FORBIDDEN = "4030",
   UNAUTHORIZED = "4035",
 
+  ACCOUNT_NOT_FOUND = "4045",
+
   // Network
   NETWORK_ERROR = "4040",
 

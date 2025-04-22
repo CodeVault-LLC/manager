@@ -14,10 +14,11 @@ type TAdminLayout = {
 export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props
   const { changeLanguage } = useI18n()
-  const { getInitialData, system } = useSystem()
+  const { getInitialData, system, doBrowserRefresh } = useSystem()
 
   useEffect(() => {
     getInitialData()
+    doBrowserRefresh()
 
     const initialLanguage = system.language
     if (initialLanguage) {
@@ -31,7 +32,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
         <AppSidebar />
         <SidebarInset>
           <InstanceHeader />
-          <Toaster />
+          <Toaster closeButton richColors />
 
           <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden">
             <div className="flex flex-1 flex-col overflow-auto">{children}</div>

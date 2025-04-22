@@ -86,7 +86,6 @@ export class UserStore implements IUserStore {
       this.isLoading = true
 
       const currentUser = await ipcClient.invoke('user:adminDetails')
-      console.log(currentUser)
 
       if (currentUser?.data) {
         runInAction(() => {
@@ -191,6 +190,8 @@ export class UserStore implements IUserStore {
    */
   register = async (data: IRegistrationData): Promise<boolean> => {
     try {
+      console.log(data);
+
       this.isLoading = true
 
       // Handle file conversion for IPC transfer

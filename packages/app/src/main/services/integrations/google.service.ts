@@ -22,7 +22,7 @@ const loadGoogleServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -45,7 +45,7 @@ const loadGoogleServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -65,7 +65,7 @@ const handleGoogleAuthCallback = (urlObj: URL) => {
     ipcMain.emit('auth:google:callback', {
       error: {
         code: EErrorCodes.FORBIDDEN,
-        message: 'You do not have permission to access this resource'
+        message: 'error.forbidden'
       }
     })
   }

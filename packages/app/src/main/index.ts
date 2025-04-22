@@ -7,10 +7,11 @@ import { loadUserServices } from './services/user.service'
 import { ConfStorage } from './store'
 import { loadNoteServices } from './services/note.service'
 import handleDeepLink from './deep-link'
-import { loadSystemServices } from './services/system.service'
+import { loadSystemIntegrations } from './services/system'
 import { loadIntegrations } from './services/integrations'
 import { loadSystemSockets } from './sockets/system.socket'
 import { loadDashboardServices } from './services/dashboard.service'
+import { runMigrations } from './database/data-source'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -49,6 +50,9 @@ if (!gotTheLock) {
       })
 
       await ConfStorage.validateExistence()
+      await runMigrations().catch((error) => {
+        console.error('Error running migrations:', error)
+      })
 
       createWindow()
 
@@ -63,7 +67,7 @@ if (!gotTheLock) {
       loadUserServices()
       loadNoteServices()
       loadDashboardServices()
-      loadSystemServices()
+      loadSystemIntegrations()
     } catch (error) {
       console.error(error)
     }

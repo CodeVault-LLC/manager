@@ -1,13 +1,20 @@
 import { action, observable, makeObservable } from 'mobx'
 // root store
 import { CoreRootStore } from './root.store'
-import { ETheme, ISystem, ISystemStatistics } from '@shared/types/system'
+import {
+  ETheme,
+  IBrowser,
+  ISystem,
+  ISystemStatistics
+} from '@shared/types/system'
 import { ipcClient } from '@renderer/utils/ipcClient'
 
 export interface ISystemStore {
   // observables
   isNewUserPopup: boolean
   system: ISystem
+
+  browsers: IBrowser[]
 
   systemStatistics: ISystemStatistics
 
@@ -17,6 +24,9 @@ export interface ISystemStore {
 
   setTheme: (theme: ETheme) => void
   setLanguage: (language: string) => void
+
+  getBrowserInitial(): void
+  doBrowserRefresh(): void
 
   getInitialData: () => void
 }
@@ -39,6 +49,8 @@ export class SystemStore implements ISystemStore {
       { code: 'no', name: 'Norwegian', flag: '🇳🇴' }
     ]
   }
+
+  browsers: IBrowser[] = []
 
   systemStatistics: ISystemStatistics = {
     cpu: 0,
@@ -137,6 +149,28 @@ export class SystemStore implements ISystemStore {
     }
   }
 
+  getBrowserInitial = (): void => {
+    ipcClient.invoke('browser:initial').then((response) => {
+      if (response.data) {
+        console.log('Browser initial', response.data)
+        this.setBrowsers(response.data)
+      } else {
+        console.error('getting initial browser data error', response.error)
+      }
+    })
+  }
+
+  doBrowserRefresh = (): void => {
+    ipcClient.invoke('browser:refresh').then((response) => {
+      if (response.data) {
+        console.log('Browser refresh', response.data)
+        this.setBrowsers(response.data)
+      } else {
+        console.error('getting initial browser data error', response.error)
+      }
+    })
+  }
+
   /**
    * @description When theme has updated set it as the html attribute
    * @param theme
@@ -146,5 +180,9 @@ export class SystemStore implements ISystemStore {
 
     root.classList.remove('dark', 'light')
     root.classList.add(theme)
+  }
+
+  setBrowsers = (browsers: IBrowser[]) => {
+    this.browsers = browsers
   }
 }

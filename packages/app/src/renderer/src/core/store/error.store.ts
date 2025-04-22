@@ -37,14 +37,17 @@ export class ErrorStore implements IErrorStore {
 
   getErrors = () => this.errors
 
-  getError: (code: EErrorCodes) => TErrorInfo | undefined = (code: EErrorCodes) =>
-    this.errors.find((error) => error.code === code)
+  getError: (code: EErrorCodes) => TErrorInfo | undefined = (
+    code: EErrorCodes
+  ) => this.errors.find((error) => error.code === code)
 
   addError = (error: TErrorInfo) => {
     const errorIndex = this.errors.findIndex((err) => err.code === error.code)
 
     if (errorIndex !== -1) {
-      this.errors = this.errors.map((err, idx) => (idx === errorIndex ? error : err))
+      this.errors = this.errors.map((err, idx) =>
+        idx === errorIndex ? error : err
+      )
     } else {
       this.errors = [...this.errors, error]
     }

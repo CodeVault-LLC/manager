@@ -17,6 +17,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as EntertainmentImport } from './routes/entertainment'
 import { Route as IndexImport } from './routes/index'
 import { Route as NotesIndexImport } from './routes/notes/index'
+import { Route as SystemBrowsersImport } from './routes/system/browsers'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
 import { Route as SettingsGeneralImport } from './routes/settings/general'
 import { Route as SettingsConnectionsImport } from './routes/settings/connections'
@@ -62,6 +63,12 @@ const IndexRoute = IndexImport.update({
 const NotesIndexRoute = NotesIndexImport.update({
   id: '/notes/',
   path: '/notes/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SystemBrowsersRoute = SystemBrowsersImport.update({
+  id: '/system/browsers',
+  path: '/system/browsers',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -207,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSecurityImport
       parentRoute: typeof SettingsImport
     }
+    '/system/browsers': {
+      id: '/system/browsers'
+      path: '/system/browsers'
+      fullPath: '/system/browsers'
+      preLoaderRoute: typeof SystemBrowsersImport
+      parentRoute: typeof rootRoute
+    }
     '/notes/': {
       id: '/notes/'
       path: '/notes'
@@ -287,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/settings/connections': typeof SettingsConnectionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/system/browsers': typeof SystemBrowsersRoute
   '/notes': typeof NotesIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -304,6 +319,7 @@ export interface FileRoutesByTo {
   '/settings/connections': typeof SettingsConnectionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/system/browsers': typeof SystemBrowsersRoute
   '/notes': typeof NotesIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga': typeof EntertainmentMangaIndexRoute
@@ -323,6 +339,7 @@ export interface FileRoutesById {
   '/settings/connections': typeof SettingsConnectionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/system/browsers': typeof SystemBrowsersRoute
   '/notes/': typeof NotesIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -343,6 +360,7 @@ export interface FileRouteTypes {
     | '/settings/connections'
     | '/settings/general'
     | '/settings/security'
+    | '/system/browsers'
     | '/notes'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -359,6 +377,7 @@ export interface FileRouteTypes {
     | '/settings/connections'
     | '/settings/general'
     | '/settings/security'
+    | '/system/browsers'
     | '/notes'
     | '/entertainment/manga/$id'
     | '/entertainment/manga'
@@ -376,6 +395,7 @@ export interface FileRouteTypes {
     | '/settings/connections'
     | '/settings/general'
     | '/settings/security'
+    | '/system/browsers'
     | '/notes/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -391,6 +411,7 @@ export interface RootRouteChildren {
   PoliciesFaqRoute: typeof PoliciesFaqRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
+  SystemBrowsersRoute: typeof SystemBrowsersRoute
   NotesIndexRoute: typeof NotesIndexRoute
 }
 
@@ -403,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoliciesFaqRoute: PoliciesFaqRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
+  SystemBrowsersRoute: SystemBrowsersRoute,
   NotesIndexRoute: NotesIndexRoute,
 }
 
@@ -424,6 +446,7 @@ export const routeTree = rootRoute
         "/policies/faq",
         "/policies/privacy",
         "/policies/terms",
+        "/system/browsers",
         "/notes/"
       ]
     },
@@ -478,6 +501,9 @@ export const routeTree = rootRoute
     "/settings/security": {
       "filePath": "settings/security.tsx",
       "parent": "/settings"
+    },
+    "/system/browsers": {
+      "filePath": "system/browsers.tsx"
     },
     "/notes/": {
       "filePath": "notes/index.tsx"

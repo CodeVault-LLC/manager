@@ -1,7 +1,7 @@
 import { TErrorInfo } from "helpers";
 import { IRegistrationData, ISession, IUser } from "./users";
 import { INote, TNotePage } from "./note";
-import { ETheme, ISystem, ISystemStatistics } from "./system";
+import { ETheme, IBrowser, ISystem, ISystemStatistics } from "./system";
 import { IDashboardWidget } from "./widget";
 
 export type TCommunicationResponse<TData> =
@@ -41,6 +41,9 @@ export interface IpcHandlers {
   "system:setSystem": (
     system: ISystem
   ) => Promise<TCommunicationResponse<boolean>>;
+
+  "browser:initial": () => Promise<TCommunicationResponse<IBrowser[]>>;
+  "browser:refresh": () => Promise<TCommunicationResponse<IBrowser[]>>;
 
   "dashboard:widgets": () => Promise<
     TCommunicationResponse<IDashboardWidget[]>

@@ -12,7 +12,6 @@ type UserEditFieldsProps = {
   onSubmit?: <T>(values: T) => Promise<void>
   buttonLabel?: string
   avatar?: boolean
-
   password?: boolean
 }
 
@@ -26,8 +25,9 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
       last_name: currentUser?.last_name,
       username: currentUser?.username,
       email: currentUser?.email,
-      password: ''
-    },
+      password: '' as string | undefined,
+      avatar: null as File | null,
+    } as const,
     onSubmit: async ({ value }) => {
       if (props.onSubmit) {
         await props.onSubmit(value)
@@ -57,7 +57,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
                 placeholder={t('forms.firstName.placeholder')}
                 required
                 autoComplete="given-name"
-                onChange={e => handleChange(e.target.value)}
+                onChange={e => handleChange(() => e.target.value)}
                 onBlur={handleBlur}
               />
             </div>
@@ -141,10 +141,18 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
       )}
 
       {props.avatar && (
-        <div className="grid gap-2">
-          <Label htmlFor="avatar">Avatar</Label>
-          <Input id="avatar" type="file" required />
-        </div>
+        <Field name='avatar' children={({ handleChange }) => (
+          <div className="grid gap-2">
+            <Label htmlFor="avatar">{t('forms.avatar.label')}</Label>
+            <Input
+              type="file"
+              required
+              accept="image/*"
+              name="avatar"
+              onChange={e => handleChange(e.target.files?.[0] || null)}
+            />
+          </div>
+        )} />
       )}
 
       <Button type="submit" className="w-full">

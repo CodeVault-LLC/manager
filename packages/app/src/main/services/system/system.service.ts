@@ -1,8 +1,9 @@
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain } from 'electron'
-import { ConfStorage } from '../store'
+import { ConfStorage } from '../../store'
 import { ETheme, ISystem } from '@shared/types/system'
+import { loadBrowserServices } from './browser.service'
 
 export const loadSystemServices = () => {
   ipcMain.handle(
@@ -11,15 +12,15 @@ export const loadSystemServices = () => {
       TCommunicationResponse<{ theme: ETheme; language: string }>
     > => {
       try {
-        const theme = await ConfStorage.getSecureData('theme')
-        const language = await ConfStorage.getSecureData('language')
+        const theme = (await ConfStorage.getSecureData('theme')) ?? ETheme.LIGHT
+        const language = (await ConfStorage.getSecureData('language')) ?? 'en'
 
         return { data: { theme, language } }
       } catch (error: any) {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -38,10 +39,12 @@ export const loadSystemServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
     }
   )
+
+  loadBrowserServices()
 }

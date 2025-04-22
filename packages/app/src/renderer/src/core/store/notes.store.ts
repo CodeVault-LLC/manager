@@ -50,7 +50,7 @@ export class NoteStore implements INoteStore {
       const err = error as TErrorInfo
 
       if (err.code === EErrorCodes.FORBIDDEN) {
-        toast.error('You do not have permission to access this resource')
+        toast.error('error.forbidden')
         return []
       }
 
@@ -74,7 +74,7 @@ export class NoteStore implements INoteStore {
       const err = error as TErrorInfo
 
       if (err.code === EErrorCodes.FORBIDDEN) {
-        toast.error('You do not have permission to access this resource')
+        toast.error('error.forbidden')
         return null
       }
 
@@ -98,7 +98,7 @@ export class NoteStore implements INoteStore {
       const err = error as TErrorInfo
 
       if (err.code === EErrorCodes.FORBIDDEN) {
-        toast.error('You do not have permission to access this resource')
+        toast.error('error.forbidden')
         return
       }
 

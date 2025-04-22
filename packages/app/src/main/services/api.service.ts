@@ -39,7 +39,7 @@ api.interceptors.response.use(
     const status = error.response.status
 
     console.error(
-      `ERROR API [${status}]: ${error.response?.data?.error || error.message}`
+      `ERROR API [${status}]: ${error.response?.data?.error} ${error.response?.data?.message}`,
     )
 
     switch (status) {
@@ -55,7 +55,7 @@ api.interceptors.response.use(
         return Promise.reject({
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         })
       case 404:

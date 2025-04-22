@@ -20,7 +20,7 @@ const loadUserServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -42,7 +42,7 @@ const loadUserServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -60,7 +60,7 @@ const loadUserServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -78,7 +78,7 @@ const loadUserServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -96,7 +96,7 @@ const loadUserServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }

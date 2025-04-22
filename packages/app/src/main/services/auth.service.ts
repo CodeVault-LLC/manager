@@ -16,10 +16,19 @@ const loadAuthServices = () => {
 
         return { data: true }
       } catch (error: any) {
+        if (error.code === EErrorCodes.ACCOUNT_NOT_FOUND) {
+          return {
+            error: {
+              code: EErrorCodes.ACCOUNT_NOT_FOUND,
+              message: 'error.accountNotFound'
+            }
+          }
+        }
+
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -64,7 +73,7 @@ const loadAuthServices = () => {
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
-            message: 'You do not have permission to access this resource'
+            message: 'error.forbidden'
           }
         }
       }
@@ -81,7 +90,7 @@ const loadAuthServices = () => {
       return {
         error: {
           code: EErrorCodes.FORBIDDEN,
-          message: 'You do not have permission to access this resource'
+          message: 'error.forbidden'
         }
       }
     }

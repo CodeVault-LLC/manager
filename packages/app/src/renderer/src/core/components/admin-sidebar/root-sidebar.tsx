@@ -54,6 +54,17 @@ const data: {
           url: '/entertainment/manga'
         }
       ]
+    },
+    {
+      title: "System",
+      url: '/system/browsers',
+      icon: SquareTerminal,
+      items: [
+        {
+          title: 'Browsers',
+          url: '/system/browsers'
+        }
+      ]
     }
   ]
 }

@@ -89,6 +89,10 @@
     "confirmPassword": {
       "label": "Confirm Password",
       "placeholder": "Confirm your password"
+    },
+    "avatar": {
+      "label": "Avatar",
+      "placeholder": "Select an avatar"
     }
   },
   "entertainment": {

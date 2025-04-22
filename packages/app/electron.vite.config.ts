@@ -11,6 +11,11 @@ export default defineConfig({
         '@main': path.resolve('src/main/src'),
         '@shared': path.resolve(__dirname, '../shared')
       }
+    },
+    build: {
+      rollupOptions: {
+        external: ['drizzle-orm', 'better-sqlite3', 'drizzle-orm/sqlite-core']
+      }
     }
   },
   preload: {
@@ -28,6 +33,9 @@ export default defineConfig({
         '@shared': path.resolve(__dirname, '../shared')
       }
     },
-    plugins: [TanStackRouterVite({ target: 'react', autoCodeSplitting: true }), react()]
+    plugins: [
+      TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
+      react()
+    ]
   }
 })

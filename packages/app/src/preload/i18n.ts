@@ -10,6 +10,8 @@ export const loadLocale = (lang: Locale): Translations => {
       return en
     case 'no':
       return no
+    default:
+      return en
   }
 }
 
