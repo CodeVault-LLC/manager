@@ -5,6 +5,9 @@ import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 import { observer } from 'mobx-react'
+import { Button } from '@renderer/components/ui/button'
+import { Badge } from '@renderer/components/ui/badge'
+import { Settings } from 'lucide-react'
 
 const RouteComponent = observer(() => {
   const { t } = useI18n()
@@ -17,21 +20,48 @@ const RouteComponent = observer(() => {
 
         <Separator className="my-4" />
 
-        {browsers &&
-          browsers.map((browser) => (
-            <div
-              key={browser.id}
-              className="flex flex-row items-center justify-between p-4 border-b"
-            >
-              <div className="flex flex-row items-center gap-2">
+        <div className="grid gap-4 grid-cols-4 sm:grid-cols-2">
+          {browsers?.map((browser) => (
+            <div className="border rounded-xl p-3" key={browser.name}>
+              <div className="flex flex-row items-center justify-between gap-2">
                 {browser.icon}
-                <span className="text-lg font-bold">{browser.name}</span>
+
+                {browser.installed && (
+                  <Badge className="bg-green-600/10 dark:bg-green-600/20 hover:bg-green-600/10 text-green-500 shadow-none rounded-full">
+                    {t('common.installed')}
+                  </Badge>
+                )}
               </div>
-              <span className="text-sm text-muted-foreground">
-                {t('common.version', { version: browser.version })}
-              </span>
+
+              <h2 className="mt-2 font-medium">{browser.name}</h2>
+
+              <p className="text-sm text-gray-500 font-medium mt-1">
+                {browser.description}
+              </p>
+
+              <Separator className="my-2" />
+
+              <div className="flex flex-row items-center justify-between">
+                {browser.installed && (
+                  <Button
+                    variant="outline"
+                    size={'sm'}
+                    className="flex flex-row items-center"
+                  >
+                    <Settings className="size-4" />
+                    {t('common.settings')}
+                  </Button>
+                )}
+
+                {browser.installed && (
+                  <Button variant="outline" size={'sm'}>
+                    {t('common.sync')}
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
+        </div>
       </div>
     </AuthenticationWrapper>
   )

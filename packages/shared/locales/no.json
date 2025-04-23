@@ -8,7 +8,11 @@
     "comingSoon": "Kommer snart",
     "connected": "Tilkoblet",
     "reauthorize": "Reautorisere",
-    "revoke": "Tilbakekall"
+    "revoke": "Tilbakekall",
+    "browsers": "Nettlesere",
+    "installed": "Installert",
+    "sync": "Synkroniser",
+    "settings": "Innstillinger"
   },
   "navigation": {
     "home": "Hjem",

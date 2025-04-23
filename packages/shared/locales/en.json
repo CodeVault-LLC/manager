@@ -8,7 +8,11 @@
     "comingSoon": "Coming Soon",
     "connected": "Connected",
     "reauthorize": "Reauthorize",
-    "revoke": "Revoke"
+    "revoke": "Revoke",
+    "browsers": "Browsers",
+    "installed": "Installed",
+    "sync": "Sync",
+    "settings": "Settings"
   },
   "navigation": {
     "home": "Home",
