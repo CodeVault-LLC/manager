@@ -13,7 +13,8 @@ export const newsProvider = sqliteTable('news_provider', {
 
   brandId: text('brand_id').notNull(),
   brandName: text('brand_name').notNull(),
-  brandUrl: text('brand_url').notNull()
+  brandUrl: text('brand_url').notNull(),
+  brandLogoUrl: text('brand_logo_url').notNull()
 })
 
 export const newsProviderRelations = relations(newsProvider, ({ one }) => ({

@@ -1,8 +1,8 @@
-import { ipcMain } from 'electron'
+import { BrowserWindow } from 'electron'
 import { getDiskInformation } from '../utils/system.helper'
 import { ISystemStatistics } from '@shared/types/system'
 
-export const loadSystemSockets = () => {
+export const loadSystemSockets = (mainWindow: BrowserWindow) => {
   setInterval(async () => {
     const cpuLoad = process.getCPUUsage().percentCPUUsage
 
@@ -15,12 +15,16 @@ export const loadSystemSockets = () => {
       load: (disk.size - disk.freeSpace) / disk.size
     }))
 
-    ipcMain.emit('system:statistics', {
+    const statistics: ISystemStatistics = {
       cpu: cpuLoad,
       memory: memoryLoad,
       disk: diskLoad,
       uptime: process.uptime(),
       pid: process.pid
-    } as ISystemStatistics)
+    }
+
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send('system:statistics', statistics)
+    }
   }, 1000)
 }

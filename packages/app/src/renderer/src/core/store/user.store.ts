@@ -19,8 +19,8 @@ export interface IUserStore {
   currentUser: IUser | undefined
   sessions: ISession[] | undefined
 
-  // fetch actions
   hydrate: (data: any) => void
+  // fetch actions
   fetchCurrentUser: () => Promise<void>
   login: (email: string, password: string) => Promise<boolean>
   register: (data: IRegistrationData) => Promise<boolean>
@@ -190,7 +190,7 @@ export class UserStore implements IUserStore {
    */
   register = async (data: IRegistrationData): Promise<boolean> => {
     try {
-      console.log(data);
+      console.log(data)
 
       this.isLoading = true
 

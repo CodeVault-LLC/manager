@@ -1,5 +1,5 @@
 {
-  "engines": {"node":"v22.14.0","pnpm":"10.9.0"},
+  "engines": {"node":"v22.14.0","pnpm":"10.8.1"},
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "tsx --watch src/index.ts",

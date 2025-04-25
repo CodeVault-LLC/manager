@@ -14,15 +14,21 @@ type TAdminLayout = {
 export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props
   const { changeLanguage } = useI18n()
-  const { getInitialData, system, doBrowserRefresh } = useSystem()
+  const { fetchInitial: getInitialData, system, doBrowserRefresh } = useSystem()
 
   useEffect(() => {
     getInitialData()
     doBrowserRefresh()
+    //subscribeToSystemStatistics()
 
     const initialLanguage = system.language
     if (initialLanguage) {
       changeLanguage(initialLanguage)
+    }
+
+    return () => {
+      // Unsubscribe from any subscriptions if needed
+      // unsubscribeFromSystemStatistics()
     }
   }, [])
 

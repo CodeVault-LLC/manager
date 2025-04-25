@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import { FC, useEffect } from 'react'
 
 export const MoviesWidget: FC = observer(() => {
-  const { getWidgetData, widgets } = useDashboard()
+  const { fetchWidgetData: getWidgetData, widgets } = useDashboard()
   const movieWidget = widgets.find((widget) => widget.name === 'movies')
 
   useEffect(() => {

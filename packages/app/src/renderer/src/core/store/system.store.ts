@@ -27,8 +27,9 @@ export interface ISystemStore {
 
   getBrowserInitial(): void
   doBrowserRefresh(): void
+  subscribeToSystemStatistics(): void
 
-  getInitialData: () => void
+  fetchInitial: () => void
 }
 
 export class SystemStore implements ISystemStore {
@@ -70,11 +71,6 @@ export class SystemStore implements ISystemStore {
       // action
       toggleNewUserPopup: action,
       setTheme: action
-    })
-
-    ipcClient.on('system:statistics', (data) => {
-      console.log('System statistics', data)
-      this.systemStatistics = data as unknown as ISystemStatistics
     })
   }
 
@@ -129,7 +125,7 @@ export class SystemStore implements ISystemStore {
   /**
    * @description Gets the initial system data
    */
-  getInitialData = async () => {
+  fetchInitial = async () => {
     try {
       const system = await ipcClient.invoke('system:initial')
 
@@ -152,7 +148,6 @@ export class SystemStore implements ISystemStore {
   getBrowserInitial = (): void => {
     ipcClient.invoke('browser:initial').then((response) => {
       if (response.data) {
-        console.log('Browser initial', response.data)
         this.setBrowsers(response.data)
       } else {
         console.error('getting initial browser data error', response.error)
@@ -163,7 +158,6 @@ export class SystemStore implements ISystemStore {
   doBrowserRefresh = (): void => {
     ipcClient.invoke('browser:refresh').then((response) => {
       if (response.data) {
-        console.log('Browser refresh', response.data)
         this.setBrowsers(response.data)
       } else {
         console.error('getting initial browser data error', response.error)
@@ -184,5 +178,12 @@ export class SystemStore implements ISystemStore {
 
   setBrowsers = (browsers: IBrowser[]) => {
     this.browsers = browsers
+  }
+
+  subscribeToSystemStatistics = () => {
+    ipcClient.on('system:statistics', (data) => {
+      console.log('System statistics', data)
+      this.systemStatistics = data as unknown as ISystemStatistics
+    })
   }
 }

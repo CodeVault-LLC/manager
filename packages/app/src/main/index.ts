@@ -12,6 +12,7 @@ import { loadIntegrations } from './services/integrations'
 import { loadSystemSockets } from './sockets/system.socket'
 import { loadDashboardServices } from './services/dashboard.service'
 import { runMigrations } from './database/data-source'
+import { loadMsnServices } from './services/news/msn.ipc'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -60,14 +61,14 @@ if (!gotTheLock) {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
 
-      loadSystemSockets()
-
       loadAuthServices()
       loadIntegrations()
       loadUserServices()
       loadNoteServices()
       loadDashboardServices()
       loadSystemIntegrations()
+
+      loadMsnServices()
     } catch (error) {
       console.error(error)
     }
@@ -103,6 +104,8 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+
+    loadSystemSockets(mainWindow)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

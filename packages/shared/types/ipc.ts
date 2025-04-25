@@ -3,6 +3,7 @@ import { IRegistrationData, ISession, IUser } from "./users";
 import { INote, TNotePage } from "./note";
 import { ETheme, IBrowser, ISystem, ISystemStatistics } from "./system";
 import { IDashboardWidget } from "./widget";
+import { INews } from "./news";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -51,6 +52,8 @@ export interface IpcHandlers {
   "dashboard:widget": (
     widget_name: string
   ) => Promise<TCommunicationResponse<IDashboardWidget>>;
+
+  "msn:news": () => Promise<TCommunicationResponse<INews[]>>;
 }
 
 export interface IpcEmittedEvents {

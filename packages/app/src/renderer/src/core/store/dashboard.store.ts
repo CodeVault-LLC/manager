@@ -3,28 +3,33 @@ import { ipcClient } from '@renderer/utils/ipcClient'
 import { IDashboardWidget } from '@shared/types/widget'
 import { CoreRootStore } from './root.store'
 import { toast } from 'sonner'
+import { INews } from '@shared/types/news'
 
 export interface IDashboardStore {
   widgets: IDashboardWidget[]
+  news: INews[]
   isLoading: boolean
 
-  getWidgets: () => void
-  getWidgetData: (
+  fetchWidgets: () => void
+  fetchWidgetData: (
     widget_name: string
   ) => Promise<IDashboardWidget<any> | undefined>
+
   hydrate: (data: any) => void
 }
 
 export class DashboardStore implements IDashboardStore {
   widgets: IDashboardWidget<any>[] = []
   isLoading: boolean = false
+  news: INews[] = []
 
   constructor(public store: CoreRootStore) {
     makeObservable(this, {
       widgets: observable.shallow,
       isLoading: observable,
 
-      getWidgets: action,
+      fetchWidgets: action,
+      fetchWidgetData: action,
       hydrate: action
     })
   }
@@ -35,7 +40,7 @@ export class DashboardStore implements IDashboardStore {
     }
   }
 
-  getWidgets = async () => {
+  fetchWidgets = async () => {
     this.isLoading = true
 
     try {
@@ -53,7 +58,7 @@ export class DashboardStore implements IDashboardStore {
     }
   }
 
-  getWidgetData = async (widget_name: string) => {
+  fetchWidgetData = async (widget_name: string) => {
     const widget = this.widgets.find((widget) => widget.name === widget_name)
 
     if (widget?.data) return widget.data
@@ -81,6 +86,24 @@ export class DashboardStore implements IDashboardStore {
     } finally {
       this.isLoading = false
       return this.widgets.find((widget) => widget.name === widget_name)?.data
+    }
+  }
+
+  fetchNews = async () => {
+    this.isLoading = true
+
+    try {
+      const response = await ipcClient.invoke('msn:news')
+
+      if (response.data) {
+        this.news = response.data
+      } else {
+        toast.error('Failed to fetch news')
+      }
+    } catch (error) {
+      toast.error('Failed to fetch news')
+    } finally {
+      this.isLoading = false
     }
   }
 }

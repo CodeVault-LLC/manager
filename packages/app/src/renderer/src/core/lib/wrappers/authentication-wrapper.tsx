@@ -25,7 +25,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer(
       currentUser,
       fetchCurrentUser
     } = useUser()
-    const { getWidgets } = useDashboard()
+    const { fetchWidgets: getWidgets } = useDashboard()
     const { getError, errors } = useError()
 
     useEffect(() => {
