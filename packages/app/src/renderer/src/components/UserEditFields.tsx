@@ -7,9 +7,9 @@ import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { Button } from './ui/button'
 import { useForm } from '@tanstack/react-form'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { VerifiedIcon } from 'lucide-react'
+import { MailCheckIcon, VerifiedIcon } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
-import { Alert } from './ui/alert'
+import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 import { Link } from '@tanstack/react-router'
 
 type UserEditFieldsProps = {
@@ -121,7 +121,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
                   </TooltipTrigger>
 
                   <TooltipContent>
-                    {t('user.emailVerificationTooltip')}
+                    {t('user.verifyEmail.emailVerificationTooltip')}
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -139,16 +139,24 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
 
             {!currentUser?.verified_email && (
               <Alert variant={'warning'} className="w-full">
-                <div className="flex flex-row gap-2 items-center justify-between">
-                  {t('user.notVerifiedEmailInfo')}
+                <MailCheckIcon size={16} />
 
-                  <Link
-                    to="/verify-email"
-                    className="text-sm text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400"
-                  >
-                    {t('user.verifyEmail')}
-                  </Link>
-                </div>
+                <AlertTitle className="font-bold text-base">
+                  {t('user.verifyEmail.notVerifiedEmailTitle')}
+                </AlertTitle>
+
+                <AlertDescription>
+                  <div className="flex flex-row gap-2 items-center justify-between">
+                    {t('user.verifyEmail.notVerifiedEmailInfo')}
+
+                    <Link
+                      to="/verify-email"
+                      className="text-sm text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400"
+                    >
+                      {t('user.verifyEmail.verifyEmail')}
+                    </Link>
+                  </div>
+                </AlertDescription>
               </Alert>
             )}
           </div>

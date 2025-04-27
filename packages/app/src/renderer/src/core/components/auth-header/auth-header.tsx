@@ -33,6 +33,8 @@ export const InstanceHeader: FC = observer(() => {
         return t('navigation.settings')
       case 'entertainment':
         return t('navigation.entertainment')
+      case 'verify-email':
+        return t('navigation.verifyEmail')
       default:
         return pathName.toUpperCase()
     }

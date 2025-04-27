@@ -28,7 +28,7 @@ export const SystemWidget: FC = observer(() => {
   const { systemStatistics } = useSystem()
 
   return (
-    <div className="grid sm:grid-cols-1 grid-cols-1 gap-4 sm:gap-6 w-full lg:grid-cols-1 xl:grid-cols-4">
+    <div className="grid sm:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-4 sm:gap-6 w-full lg:grid-cols-4 xl:grid-cols-4">
       {/* CPU */}
       <Card>
         <CardContent className="pt-4">

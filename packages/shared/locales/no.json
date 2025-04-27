@@ -13,12 +13,14 @@
     "installed": "Installert",
     "sync": "Synkroniser",
     "settings": "Innstillinger",
-    "forgotPassword": "Glemt passord?"
+    "forgotPassword": "Glemt passord?",
+    "verificationCode": "Bekreftelseskode"
   },
   "navigation": {
     "home": "Hjem",
     "settings": "Innstillinger",
-    "entertainment": "Underholdning"
+    "entertainment": "Underholdning",
+    "verifyEmail": "Bekreft e-post"
   },
   "user": {
     "logout": "Logg ut",
@@ -33,9 +35,15 @@
       "revokeAllSessionsWarning": "Dette vil logge deg ut fra alle enheter bortsett fra den du bruker nå. Denne handlingen kan ikke angres.",
       "revoke": "Tilbakekall"
     },
-    "emailVerificationTooltip": "E-postadresse bekreftet for kontosikkerhet",
-    "notVerifiedEmailInfo": "E-postadressen din er ikke bekreftet. Bekreft e-posten din for å sikre kontoen din og få full tilgang.",
-    "verifyEmail": "Bekreft e-post"
+    "verifyEmail": {
+      "emailVerificationTooltip": "E-postadresse bekreftet for kontosikkerhet",
+      "notVerifiedEmailTitle": "Mangler e-postbekreftelse",
+      "notVerifiedEmailInfo": "E-postadressen din er ikke bekreftet. Bekreft e-posten din for å sikre kontoen din og få full tilgang.",
+      "verifyEmail": "Bekreft e-post",
+      "verificationSent": "Vi har sendt en bekreftelseskode til e-postadressen din. Skriv inn koden nedenfor for å bekrefte identiteten din.",
+      "emailVerifiedSuccessTitle": "E-post bekreftet",
+      "emailVerifiedSuccess": "E-postadressen din er bekreftet. Du kan nå bruke alle funksjonene i programmet."
+    }
   },
   "settings": {
     "navigation": {

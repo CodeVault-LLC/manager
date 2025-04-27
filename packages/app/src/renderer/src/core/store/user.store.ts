@@ -29,7 +29,7 @@ export interface IUserStore {
   signOut: () => void
 
   verifyEmail: () => Promise<void>
-  verifyEmailToken: (token: string) => Promise<void>
+  verifyEmailToken: (token: string) => Promise<boolean>
 
   // Sessions
   fetchAllSessions: () => Promise<void>
@@ -368,15 +368,8 @@ export class UserStore implements IUserStore {
       const response = await ipcClient.invoke('user:verifyEmail')
 
       if (response?.data) {
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
-          this.userStatus = undefined
-        })
       } else {
         runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
           this.userStatus = {
             status: EUserStatus.ERROR,
             message: response?.error || 'Email verification failed'
@@ -392,8 +385,6 @@ export class UserStore implements IUserStore {
 
   verifyEmailToken = async (token: string) => {
     try {
-      console.log('Verifying email token:', token)
-
       const response = await ipcClient.invoke('user:verifyEmailToken', token)
 
       if (response?.data) {
@@ -402,8 +393,9 @@ export class UserStore implements IUserStore {
             this.currentUser.verified_email = true
           }
         })
+
+        return true
       } else {
-        console.log(response.error)
         if (response.error.code === EErrorCodes.BAD_REQUEST) {
           runInAction(() => {
             this.userStatus = {
@@ -414,6 +406,8 @@ export class UserStore implements IUserStore {
 
           toast.error(response?.error.message || 'Invalid or expired token')
         }
+
+        return false
       }
     } catch (error: any) {
       console.error(error)
@@ -425,6 +419,8 @@ export class UserStore implements IUserStore {
       })
 
       toast.error(error?.message || 'Email verification failed')
+
+      return false
     }
   }
 

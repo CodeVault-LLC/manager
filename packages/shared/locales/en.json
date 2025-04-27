@@ -13,12 +13,14 @@
     "installed": "Installed",
     "sync": "Sync",
     "settings": "Settings",
-    "forgotPassword": "Forgot Password?"
+    "forgotPassword": "Forgot Password?",
+    "verificationCode": "Verification Code"
   },
   "navigation": {
     "home": "Home",
     "settings": "Settings",
-    "entertainment": "Entertainment"
+    "entertainment": "Entertainment",
+    "verifyEmail": "Verify Email"
   },
   "user": {
     "logout": "Logout",
@@ -33,9 +35,15 @@
       "revokeAllSessionsWarning": "This will log you out from all devices except your current one. This action cannot be undone.",
       "revoke": "Revoke"
     },
-    "emailVerificationTooltip": "Email address verified for account security",
-    "notVerifiedEmailInfo": "Your email address is not verified. Verify your email to help secure your account and enable full access.",
-    "verifyEmail": "Verify Email"
+    "verifyEmail": {
+      "emailVerificationTooltip": "Email address verified for account security",
+      "notVerifiedEmailTitle": "Missing Email Verification",
+      "notVerifiedEmailInfo": "Your email address is not verified. Verify your email to help secure your account and enable full access.",
+      "verifyEmail": "Verify Email",
+      "verificationSent": "We've sent a verification code to your email address. Enter the code below to confirm your identity.",
+      "emailVerifiedSuccessTitle": "Email Verified",
+      "emailVerifiedSuccess": "Your email address has been verified. You can now use all features of the application."
+    }
   },
   "settings": {
     "navigation": {

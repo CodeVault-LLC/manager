@@ -8,10 +8,17 @@ import { observer } from 'mobx-react'
 import { Button } from '@renderer/components/ui/button'
 import { Badge } from '@renderer/components/ui/badge'
 import { Settings } from 'lucide-react'
+import { Chrome } from '@renderer/components/brands/chrome'
+import { Edge } from '@renderer/components/brands'
 
 const RouteComponent = observer(() => {
   const { t } = useI18n()
   const { browsers } = useSystem()
+
+  const browserIcons = {
+    chrome: <Chrome className="size-6" />,
+    edge: <Edge className="size-6" />
+  }
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
@@ -24,7 +31,7 @@ const RouteComponent = observer(() => {
           {browsers?.map((browser) => (
             <div className="border rounded-xl p-3" key={browser.name}>
               <div className="flex flex-row items-center justify-between gap-2">
-                {browser.icon}
+                {browserIcons[browser.icon]}
 
                 {browser.installed && (
                   <Badge className="bg-green-600/10 dark:bg-green-600/20 hover:bg-green-600/10 text-green-500 shadow-none rounded-full">
