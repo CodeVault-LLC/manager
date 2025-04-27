@@ -24,17 +24,30 @@ export const ipcClient = {
   },
 
   // Wrapper for listening to emitted events
-  on: <T extends keyof IpcEmittedEvents>(channel: T, listener: IpcRendererListener): void => {
+  on: <T extends keyof IpcEmittedEvents>(
+    channel: T,
+    listener: IpcRendererListener
+  ): void => {
     window.electron.ipcRenderer.on(channel, listener)
   },
 
   // Remove a specific listener
-  off: <T extends keyof IpcEmittedEvents>(channel: T, listener: IpcRendererListener): void => {
+  off: <T extends keyof IpcEmittedEvents>(
+    channel: T,
+    listener: IpcRendererListener
+  ): void => {
     window.electron.ipcRenderer.removeListener(channel, listener)
   },
 
   // Remove all listeners for a given event
   removeAll: <T extends keyof IpcEmittedEvents>(channel: T): void => {
     window.electron.ipcRenderer.removeAllListeners(channel)
+  },
+
+  // Get all listeners for a given event
+  listeners: <T extends keyof IpcEmittedEvents>(channel: T): Function[] => {
+    const listenerList = window.electron.ipcRenderer.listeners(channel)
+
+    return listenerList
   }
 }

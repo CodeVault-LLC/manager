@@ -88,6 +88,7 @@ if (!gotTheLock) {
     }
   }
 }
+let stopSystemSockets: (() => void) | null = null // <-- ADD THIS
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -105,7 +106,20 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
 
-    loadSystemSockets(mainWindow)
+    // STOP the previous interval if one exists
+    if (stopSystemSockets) {
+      stopSystemSockets()
+    }
+
+    // START a new system socket
+    stopSystemSockets = loadSystemSockets(mainWindow)
+  })
+
+  mainWindow.on('closed', () => {
+    // ALSO clear interval if window closes
+    if (stopSystemSockets) {
+      stopSystemSockets()
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

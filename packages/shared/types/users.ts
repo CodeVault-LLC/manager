@@ -17,6 +17,8 @@ export interface IUser extends IUserLite {
   user_timezone: string;
   username: string;
 
+  verified_email?: boolean;
+
   google: IGoogleUserLite | null;
 }
 

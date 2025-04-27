@@ -12,7 +12,8 @@
     "browsers": "Browsers",
     "installed": "Installed",
     "sync": "Sync",
-    "settings": "Settings"
+    "settings": "Settings",
+    "forgotPassword": "Forgot Password?"
   },
   "navigation": {
     "home": "Home",
@@ -31,7 +32,10 @@
       "revokeAllSessions": "Revoke all sessions",
       "revokeAllSessionsWarning": "This will log you out from all devices except your current one. This action cannot be undone.",
       "revoke": "Revoke"
-    }
+    },
+    "emailVerificationTooltip": "Email address verified for account security",
+    "notVerifiedEmailInfo": "Your email address is not verified. Verify your email to help secure your account and enable full access.",
+    "verifyEmail": "Verify Email"
   },
   "settings": {
     "navigation": {
@@ -97,12 +101,33 @@
     "avatar": {
       "label": "Avatar",
       "placeholder": "Select an avatar"
-    }
+    },
+    "rememberMe": "Remember Me"
   },
   "entertainment": {
     "manga": {
       "title": "Manga",
       "description": "Find and read manga from various sources."
     }
+  },
+  "news": {
+    "category": {
+      "money": "Money",
+      "business": "Business",
+      "technology": "Technology",
+      "health": "Health"
+    }
+  },
+  "system": {
+    "statistics": {
+      "cpuUsage": "CPU Usage",
+      "memoryUsage": "Memory Usage",
+      "diskUsage": "Disk Usage",
+      "networkUsage": "Network Usage",
+      "uptime": "Uptime"
+    }
+  },
+  "error": {
+    "invalidToken": "Invalid or expired confirmation token"
   }
 }

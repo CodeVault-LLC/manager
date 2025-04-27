@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
@@ -29,6 +30,12 @@ import { Route as EntertainmentMangaIndexImport } from './routes/entertainment/m
 import { Route as EntertainmentMangaIdImport } from './routes/entertainment/manga/$id'
 
 // Create/Update Routes
+
+const VerifyEmailRoute = VerifyEmailImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SettingsRoute = SettingsImport.update({
   id: '/settings',
@@ -165,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsImport
       parentRoute: typeof rootRoute
     }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailImport
+      parentRoute: typeof rootRoute
+    }
     '/entertainment/manga': {
       id: '/entertainment/manga'
       path: '/manga'
@@ -294,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
@@ -313,6 +328,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -332,6 +348,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
@@ -353,6 +370,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/verify-email'
     | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
@@ -371,6 +389,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/verify-email'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -388,6 +407,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/verify-email'
     | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
@@ -408,6 +428,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRouteWithChildren
+  VerifyEmailRoute: typeof VerifyEmailRoute
   PoliciesFaqRoute: typeof PoliciesFaqRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
@@ -421,6 +442,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRouteWithChildren,
+  VerifyEmailRoute: VerifyEmailRoute,
   PoliciesFaqRoute: PoliciesFaqRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
@@ -443,6 +465,7 @@ export const routeTree = rootRoute
         "/login",
         "/register",
         "/settings",
+        "/verify-email",
         "/policies/faq",
         "/policies/privacy",
         "/policies/terms",
@@ -472,6 +495,9 @@ export const routeTree = rootRoute
         "/settings/general",
         "/settings/security"
       ]
+    },
+    "/verify-email": {
+      "filePath": "verify-email.tsx"
     },
     "/entertainment/manga": {
       "filePath": "entertainment/manga.tsx",

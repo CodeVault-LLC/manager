@@ -1,5 +1,6 @@
 import { Google } from '@renderer/components/brands/google'
 import { Button } from '@renderer/components/ui/button'
+import { Checkbox } from '@renderer/components/ui/checkbox'
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
 import { Separator } from '@renderer/components/ui/separator'
@@ -8,23 +9,26 @@ import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authenticatio
 import { useUser } from '@renderer/hooks'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
+import { useForm } from '@tanstack/react-form'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { observer } from 'mobx-react'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
 const LoginPage = observer(() => {
   const { t } = useI18n()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+
+  const { Field, handleSubmit } = useForm({
+    defaultValues: {
+      email: '',
+      password: ''
+    },
+    onSubmit: async ({ value }) => {
+      await login(value.email, value.password)
+    }
+  })
 
   const { login, currentUser } = useUser()
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    await login(email, password)
-  }
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -36,7 +40,14 @@ const LoginPage = observer(() => {
     <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
       <div className="flex items-center justify-center h-screen">
         <div className="p-6 rounded-lg w-full max-w-2xl mx-auto">
-          <form className="flex flex-col gap-6" onSubmit={onSubmit}>
+          <form
+            className="flex flex-col gap-6"
+            onSubmit={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleSubmit()
+            }}
+          >
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-2">
                 <h1 className="text-xl font-bold">Log in to Manager</h1>
@@ -58,27 +69,57 @@ const LoginPage = observer(() => {
               <Separator className="h-px bg-border mb-6" />
 
               <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">{t('forms.email.label')}</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={t('forms.email.placeholder')}
-                    required
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                  />
+                <Field
+                  name="email"
+                  children={({ state, handleChange, handleBlur }) => (
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">{t('forms.email.label')}</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder={t('forms.email.placeholder')}
+                        required
+                        autoComplete="email"
+                        onChange={(e) => handleChange(() => e.target.value)}
+                        onBlur={handleBlur}
+                        defaultValue={state.value}
+                      />
+                    </div>
+                  )}
+                />
+
+                <Field
+                  name="password"
+                  children={({ state, handleChange, handleBlur }) => (
+                    <div className="grid gap-2">
+                      <Label htmlFor="password">
+                        {t('forms.password.label')}
+                      </Label>
+                      <PasswordInput
+                        id="password"
+                        placeholder={t('forms.password.placeholder')}
+                        required
+                        onChange={(e) => handleChange(() => e.target.value)}
+                        onBlur={handleBlur}
+                        defaultValue={state.value}
+                      />
+                    </div>
+                  )}
+                />
+
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="remember" className="flex items-center gap-2">
+                    <Checkbox id="remember" className="cursor-pointer" />
+                    {t('forms.rememberMe')}
+                  </Label>
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-muted-foreground hover:text-primary"
+                  >
+                    {t('common.forgotPassword')}
+                  </Link>
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="password">{t('forms.password.label')}</Label>
-                  <PasswordInput
-                    id="password"
-                    placeholder={t('forms.password.placeholder')}
-                    required
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                  />
-                </div>
+
                 <Button type="submit" className="w-full">
                   {t('user.login')}
                 </Button>

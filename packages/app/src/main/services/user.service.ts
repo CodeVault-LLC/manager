@@ -102,6 +102,71 @@ const loadUserServices = () => {
       }
     }
   )
+
+  ipcMain.handle(
+    'user:forgotPassword',
+    async (_, email: string): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        await api.post<void>('/users/forgot-password/', { email })
+
+        return { data: true }
+      } catch (error: any) {
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'user:verifyEmail',
+    async (): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        await api.post<void>('/users/verify-email')
+
+        return { data: true }
+      } catch (error: any) {
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'user:verifyEmailToken',
+    async (_, token: string): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        await api.post<void>('/users/confirm-verify-email/' + token)
+
+        return { data: true }
+      } catch (error: any) {
+        console.error('Error verifying email token:', error)
+
+        if (error.error.code === EErrorCodes.BAD_REQUEST) {
+          return {
+            error: {
+              code: EErrorCodes.BAD_REQUEST,
+              message: 'error.invalidToken'
+            }
+          }
+        }
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
 }
 
 export { loadUserServices }

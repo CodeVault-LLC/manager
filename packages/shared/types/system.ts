@@ -27,8 +27,9 @@ export enum ETheme {
 export interface ISystemStatistics {
   cpu: number;
   memory: number;
-  disk: { name: string; load: number }[];
+  disk: number;
   uptime: number;
+  network: { received: number; transmitted: number };
   pid: number;
 }
 

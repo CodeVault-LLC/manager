@@ -6,6 +6,7 @@ import { AppSidebar } from '../components/admin-sidebar'
 import { Toaster } from '@renderer/components/ui/sonner'
 import { useSystem } from '@renderer/hooks'
 import { useI18n } from '@renderer/hooks/use-i18n'
+import { useDashboard } from '@renderer/hooks/use-dashboard'
 
 type TAdminLayout = {
   children: ReactNode
@@ -14,12 +15,21 @@ type TAdminLayout = {
 export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props
   const { changeLanguage } = useI18n()
-  const { fetchInitial: getInitialData, system, doBrowserRefresh } = useSystem()
+  const {
+    fetchInitial: getInitialData,
+    system,
+    doBrowserRefresh,
+    subscribeToSystemStatistics,
+    unsubscribeFromSystemStatistics
+  } = useSystem()
+
+  const { fetchNews } = useDashboard()
 
   useEffect(() => {
     getInitialData()
     doBrowserRefresh()
-    //subscribeToSystemStatistics()
+    subscribeToSystemStatistics()
+    fetchNews()
 
     const initialLanguage = system.language
     if (initialLanguage) {
@@ -27,8 +37,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
     }
 
     return () => {
-      // Unsubscribe from any subscriptions if needed
-      // unsubscribeFromSystemStatistics()
+      unsubscribeFromSystemStatistics()
     }
   }, [])
 
@@ -36,12 +45,14 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
     <div className="relative flex h-screen w-screen overflow-hidden">
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="overflow-x-hidden">
           <InstanceHeader />
           <Toaster closeButton richColors />
 
-          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden">
-            <div className="flex flex-1 flex-col overflow-auto">{children}</div>
+          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden w-full max-w-full">
+            <div className="flex flex-1 flex-col overflow-auto w-full max-w-full">
+              {children}
+            </div>
           </main>
         </SidebarInset>
       </SidebarProvider>

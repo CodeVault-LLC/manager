@@ -2,7 +2,7 @@ import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { INews } from '@shared/types/news'
 import { ipcMain } from 'electron'
-import { db } from 'src/main/database/data-source'
+import { db } from '../../database/data-source'
 import { msnServices } from './msn.service'
 
 export const loadMsnServices = async () => {
@@ -74,6 +74,7 @@ export const loadMsnServices = async () => {
           })
         }
       } catch (error) {
+        console.error('Failed to fetch news', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,

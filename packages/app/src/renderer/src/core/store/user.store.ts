@@ -28,6 +28,9 @@ export interface IUserStore {
   reset: () => void
   signOut: () => void
 
+  verifyEmail: () => Promise<void>
+  verifyEmailToken: (token: string) => Promise<void>
+
   // Sessions
   fetchAllSessions: () => Promise<void>
   deleteSession: (sessionId: number) => Promise<void>
@@ -62,6 +65,11 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action,
 
+      updateUser: action,
+      authenticateGoogle: action,
+      revokeGoogle: action,
+      verifyEmail: action,
+      verifyEmailToken: action,
       fetchAllSessions: action,
       deleteSession: action,
       deleteAllSessions: action
@@ -190,8 +198,6 @@ export class UserStore implements IUserStore {
    */
   register = async (data: IRegistrationData): Promise<boolean> => {
     try {
-      console.log(data)
-
       this.isLoading = true
 
       // Handle file conversion for IPC transfer
@@ -354,6 +360,71 @@ export class UserStore implements IUserStore {
       }
     } catch (error: any) {
       console.error(error)
+    }
+  }
+
+  verifyEmail = async () => {
+    try {
+      const response = await ipcClient.invoke('user:verifyEmail')
+
+      if (response?.data) {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.currentUser = undefined
+          this.userStatus = undefined
+        })
+      } else {
+        runInAction(() => {
+          this.isUserLoggedIn = false
+          this.currentUser = undefined
+          this.userStatus = {
+            status: EUserStatus.ERROR,
+            message: response?.error || 'Email verification failed'
+          }
+        })
+
+        toast.error(response?.error || 'Email verification failed')
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
+
+  verifyEmailToken = async (token: string) => {
+    try {
+      console.log('Verifying email token:', token)
+
+      const response = await ipcClient.invoke('user:verifyEmailToken', token)
+
+      if (response?.data) {
+        runInAction(() => {
+          if (this.currentUser) {
+            this.currentUser.verified_email = true
+          }
+        })
+      } else {
+        console.log(response.error)
+        if (response.error.code === EErrorCodes.BAD_REQUEST) {
+          runInAction(() => {
+            this.userStatus = {
+              status: EUserStatus.ERROR,
+              message: response?.error.message || 'Invalid or expired token'
+            }
+          })
+
+          toast.error(response?.error.message || 'Invalid or expired token')
+        }
+      }
+    } catch (error: any) {
+      console.error(error)
+      runInAction(() => {
+        this.userStatus = {
+          status: EUserStatus.ERROR,
+          message: error?.message || 'Email verification failed'
+        }
+      })
+
+      toast.error(error?.message || 'Email verification failed')
     }
   }
 

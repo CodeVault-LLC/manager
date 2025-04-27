@@ -1,4 +1,4 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { exposeToMainWorld } from './i18n'
 
@@ -10,7 +10,25 @@ const api = {}
 // just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('electron', electronAPI)
+    const listeners = (channel: string) => {
+      const listenerList = ipcRenderer.listeners(channel)
+
+      if (listenerList) {
+        return listenerList
+      } else {
+        return []
+      }
+    }
+
+    const electronAPIC = {
+      ...electronAPI,
+      ipcRenderer: {
+        ...electronAPI.ipcRenderer,
+        listeners
+      }
+    }
+
+    contextBridge.exposeInMainWorld('electron', electronAPIC)
     contextBridge.exposeInMainWorld('api', api)
 
     exposeToMainWorld()

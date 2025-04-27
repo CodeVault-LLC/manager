@@ -39,10 +39,20 @@ api.interceptors.response.use(
     const status = error.response.status
 
     console.error(
-      `ERROR API [${status}]: ${error.response?.data?.error} ${error.response?.data?.message}`,
+      `ERROR API [${status}]: ${error.response.config.method?.toUpperCase()} ${
+        error.response.config.url
+      } - ${error.response.data?.message || error.message}`
     )
 
     switch (status) {
+      case 400:
+        return Promise.reject({
+          error: {
+            code: EErrorCodes.BAD_REQUEST,
+            message: error.response.data?.message || 'error.bad_request'
+          }
+        })
+
       case 401:
         return Promise.reject({
           error: {
@@ -51,7 +61,6 @@ api.interceptors.response.use(
           }
         })
       case 403:
-        console.log('Yup, error happened')
         return Promise.reject({
           error: {
             code: EErrorCodes.FORBIDDEN,

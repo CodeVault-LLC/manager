@@ -15,6 +15,8 @@ export interface IDashboardStore {
     widget_name: string
   ) => Promise<IDashboardWidget<any> | undefined>
 
+  fetchNews: () => void
+
   hydrate: (data: any) => void
 }
 
@@ -30,6 +32,7 @@ export class DashboardStore implements IDashboardStore {
 
       fetchWidgets: action,
       fetchWidgetData: action,
+      fetchNews: action,
       hydrate: action
     })
   }
@@ -98,9 +101,11 @@ export class DashboardStore implements IDashboardStore {
       if (response.data) {
         this.news = response.data
       } else {
+        console.log('Failed to fetch news', response.error)
         toast.error('Failed to fetch news')
       }
     } catch (error) {
+      console.log('Failed to fetch news', error)
       toast.error('Failed to fetch news')
     } finally {
       this.isLoading = false

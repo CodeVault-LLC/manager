@@ -38,6 +38,8 @@ export const userMiddleware = async (
       return;
     }
 
+    console.log('Middleware triggered for path:', req.path);
+
     const authorizationHeader = req.headers.authorization;
     const xSystemHeader = req.headers['x-system'] as string | undefined;
 

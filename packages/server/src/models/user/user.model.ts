@@ -13,6 +13,7 @@ import { sessions } from './session.model';
 import { notes } from './notes.model';
 import { googleAccounts } from './google.model';
 import { userMangas } from '../entertainment/manga.model';
+import { tokens } from './token.model';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -26,6 +27,8 @@ export const users = pgTable('users', {
   lastName: varchar('last_name', { length: 100 }).notNull(),
 
   email: text('email').unique().notNull(),
+  verifiedEmail: boolean('verified_email').notNull().default(false),
+
   password: text('password').notNull(),
 
   avatarId: text('avatar_id'),
@@ -43,8 +46,8 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   projects: many(projects),
   sessions: many(sessions),
   notes: many(notes),
+  tokens: many(tokens),
 
-  // Entertainment
   mangas: many(userMangas),
 
   googleAccount: one(googleAccounts, {

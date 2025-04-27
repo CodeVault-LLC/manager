@@ -8,6 +8,7 @@ import { sessionRouter } from '../session/session.controller.js';
 import { notesRouter } from '../notes/notes.controller.js';
 import { configuration } from '@/config/config.js';
 import { googleRouter } from '../google/google.controller.js';
+import { Mail } from '@/email/index.js';
 
 const storage: StorageEngine = memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10000000 } });
@@ -192,6 +193,124 @@ router.post(
       res.status(204).end();
     } catch (error) {
       next(error);
+    }
+  },
+);
+
+router.post('/forgot-password', async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    const resetToken = await UserService.createPasswordResetToken(user.id);
+
+    if (!resetToken) {
+      res.status(500).json({ error: 'Failed to create reset token' });
+      return;
+    }
+
+    const e = await Mail.getInstance().sendPasswordResetEmail(
+      user.email,
+      resetToken,
+    );
+
+    if (!e) {
+      res.status(500).json({ error: 'Failed to send reset email' });
+      return;
+    }
+
+    res.status(200).json({ message: 'Password reset email sent' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post(
+  '/confirm-forgot-password/:token',
+  async (req: Request, res: Response) => {
+    try {
+      const token = req.params.token;
+      const newPassword = req.body.password;
+
+      if (!newPassword) {
+        res.status(400).json({ error: 'Missing new password' });
+        return;
+      }
+
+      const user = await UserService.verifyPasswordResetToken(token);
+
+      if (!user) {
+        res.status(400).json({ error: 'Invalid or expired token' });
+        return;
+      }
+
+      await UserService.updateUser(user.id, {
+        password: hashPassword(newPassword),
+      });
+
+      res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
+);
+
+router.post('/verify-email', async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (user.verifiedEmail) {
+      res.status(400).json({ error: 'Email already verified' });
+      return;
+    }
+
+    const verificationToken = await UserService.createEmailVerificationToken(
+      user.id,
+    );
+
+    if (!verificationToken) {
+      res.status(500).json({ error: 'Failed to create verification token' });
+      return;
+    }
+
+    const e = await Mail.getInstance().sendVerificationEmail(
+      user.email,
+      verificationToken,
+    );
+
+    if (!e) {
+      res.status(500).json({ error: 'Failed to send verification email' });
+      return;
+    }
+
+    res.status(200).json({ message: 'Verification email sent' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post(
+  '/confirm-verify-email/:token',
+  async (req: Request, res: Response) => {
+    try {
+      const token = req.params.token;
+
+      if (!token) {
+        res.status(400).json({ error: 'Missing verification token' });
+        return;
+      }
+
+      const user = await UserService.verifyEmailToken(token);
+
+      if (!user) {
+        console.error('Invalid or expired token');
+        res.status(400).json({ error: 'Invalid or expired token' });
+        return;
+      }
+
+      res.status(200).json({ message: 'Email verified successfully' });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   },
 );

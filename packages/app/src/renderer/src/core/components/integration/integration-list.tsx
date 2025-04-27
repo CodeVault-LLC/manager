@@ -52,9 +52,7 @@ export const IntegrationList = observer(() => {
       ),
       status: 'comingSoon',
       description: 'Connect your Apple account to sync your data.',
-      action: () => {
-        console.log('Test')
-      }
+      action: () => {}
     },
     {
       name: 'Microsoft',
@@ -73,9 +71,7 @@ export const IntegrationList = observer(() => {
       ),
       status: 'comingSoon',
       description: 'Connect your Microsoft account to sync your data.',
-      action: () => {
-        console.log('Test')
-      }
+      action: () => {}
     }
   ]
 

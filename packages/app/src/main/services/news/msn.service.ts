@@ -1,11 +1,7 @@
 import { MsnNewsResponse } from '@shared/types/msn/msn-news'
 import axios from 'axios'
-import { db } from 'src/main/database/data-source'
-import {
-  news,
-  newsProvider,
-  newsThumbnail
-} from 'src/main/database/models/schema'
+import { db } from '../../database/data-source'
+import { news, newsProvider, newsThumbnail } from '../../database/models/schema'
 
 const msnApi = axios.create({
   baseURL: 'https://api.msn.com/news/',
@@ -21,9 +17,9 @@ export const msnServices = {
       const defaultApiKey = '0QfOX3Vn51YCzitbLaRkTTBadtWpgTN8NZLW0C1SEM'
       const timeOut = 2000
       const newsSkip = 24
-      const market = 'en-us'
+      const market = 'nb-no'
 
-      const msnFeedUrl = `feed/pages/channelfeed?&timeOut=${timeOut}&apikey=${defaultApiKey}&cm=${market}&newsSkip=${newsSkip}&InterestIds=Y_3ffba0f9-b0e7-4c82-9c3c-fe7ee4f055ea`
+      const msnFeedUrl = `feed/pages/channelfeed?&timeOut=${timeOut}&apikey=${defaultApiKey}&cm=${market}&newsSkip=${newsSkip}&InterestIds=Y_44160fb4-334d-431d-8a3c-9777dbc8a82d`
 
       const response = await msnApi.get<MsnNewsResponse>(msnFeedUrl)
 
@@ -44,18 +40,20 @@ export const msnServices = {
                 publishedDate: new Date(card.publishedDateTime),
                 summary: card.abstract
               })
-              .returning()[0]
+              .returning({ id: news.id })
+
+            console.log('newsResult', newsResult)
 
             await tx.insert(newsProvider).values({
               brandId: card.provider.id,
               brandName: card.provider.name,
-              newsId: newsResult.id,
+              newsId: newsResult[0].id.toString(),
               brandLogoUrl: card.provider.logoUrl,
               brandUrl: ''
             })
 
             await tx.insert(newsThumbnail).values({
-              newsId: newsResult.id,
+              newsId: newsResult[0].id.toString(),
               originalHeight: card.images[0].height,
               originalWidth: card.images[0].width,
               originalUrl: card.images[0].url,

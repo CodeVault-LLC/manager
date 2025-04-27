@@ -28,6 +28,7 @@ export interface ISystemStore {
   getBrowserInitial(): void
   doBrowserRefresh(): void
   subscribeToSystemStatistics(): void
+  unsubscribeFromSystemStatistics(): void
 
   fetchInitial: () => void
 }
@@ -56,7 +57,8 @@ export class SystemStore implements ISystemStore {
   systemStatistics: ISystemStatistics = {
     cpu: 0,
     memory: 0,
-    disk: [],
+    disk: 0,
+    network: { received: 0, transmitted: 0 },
     uptime: 0,
     pid: 0
   }
@@ -70,7 +72,8 @@ export class SystemStore implements ISystemStore {
 
       // action
       toggleNewUserPopup: action,
-      setTheme: action
+      setTheme: action,
+      setSystemStatistics: action
     })
   }
 
@@ -180,10 +183,23 @@ export class SystemStore implements ISystemStore {
     this.browsers = browsers
   }
 
+  setSystemStatistics = (data: ISystemStatistics) => {
+    this.systemStatistics = data
+  }
+
   subscribeToSystemStatistics = () => {
-    ipcClient.on('system:statistics', (data) => {
-      console.log('System statistics', data)
-      this.systemStatistics = data as unknown as ISystemStatistics
+    const listeners = ipcClient.listeners('system:statistics')
+    if (listeners.length > 0) {
+      console.warn('Listener already registered for system:statistics')
+      return
+    }
+
+    ipcClient.on('system:statistics', (_, data) => {
+      this.setSystemStatistics(data)
     })
+  }
+
+  unsubscribeFromSystemStatistics = () => {
+    ipcClient.removeAll('system:statistics')
   }
 }

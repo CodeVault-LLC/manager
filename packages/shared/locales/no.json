@@ -12,7 +12,8 @@
     "browsers": "Nettlesere",
     "installed": "Installert",
     "sync": "Synkroniser",
-    "settings": "Innstillinger"
+    "settings": "Innstillinger",
+    "forgotPassword": "Glemt passord?"
   },
   "navigation": {
     "home": "Hjem",
@@ -31,7 +32,10 @@
       "revokeAllSessions": "Tilbakekall alle økter",
       "revokeAllSessionsWarning": "Dette vil logge deg ut fra alle enheter bortsett fra den du bruker nå. Denne handlingen kan ikke angres.",
       "revoke": "Tilbakekall"
-    }
+    },
+    "emailVerificationTooltip": "E-postadresse bekreftet for kontosikkerhet",
+    "notVerifiedEmailInfo": "E-postadressen din er ikke bekreftet. Bekreft e-posten din for å sikre kontoen din og få full tilgang.",
+    "verifyEmail": "Bekreft e-post"
   },
   "settings": {
     "navigation": {
@@ -79,12 +83,33 @@
     "confirmPassword": {
       "label": "Bekreft passord",
       "placeholder": "Bekreft ditt passord"
-    }
+    },
+    "rememberMe": "Husk meg"
   },
   "entertainment": {
     "manga": {
       "title": "Manga",
       "description": "Finn og les manga fra forskjellige kilder."
     }
+  },
+  "news": {
+    "category": {
+      "money": "Penger",
+      "business": "Bedrift",
+      "technology": "Teknologi",
+      "health": "Helse"
+    }
+  },
+  "system": {
+    "statistics": {
+      "cpuUsage": "CPU-bruk",
+      "memoryUsage": "Minnebruk",
+      "diskUsage": "Diskbruk",
+      "networkUsage": "Nettverksbruk",
+      "uptime": "Oppetid"
+    }
+  },
+  "error": {
+    "invalidToken": "Ugyldig eller utløpt bekreftelsestoken"
   }
 }

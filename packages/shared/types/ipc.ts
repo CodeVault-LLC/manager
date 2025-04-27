@@ -20,6 +20,11 @@ export interface IpcHandlers {
     sessionId: string
   ) => Promise<TCommunicationResponse<boolean>>;
 
+  "user:verifyEmail": () => Promise<TCommunicationResponse<boolean>>;
+  "user:verifyEmailToken": (
+    token: string
+  ) => Promise<TCommunicationResponse<boolean>>;
+
   "note:all": () => Promise<TCommunicationResponse<TNotePage[]>>;
   "note:getNote": (id: number) => Promise<TCommunicationResponse<INote>>;
   "note:createNote": (note: INote) => Promise<TCommunicationResponse<INote>>;

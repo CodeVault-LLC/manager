@@ -7,6 +7,10 @@ import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { Button } from './ui/button'
 import { useForm } from '@tanstack/react-form'
 import { useI18n } from '@renderer/hooks/use-i18n'
+import { VerifiedIcon } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
+import { Alert } from './ui/alert'
+import { Link } from '@tanstack/react-router'
 
 type UserEditFieldsProps = {
   onSubmit?: <T>(values: T) => Promise<void>
@@ -15,7 +19,7 @@ type UserEditFieldsProps = {
   password?: boolean
 }
 
-export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
+export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
   const { t } = useI18n()
   const { isUserLoggedIn, currentUser } = useUser()
 
@@ -26,7 +30,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
       username: currentUser?.username,
       email: currentUser?.email,
       password: '' as string | undefined,
-      avatar: null as File | null,
+      avatar: null as File | null
     } as const,
     onSubmit: async ({ value }) => {
       if (props.onSubmit) {
@@ -40,7 +44,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={e => {
+      onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
         handleSubmit()
@@ -57,7 +61,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
                 placeholder={t('forms.firstName.placeholder')}
                 required
                 autoComplete="given-name"
-                onChange={e => handleChange(() => e.target.value)}
+                onChange={(e) => handleChange(() => e.target.value)}
                 onBlur={handleBlur}
               />
             </div>
@@ -74,7 +78,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
                 placeholder={t('forms.lastName.placeholder')}
                 required
                 autoComplete="family-name"
-                onChange={e => handleChange(e.target.value)}
+                onChange={(e) => handleChange(e.target.value)}
                 onBlur={handleBlur}
               />
             </div>
@@ -94,7 +98,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
               name="username"
               autoComplete="username"
               required
-              onChange={e => handleChange(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               onBlur={handleBlur}
             />
           </div>
@@ -105,7 +109,23 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
         name="email"
         children={({ state, handleChange, handleBlur }) => (
           <div className="grid gap-2">
-            <Label htmlFor="email">{t('forms.email.label')}</Label>
+            <div className="flex flex-row gap-2 items-center">
+              <Label htmlFor="email">{t('forms.email.label')}</Label>
+              {currentUser?.verified_email && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <VerifiedIcon
+                      className="text-green-600 dark:text-green-500"
+                      size={16}
+                    />
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    {t('user.emailVerificationTooltip')}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
             <Input
               defaultValue={state.value}
               type="email"
@@ -113,9 +133,24 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
               name="email"
               autoComplete="email"
               required
-              onChange={e => handleChange(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               onBlur={handleBlur}
             />
+
+            {!currentUser?.verified_email && (
+              <Alert variant={'warning'} className="w-full">
+                <div className="flex flex-row gap-2 items-center justify-between">
+                  {t('user.notVerifiedEmailInfo')}
+
+                  <Link
+                    to="/verify-email"
+                    className="text-sm text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400"
+                  >
+                    {t('user.verifyEmail')}
+                  </Link>
+                </div>
+              </Alert>
+            )}
           </div>
         )}
       />
@@ -132,7 +167,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
                 placeholder={t('forms.password.placeholder')}
                 required
                 name="password"
-                onChange={e => handleChange(e.target.value)}
+                onChange={(e) => handleChange(e.target.value)}
                 onBlur={handleBlur}
               />
             </div>
@@ -141,18 +176,21 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer(props => {
       )}
 
       {props.avatar && (
-        <Field name='avatar' children={({ handleChange }) => (
-          <div className="grid gap-2">
-            <Label htmlFor="avatar">{t('forms.avatar.label')}</Label>
-            <Input
-              type="file"
-              required
-              accept="image/*"
-              name="avatar"
-              onChange={e => handleChange(e.target.files?.[0] || null)}
-            />
-          </div>
-        )} />
+        <Field
+          name="avatar"
+          children={({ handleChange }) => (
+            <div className="grid gap-2">
+              <Label htmlFor="avatar">{t('forms.avatar.label')}</Label>
+              <Input
+                type="file"
+                required
+                accept="image/*"
+                name="avatar"
+                onChange={(e) => handleChange(e.target.files?.[0] || null)}
+              />
+            </div>
+          )}
+        />
       )}
 
       <Button type="submit" className="w-full">

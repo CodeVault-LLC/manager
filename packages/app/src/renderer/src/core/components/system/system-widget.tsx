@@ -4,22 +4,42 @@ import { FC } from 'react'
 import { LoadingSpinner } from '../loader/loading-spinner'
 import { observer } from 'mobx-react'
 import { useSystem } from '@renderer/hooks'
+import { useI18n } from '@renderer/hooks/use-i18n'
+
+const formatUptime = (seconds: number) => {
+  const weeks = Math.floor(seconds / 604800)
+  const days = Math.floor((seconds % 604800) / 86400)
+  const hrs = Math.floor((seconds % 86400) / 3600)
+  const mins = Math.floor((seconds % 3600) / 60)
+  const secs = seconds % 60
+
+  const formattedUptime: string[] = []
+  if (weeks > 0) formattedUptime.push(`${weeks}w`)
+  if (days > 0) formattedUptime.push(`${days}d`)
+  if (hrs > 0) formattedUptime.push(`${hrs}h`)
+  if (mins > 0) formattedUptime.push(`${mins}m`)
+  if (secs > 0) formattedUptime.push(`${secs}s`)
+
+  return formattedUptime.join(' ')
+}
 
 export const SystemWidget: FC = observer(() => {
+  const { t } = useI18n()
   const { systemStatistics } = useSystem()
 
   return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
+    <div className="grid sm:grid-cols-1 grid-cols-1 gap-4 sm:gap-6 w-full lg:grid-cols-1 xl:grid-cols-4">
+      {/* CPU */}
       <Card>
         <CardContent className="pt-4">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              CPU Load
+              {t('system.statistics.cpuUsage')}
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              {systemStatistics?.cpu ? (
-                <h3 className="textlg sm:text-2xl font-medium">
-                  {systemStatistics?.cpu}%
+              {systemStatistics?.cpu !== undefined ? (
+                <h3 className="text-lg sm:text-2xl font-medium">
+                  {systemStatistics.cpu.toFixed(2)}%
                 </h3>
               ) : (
                 <LoadingSpinner className="size-6" />
@@ -30,16 +50,17 @@ export const SystemWidget: FC = observer(() => {
         </CardContent>
       </Card>
 
+      {/* Memory */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Memory Usage
+              {t('system.statistics.memoryUsage')}
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              {systemStatistics?.memory ? (
-                <h3 className="textlg sm:text-2xl font-medium">
-                  {systemStatistics?.memory}%
+              {systemStatistics?.memory !== undefined ? (
+                <h3 className="text-lg sm:text-2xl font-medium">
+                  {systemStatistics.memory.toFixed(2)}%
                 </h3>
               ) : (
                 <LoadingSpinner className="size-6" />
@@ -50,49 +71,44 @@ export const SystemWidget: FC = observer(() => {
         </CardContent>
       </Card>
 
+      {/* Disk */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Disk Usage
+              {t('system.statistics.diskUsage')}
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              {systemStatistics?.disk[0]?.load ? (
-                <h3 className="text-xl sm:text-2xl font-medium">
-                  {systemStatistics?.disk[0]?.load}%
+              {systemStatistics?.disk !== undefined ? (
+                <h3 className="text-lg sm:text-2xl font-medium">
+                  {systemStatistics.disk.toFixed(2)}%
                 </h3>
               ) : (
                 <LoadingSpinner className="size-6" />
               )}
             </div>
-            <Progress
-              value={systemStatistics?.disk[0]?.load}
-              className="mt-6"
-            />
+            <Progress value={systemStatistics?.disk} className="mt-6" />
           </div>
         </CardContent>
       </Card>
 
+      {/* Uptime */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Uptime
+              {t('system.statistics.uptime')}
             </p>
             <div className="mt-1 flex items-center gap-x-2">
-              {systemStatistics?.uptime ? (
+              {systemStatistics?.uptime !== undefined ? (
                 <h3 className="text-lg sm:text-2xl font-medium">
-                  {Math.floor(systemStatistics?.uptime / 60)}m
+                  {formatUptime(systemStatistics.uptime)}
                 </h3>
               ) : (
                 <LoadingSpinner className="size-6" />
               )}
             </div>
-            <Progress
-              value={systemStatistics?.uptime}
-              max={100}
-              className="mt-6"
-            />
+            {/* No progress bar for uptime needed, you can remove this */}
           </div>
         </CardContent>
       </Card>

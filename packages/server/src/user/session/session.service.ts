@@ -54,8 +54,6 @@ export const SessionService = {
   async retrieveSessionByToken(
     sessionToken: string,
   ): Promise<Session | undefined> {
-    console.log(sessionToken);
-
     const session = await db.query.sessions.findFirst({
       where: eq(sessions.sessionToken, sessionToken),
     });
