@@ -18,82 +18,108 @@ type TAuthenticationWrapper = {
 export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer(
   (props) => {
     const navigate = useNavigate()
-
     const { children, pageType = EPageTypes.AUTHENTICATED } = props
+
     const {
       isLoading: isUserLoading,
       currentUser,
       fetchCurrentUser
     } = useUser()
-    const { fetchWidgets: getWidgets } = useDashboard()
-    const { getError, errors } = useError()
+    const { fetchWidgets } = useDashboard()
+    const { getError } = useError()
+
+    // Helper to get redirect URL
+    const getWorkspaceRedirectionUrl = (): string => {
+      return '/'
+      // You can expand this if you want to handle workspace slugs
+    }
 
     useEffect(() => {
-      if (
-        getError(EErrorCodes.UNAUTHORIZED) &&
-        pageType === EPageTypes.AUTHENTICATED
-      ) {
+      if (isUserLoading) return
+
+      const unauthorizedError = getError(EErrorCodes.UNAUTHORIZED)
+      const networkError = getError(EErrorCodes.NETWORK_ERROR)
+
+      if (networkError) {
+        return // Don't navigate if there's a network error
+      }
+
+      if (unauthorizedError && pageType === EPageTypes.AUTHENTICATED) {
         navigate({ to: '/login' })
         return
       }
 
-      if (!currentUser?.id && !isUserLoading) {
+      if (!currentUser?.id) {
         fetchCurrentUser()
-
-        getWidgets()
         return
       }
 
-      return
-    }, [currentUser, errors])
+      if (pageType === EPageTypes.NON_AUTHENTICATED && currentUser?.id) {
+        const redirectionRoute = getWorkspaceRedirectionUrl()
+        navigate({ to: redirectionRoute })
+        return
+      }
 
-    const getWorkspaceRedirectionUrl = (): string => {
-      let redirectionRoute = '/'
+      if (pageType === EPageTypes.AUTHENTICATED && !currentUser?.id) {
+        navigate({ to: '/login' })
+        return
+      }
 
-      // validate the current workspace_slug is available in the user's workspace list
-      /*const isCurrentWorkspaceValid = Object.values(workspaces || {}).findIndex(
-      (workspace) => workspace.slug === currentWorkspaceSlug
-    )
+      // After user is available and no errors, fetch widgets
+      if (currentUser?.id) {
+        fetchWidgets()
+      }
+    }, [
+      currentUser,
+      isUserLoading,
+      navigate,
+      pageType,
+      getError,
+      fetchCurrentUser,
+      fetchWidgets
+    ])
 
-    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`*/
-
-      return redirectionRoute
-    }
-
-    if (getError(EErrorCodes.NETWORK_ERROR)) {
+    // Handle network error view separately
+    const networkError = getError(EErrorCodes.NETWORK_ERROR)
+    if (networkError) {
       return <NetworkError />
     }
 
-    if (isUserLoading && !currentUser?.id)
+    // Show loading spinner while user is loading
+    if (isUserLoading && !currentUser?.id) {
       return (
         <div className="relative flex h-screen w-full items-center justify-center">
           <LoadingSpinner />
         </div>
       )
+    }
 
-    if (pageType === EPageTypes.PUBLIC) return <>{children}</>
+    // Handle PUBLIC pages (accessible always)
+    if (pageType === EPageTypes.PUBLIC) {
+      return <>{children}</>
+    }
 
+    // Handle NON_AUTHENTICATED pages
     if (pageType === EPageTypes.NON_AUTHENTICATED) {
       if (!currentUser?.id) {
         return <>{children}</>
       } else {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl()
-        navigate({ to: currentRedirectRoute })
-        return <></>
+        // Redirect handled in useEffect
+        return null
       }
     }
 
+    // Handle AUTHENTICATED pages
     if (pageType === EPageTypes.AUTHENTICATED) {
-      if (currentUser?.id && !isUserLoading) {
+      if (currentUser?.id) {
         return <>{children}</>
-      } else if (!isUserLoading) {
-        return <></>
       } else {
-        navigate({ to: '/login' })
-        return <></>
+        // Redirect handled in useEffect
+        return null
       }
     }
 
+    // Fallback (should never happen)
     return <>{children}</>
   }
 )
