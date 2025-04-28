@@ -14,7 +14,12 @@
     "sync": "Synkroniser",
     "settings": "Innstillinger",
     "forgotPassword": "Glemt passord?",
-    "verificationCode": "Bekreftelseskode"
+    "verificationCode": "Bekreftelseskode",
+    "overview": "Oversikt",
+    "hardware": "Maskinvare",
+    "network": "Nettverk",
+    "storage": "Lagring",
+    "security": "Sikkerhet"
   },
   "navigation": {
     "home": "Hjem",
@@ -100,14 +105,7 @@
       "description": "Finn og les manga fra forskjellige kilder."
     }
   },
-  "news": {
-    "category": {
-      "money": "Penger",
-      "business": "Bedrift",
-      "technology": "Teknologi",
-      "health": "Helse"
-    }
-  },
+  "news": {},
   "system": {
     "statistics": {
       "cpuUsage": "CPU-bruk",

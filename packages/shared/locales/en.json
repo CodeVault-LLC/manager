@@ -14,7 +14,12 @@
     "sync": "Sync",
     "settings": "Settings",
     "forgotPassword": "Forgot Password?",
-    "verificationCode": "Verification Code"
+    "verificationCode": "Verification Code",
+    "overview": "Overview",
+    "hardware": "Hardware",
+    "network": "Network",
+    "storage": "Storage",
+    "security": "Security"
   },
   "navigation": {
     "home": "Home",
@@ -118,14 +123,7 @@
       "description": "Find and read manga from various sources."
     }
   },
-  "news": {
-    "category": {
-      "money": "Money",
-      "business": "Business",
-      "technology": "Technology",
-      "health": "Health"
-    }
-  },
+  "news": {},
   "system": {
     "statistics": {
       "cpuUsage": "CPU Usage",
