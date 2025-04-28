@@ -13,66 +13,72 @@ import { TeamSwitcher } from './sidebar-workspace'
 import { NavUser } from './sidebar-user'
 import { useUser } from '@renderer/hooks'
 import { observer } from 'mobx-react'
-
-const data: {
-  teams: {
-    name: string
-    logo: React.ComponentType
-    plan: string
-  }[]
-  navMain: NavMainProps['items']
-} = {
-  teams: [
-    {
-      name: 'Design Engineering',
-      logo: Frame,
-      plan: 'Team'
-    }
-  ],
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '/',
-      icon: PieChart,
-      isActive: false,
-      items: [
-        {
-          title: 'Overview',
-          url: '/'
-        }
-      ]
-    },
-    {
-      // Entertainment (e.g. games, movies, etc.)
-      title: 'Entertainment',
-      url: '/entertainment',
-      icon: SquareTerminal,
-      isActive: false,
-      items: [
-        {
-          title: 'Manga',
-          url: '/entertainment/manga'
-        }
-      ]
-    },
-    {
-      title: "System",
-      url: '/system/browsers',
-      icon: SquareTerminal,
-      items: [
-        {
-          title: 'Browsers',
-          url: '/system/browsers'
-        }
-      ]
-    }
-  ]
-}
+import { useI18n } from '@renderer/hooks/use-i18n'
 
 export const AppSidebar = observer((props: { className?: string }) => {
   const { isUserLoggedIn } = useUser()
+  const { t } = useI18n()
 
   if (!isUserLoggedIn) return null
+
+  const data: {
+    teams: {
+      name: string
+      logo: React.ComponentType
+      plan: string
+    }[]
+    navMain: NavMainProps['items']
+  } = {
+    teams: [
+      {
+        name: 'Design Engineering',
+        logo: Frame,
+        plan: 'Team'
+      }
+    ],
+    navMain: [
+      {
+        title: 'Dashboard',
+        url: '/',
+        icon: PieChart,
+        isActive: false,
+        items: [
+          {
+            title: t('common.overview'),
+            url: '/'
+          }
+        ]
+      },
+      {
+        // Entertainment (e.g. games, movies, etc.)
+        title: 'Entertainment',
+        url: '/entertainment',
+        icon: SquareTerminal,
+        isActive: false,
+        items: [
+          {
+            title: 'Manga',
+            url: '/entertainment/manga'
+          }
+        ]
+      },
+      {
+        title: 'System',
+        url: '/system/browsers',
+        icon: SquareTerminal,
+        items: [
+          {
+            title: t('common.overview'),
+            url: '/system'
+          },
+          {
+            title: t('common.browsers'),
+            url: '/system/browsers'
+          }
+        ]
+      }
+    ]
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>

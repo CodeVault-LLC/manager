@@ -2,6 +2,7 @@ import { MsnNewsResponse } from '@shared/types/msn/msn-news'
 import axios from 'axios'
 import { db } from '../../database/data-source'
 import { news, newsProvider, newsThumbnail } from '../../database/models/schema'
+import { desc } from 'drizzle-orm'
 
 const msnApi = axios.create({
   baseURL: 'https://api.msn.com/news/',
@@ -45,10 +46,10 @@ export const msnServices = {
             console.log('newsResult', newsResult)
 
             await tx.insert(newsProvider).values({
-              brandId: card.provider.id,
-              brandName: card.provider.name,
-              newsId: newsResult[0].id.toString(),
-              brandLogoUrl: card.provider.logoUrl,
+              brandId: card.provider?.id,
+              brandName: card.provider?.name,
+              newsId: newsResult[0]?.id?.toString(),
+              brandLogoUrl: card.provider?.logoUrl,
               brandUrl: ''
             })
 
@@ -70,12 +71,30 @@ export const msnServices = {
           provider: true,
           thumbnail: true
         },
+        orderBy: [desc(news.publishedDate)],
         limit: 15
       })
 
       return newsResult
     } catch (error) {
       throw new Error('Error fetching news from MSN API')
+    }
+  },
+
+  getLatestNews: async (limit = 15) => {
+    try {
+      const newsResult = await db.query.news.findMany({
+        with: {
+          provider: true,
+          thumbnail: true
+        },
+        orderBy: [desc(news.publishedDate)],
+        limit
+      })
+
+      return newsResult
+    } catch (error) {
+      throw new Error('Error fetching news from database')
     }
   }
 }

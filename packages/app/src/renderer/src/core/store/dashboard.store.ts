@@ -16,6 +16,7 @@ export interface IDashboardStore {
   ) => Promise<IDashboardWidget<any> | undefined>
 
   fetchNews: () => void
+  openNews: (url: string) => void
 
   hydrate: (data: any) => void
 }
@@ -109,6 +110,15 @@ export class DashboardStore implements IDashboardStore {
       toast.error('Failed to fetch news')
     } finally {
       this.isLoading = false
+    }
+  }
+
+  openNews = async (url: string) => {
+    try {
+      await ipcClient.invoke('msn:open', url)
+    } catch (error) {
+      console.error('Failed to open news', error)
+      toast.error('Failed to open news')
     }
   }
 }

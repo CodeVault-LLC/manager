@@ -5,6 +5,7 @@ import {
   ETheme,
   IBrowser,
   ISystem,
+  ISystemHardware,
   ISystemStatistics
 } from '@shared/types/system'
 import { ipcClient } from '@renderer/utils/ipcClient'
@@ -13,6 +14,7 @@ export interface ISystemStore {
   // observables
   isNewUserPopup: boolean
   system: ISystem
+  hardware: ISystemHardware | null
 
   browsers: IBrowser[]
 
@@ -29,6 +31,8 @@ export interface ISystemStore {
   doBrowserRefresh(): void
   subscribeToSystemStatistics(): void
   unsubscribeFromSystemStatistics(): void
+
+  getSystemHardware(): void
 
   fetchInitial: () => void
 }
@@ -52,12 +56,13 @@ export class SystemStore implements ISystemStore {
     ]
   }
 
+  hardware: ISystemHardware | null = null
   browsers: IBrowser[] = []
 
   systemStatistics: ISystemStatistics = {
-    cpu: 0,
-    memory: 0,
-    disk: 0,
+    cpu: { current: 0, average: 0 },
+    memory: { current: 0, average: 0 },
+    disk: { current: 0, average: 0 },
     network: { received: 0, transmitted: 0 },
     uptime: 0,
     pid: 0
@@ -68,6 +73,7 @@ export class SystemStore implements ISystemStore {
       // observables
       isNewUserPopup: observable.ref,
       system: observable.shallow,
+      hardware: observable.shallow,
       systemStatistics: observable.shallow,
 
       // action
@@ -154,6 +160,16 @@ export class SystemStore implements ISystemStore {
         this.setBrowsers(response.data)
       } else {
         console.error('getting initial browser data error', response.error)
+      }
+    })
+  }
+
+  getSystemHardware = (): void => {
+    ipcClient.invoke('system:getHardware').then((response) => {
+      if (response.data) {
+        this.hardware = response.data
+      } else {
+        console.error('getting initial system data error', response.error)
       }
     })
   }

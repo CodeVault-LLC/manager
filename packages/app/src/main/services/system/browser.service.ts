@@ -52,6 +52,7 @@ export const browserList = [
     }
   }
 ]
+
 export const loadBrowserServices = () => {
   const isBrowserInstalled = (browser: IBrowser) => {
     const paths = browser.paths[process.platform]

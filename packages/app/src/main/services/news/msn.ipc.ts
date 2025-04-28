@@ -2,23 +2,20 @@ import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { INews } from '@shared/types/news'
 import { ipcMain } from 'electron'
-import { db } from '../../database/data-source'
 import { msnServices } from './msn.service'
+import { shell } from 'electron'
 
 export const loadMsnServices = async () => {
   ipcMain.handle(
     'msn:news',
     async (): Promise<TCommunicationResponse<INews[]>> => {
       try {
-        const news = await db.query.news.findMany({
-          with: {
-            provider: true,
-            thumbnail: true
-          },
-          limit: 15
-        })
+        const news = await msnServices.getLatestNews()
 
-        if (news.length === 0) {
+        if (
+          news.length === 0 ||
+          news[0]?.publishedDate < new Date(Date.now() - 60 * 60 * 1000)
+        ) {
           const news = await msnServices.requestLatestNews()
 
           return {
@@ -84,4 +81,22 @@ export const loadMsnServices = async () => {
       }
     }
   )
+
+  ipcMain.handle('msn:open', async (_, url: string) => {
+    try {
+      await shell.openExternal(url)
+
+      return {
+        data: true
+      }
+    } catch (error) {
+      console.error('Failed to open URL', error)
+      return {
+        error: {
+          code: EErrorCodes.FORBIDDEN,
+          message: 'error.forbidden'
+        }
+      }
+    }
+  })
 }

@@ -29,9 +29,18 @@ export const loadSystemSockets = (mainWindow: BrowserWindow) => {
     const networkStats = await getNetworkUsage()
 
     const statistics: ISystemStatistics = {
-      cpu: load.currentLoad,
-      memory: memoryUsage,
-      disk: diskUsage,
+      cpu: {
+        average: load.avgLoad,
+        current: load.currentLoad
+      },
+      memory: {
+        current: memoryUsage,
+        average: 0
+      },
+      disk: {
+        current: diskUsage,
+        average: 0
+      },
       network: networkStats,
       uptime: uptimeSeconds,
       pid: process.pid

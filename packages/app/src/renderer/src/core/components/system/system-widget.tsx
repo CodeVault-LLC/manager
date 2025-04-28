@@ -38,14 +38,20 @@ export const SystemWidget: FC = observer(() => {
             </p>
             <div className="mt-1 flex items-center gap-x-2">
               {systemStatistics?.cpu !== undefined ? (
-                <h3 className="text-lg sm:text-2xl font-medium">
-                  {systemStatistics.cpu.toFixed(2)}%
-                </h3>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-lg sm:text-2xl font-medium">
+                    {systemStatistics.cpu.current.toFixed(2)}%
+                  </h3>
+
+                  <span className="text-xs text-muted-foreground">
+                    Average {systemStatistics.cpu.average.toFixed(2)}%
+                  </span>
+                </div>
               ) : (
                 <LoadingSpinner className="size-6" />
               )}
             </div>
-            <Progress value={systemStatistics?.cpu} className="mt-6" />
+            <Progress value={systemStatistics?.cpu.current} className="mt-6" />
           </div>
         </CardContent>
       </Card>
@@ -59,14 +65,23 @@ export const SystemWidget: FC = observer(() => {
             </p>
             <div className="mt-1 flex items-center gap-x-2">
               {systemStatistics?.memory !== undefined ? (
-                <h3 className="text-lg sm:text-2xl font-medium">
-                  {systemStatistics.memory.toFixed(2)}%
-                </h3>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-lg sm:text-2xl font-medium">
+                    {systemStatistics.memory.current.toFixed(2)}%
+                  </h3>
+
+                  <span className="text-xs text-muted-foreground">
+                    Average {systemStatistics.memory.average.toFixed(2)}%
+                  </span>
+                </div>
               ) : (
                 <LoadingSpinner className="size-6" />
               )}
             </div>
-            <Progress value={systemStatistics?.memory} className="mt-6" />
+            <Progress
+              value={systemStatistics?.memory.current}
+              className="mt-6"
+            />
           </div>
         </CardContent>
       </Card>
@@ -80,14 +95,20 @@ export const SystemWidget: FC = observer(() => {
             </p>
             <div className="mt-1 flex items-center gap-x-2">
               {systemStatistics?.disk !== undefined ? (
-                <h3 className="text-lg sm:text-2xl font-medium">
-                  {systemStatistics.disk.toFixed(2)}%
-                </h3>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-lg sm:text-2xl font-medium">
+                    {systemStatistics.disk.current.toFixed(2)}%
+                  </h3>
+
+                  <span className="text-xs text-muted-foreground">
+                    Average {systemStatistics.disk.average.toFixed(2)}%
+                  </span>
+                </div>
               ) : (
                 <LoadingSpinner className="size-6" />
               )}
             </div>
-            <Progress value={systemStatistics?.disk} className="mt-6" />
+            <Progress value={systemStatistics?.disk.current} className="mt-6" />
           </div>
         </CardContent>
       </Card>
