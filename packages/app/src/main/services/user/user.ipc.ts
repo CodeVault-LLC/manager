@@ -1,10 +1,10 @@
-import { ISession, IUser } from '@shared/types/users'
-import { ipcMain } from 'electron'
-import { api } from './api.service'
-import { EErrorCodes } from '@shared/helpers'
+import { ISession, IUser } from '@shared/types'
 import { TCommunicationResponse } from '@shared/types/ipc'
+import { ipcMain } from 'electron'
+import { api } from '../api.service'
+import { EErrorCodes } from '@shared/helpers'
 
-const loadUserServices = () => {
+export const registerUserIPC = () => {
   ipcMain.handle(
     'user:adminDetails',
     async (): Promise<TCommunicationResponse<IUser>> => {
@@ -168,5 +168,3 @@ const loadUserServices = () => {
     }
   )
 }
-
-export { loadUserServices }

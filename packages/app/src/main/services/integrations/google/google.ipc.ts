@@ -1,9 +1,9 @@
-import { ipcMain, shell } from 'electron'
+import { api } from '@main/services/api.service'
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
-import { api } from '../api.service'
+import { ipcMain, shell } from 'electron'
 
-const loadGoogleServices = () => {
+export const registerGoogleIPC = () => {
   ipcMain.handle(
     'auth:google',
     async (): Promise<TCommunicationResponse<boolean>> => {
@@ -52,23 +52,3 @@ const loadGoogleServices = () => {
     }
   )
 }
-
-const handleGoogleAuthCallback = (urlObj: URL) => {
-  const success = urlObj.searchParams.get('success')
-  console.log('success', success)
-
-  if (success) {
-    ipcMain.emit('auth:google:callback', {
-      data: true
-    })
-  } else {
-    ipcMain.emit('auth:google:callback', {
-      error: {
-        code: EErrorCodes.FORBIDDEN,
-        message: 'error.forbidden'
-      }
-    })
-  }
-}
-
-export { loadGoogleServices, handleGoogleAuthCallback }

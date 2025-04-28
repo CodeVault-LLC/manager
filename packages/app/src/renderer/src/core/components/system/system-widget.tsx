@@ -11,7 +11,7 @@ const formatUptime = (seconds: number) => {
   const days = Math.floor((seconds % 604800) / 86400)
   const hrs = Math.floor((seconds % 86400) / 3600)
   const mins = Math.floor((seconds % 3600) / 60)
-  const secs = seconds % 60
+  const secs = Math.round(seconds % 60)
 
   const formattedUptime: string[] = []
   if (weeks > 0) formattedUptime.push(`${weeks}w`)

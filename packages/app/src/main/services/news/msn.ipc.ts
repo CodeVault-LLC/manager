@@ -4,13 +4,16 @@ import { INews } from '@shared/types/news'
 import { ipcMain } from 'electron'
 import { msnServices } from './msn.service'
 import { shell } from 'electron'
+import logger from '@main/logger'
 
-export const loadMsnServices = async () => {
+export const registerMsnIPC = async () => {
   ipcMain.handle(
     'msn:news',
     async (): Promise<TCommunicationResponse<INews[]>> => {
       try {
         const news = await msnServices.getLatestNews()
+
+        console.log('MSN news', news)
 
         if (
           news.length === 0 ||
@@ -71,7 +74,10 @@ export const loadMsnServices = async () => {
           })
         }
       } catch (error) {
-        console.error('Failed to fetch news', error)
+        logger.error('Failed to fetch news', {
+          error
+        })
+
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -90,7 +96,10 @@ export const loadMsnServices = async () => {
         data: true
       }
     } catch (error) {
-      console.error('Failed to open URL', error)
+      logger.error('Failed to open URL', {
+        error
+      })
+
       return {
         error: {
           code: EErrorCodes.FORBIDDEN,

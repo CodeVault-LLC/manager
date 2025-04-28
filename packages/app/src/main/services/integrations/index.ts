@@ -1,5 +1,5 @@
-import { loadGoogleServices } from './google.service'
+import { registerGoogleIPC } from './google'
 
-export const loadIntegrations = () => {
-  loadGoogleServices()
+export const registerIntegrations = () => {
+  registerGoogleIPC()
 }

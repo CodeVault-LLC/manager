@@ -4,6 +4,7 @@ import { API_BASE_URL } from '@shared/constants'
 import { getSystemVersion } from '../utils/system.helper'
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
+import logger from '@main/logger'
 
 export let api = axios.create({
   baseURL: API_BASE_URL,
@@ -27,6 +28,11 @@ api.interceptors.response.use(
   (response) => response,
   (error): Promise<TCommunicationResponse<null>> => {
     if (!error.response) {
+      logger.error('Network error', {
+        error: error.message,
+        config: error.config
+      })
+
       return Promise.reject({
         error: {
           code: EErrorCodes.NETWORK_ERROR,
@@ -38,10 +44,15 @@ api.interceptors.response.use(
 
     const status = error.response.status
 
-    console.error(
-      `ERROR API [${status}]: ${error.response.config.method?.toUpperCase()} ${
+    logger.error(
+      `API [${status}]: ${error.response.config.method?.toUpperCase()} ${
         error.response.config.url
-      } - ${error.response.data?.message || error.message}`
+      } - ${error.response.data?.message || error.message}`,
+      {
+        error: error.message,
+        config: error.config,
+        data: error.response.data
+      }
     )
 
     switch (status) {

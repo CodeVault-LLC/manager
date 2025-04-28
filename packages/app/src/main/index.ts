@@ -2,17 +2,16 @@ import { app, shell, BrowserWindow } from 'electron'
 import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { loadAuthServices } from './services/auth.service'
-import { loadUserServices } from './services/user.service'
 import { ConfStorage } from './store'
 import { loadNoteServices } from './services/note.service'
 import handleDeepLink from './deep-link'
-import { loadSystemIntegrations } from './services/system'
-import { loadIntegrations } from './services/integrations'
 import { loadSystemSockets } from './sockets/system.socket'
 import { loadDashboardServices } from './services/dashboard.service'
 import { runMigrations } from './database/data-source'
-import { loadMsnServices } from './services/news/msn.ipc'
+import { registerMsnIPC } from './services/news/msn.ipc'
+import { registerSystemIPC } from './services/system'
+import { registerAuthIPC, registerUserIPC } from './services/user'
+import { registerIntegrations } from './services/integrations'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -61,14 +60,15 @@ if (!gotTheLock) {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
 
-      loadAuthServices()
-      loadIntegrations()
-      loadUserServices()
+      registerAuthIPC()
+      registerUserIPC()
+
+      registerIntegrations()
       loadNoteServices()
       loadDashboardServices()
-      loadSystemIntegrations()
 
-      loadMsnServices()
+      registerSystemIPC()
+      registerMsnIPC()
     } catch (error) {
       console.error(error)
     }

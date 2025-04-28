@@ -12,6 +12,7 @@
     "types": ["electron-vite/node"],
     "baseUrl": ".",
     "paths": {
+      "@main/*": ["./src/main/*"],
       "@shared/*": ["../shared/*"]
     },
     "moduleResolution": "Bundler",
