@@ -1,3 +1,3 @@
 export type BrandIconProps = {
-  className: string
+  className?: string
 }

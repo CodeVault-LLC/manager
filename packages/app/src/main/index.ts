@@ -116,7 +116,6 @@ function createWindow(): void {
   })
 
   mainWindow.on('closed', () => {
-    // ALSO clear interval if window closes
     if (stopSystemSockets) {
       stopSystemSockets()
     }

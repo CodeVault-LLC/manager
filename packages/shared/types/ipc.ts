@@ -1,7 +1,13 @@
 import { TErrorInfo } from "helpers";
 import { IRegistrationData, ISession, IUser } from "./users";
 import { INote, TNotePage } from "./note";
-import { ETheme, IBrowser, ISystem, ISystemHardware, ISystemStatistics } from "./system";
+import {
+  ETheme,
+  IBrowser,
+  ISystem,
+  ISystemHardware,
+  ISystemStatistics,
+} from "./system";
 import { IDashboardWidget } from "./widget";
 import { INews } from "./news";
 
@@ -49,6 +55,9 @@ export interface IpcHandlers {
   ) => Promise<TCommunicationResponse<boolean>>;
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
+  "system:openExternal": (
+    url: string
+  ) => Promise<TCommunicationResponse<boolean>>;
 
   "browser:initial": () => Promise<TCommunicationResponse<IBrowser[]>>;
   "browser:refresh": () => Promise<TCommunicationResponse<IBrowser[]>>;
@@ -61,10 +70,10 @@ export interface IpcHandlers {
   ) => Promise<TCommunicationResponse<IDashboardWidget>>;
 
   "msn:news": () => Promise<TCommunicationResponse<INews[]>>;
-  "msn:open": (url: string) => Promise<TCommunicationResponse<boolean>>;
 }
 
 export interface IpcEmittedEvents {
   "auth:google:callback": (response: boolean) => void;
   "system:statistics": (data: ISystemStatistics) => void;
+  "system:inactivity": (data: { inactive: boolean; pid: number }) => void;
 }

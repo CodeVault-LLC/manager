@@ -1,6 +1,6 @@
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
-import { ipcMain } from 'electron'
+import { ipcMain, shell } from 'electron'
 import { ConfStorage } from '@main/store'
 import { ETheme, ISystem, ISystemHardware } from '@shared/types/system'
 import logger from '@main/logger'
@@ -69,6 +69,34 @@ export const registerSystemIPC = () => {
       } catch (error: any) {
         logger.error(
           `Error while getting system hardware data: ${error.message}`,
+          error
+        )
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'system:openExternal',
+    async (_, url: string): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        const validUrl = new URL(url)
+        if (!validUrl.protocol.startsWith('http')) {
+          throw new Error('Invalid URL protocol')
+        }
+
+        await shell.openExternal(validUrl.href)
+
+        return { data: true }
+      } catch (error: any) {
+        logger.error(
+          `Error while opening external link: ${error.message}`,
           error
         )
 

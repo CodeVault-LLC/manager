@@ -15,6 +15,7 @@ export interface ISystemStore {
   isNewUserPopup: boolean
   system: ISystem
   hardware: ISystemHardware | null
+  inactive: boolean
 
   browsers: IBrowser[]
 
@@ -29,10 +30,16 @@ export interface ISystemStore {
 
   getBrowserInitial(): void
   doBrowserRefresh(): void
+
   subscribeToSystemStatistics(): void
   unsubscribeFromSystemStatistics(): void
 
+  subscribeToSystemInactivity(): void
+  unsubscribeFromSystemInactivity(): void
+
   getSystemHardware(): void
+
+  openExternal: (url: string) => void
 
   fetchInitial: () => void
 }
@@ -56,6 +63,8 @@ export class SystemStore implements ISystemStore {
     ]
   }
 
+  inactive: boolean = false
+
   hardware: ISystemHardware | null = null
   browsers: IBrowser[] = []
 
@@ -76,10 +85,15 @@ export class SystemStore implements ISystemStore {
       hardware: observable.shallow,
       systemStatistics: observable.shallow,
 
+      inactive: observable,
+
       // action
       toggleNewUserPopup: action,
       setTheme: action,
-      setSystemStatistics: action
+      setSystemStatistics: action,
+      setLanguage: action,
+
+      subscribeToSystemInactivity: action
     })
   }
 
@@ -217,5 +231,29 @@ export class SystemStore implements ISystemStore {
 
   unsubscribeFromSystemStatistics = () => {
     ipcClient.removeAll('system:statistics')
+  }
+
+  subscribeToSystemInactivity = () => {
+    const listeners = ipcClient.listeners('system:inactivity')
+    if (listeners.length > 0) {
+      console.warn('Listener already registered for system:inactivity')
+      return
+    }
+
+    ipcClient.on('system:inactivity', (_, data) => {
+      this.inactive = data.inactive
+    })
+  }
+
+  unsubscribeFromSystemInactivity = () => {
+    ipcClient.removeAll('system:inactivity')
+  }
+
+  openExternal = (url: string) => {
+    ipcClient.invoke('system:openExternal', url).then((response) => {
+      if (response.error) {
+        console.error('opening external link error', response.error)
+      }
+    })
   }
 }

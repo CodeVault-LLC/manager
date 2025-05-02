@@ -1,4 +1,5 @@
 import { News } from '@renderer/core/components/news'
+import { FeaturedMatches } from '@renderer/core/components/sports/featured-matches'
 import { SystemWidget } from '@renderer/core/components/system/system-widget'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
@@ -12,6 +13,10 @@ const WorkspaceManagementPage = observer(() => {
         <SystemWidget />
 
         <News />
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <FeaturedMatches />
+        </div>
       </div>
     </AuthenticationWrapper>
   )

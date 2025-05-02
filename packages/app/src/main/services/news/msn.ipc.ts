@@ -3,7 +3,6 @@ import { TCommunicationResponse } from '@shared/types/ipc'
 import { INews } from '@shared/types/news'
 import { ipcMain } from 'electron'
 import { msnServices } from './msn.service'
-import { shell } from 'electron'
 import logger from '@main/logger'
 
 export const registerMsnIPC = async () => {
@@ -87,25 +86,4 @@ export const registerMsnIPC = async () => {
       }
     }
   )
-
-  ipcMain.handle('msn:open', async (_, url: string) => {
-    try {
-      await shell.openExternal(url)
-
-      return {
-        data: true
-      }
-    } catch (error) {
-      logger.error('Failed to open URL', {
-        error
-      })
-
-      return {
-        error: {
-          code: EErrorCodes.FORBIDDEN,
-          message: 'error.forbidden'
-        }
-      }
-    }
-  })
 }

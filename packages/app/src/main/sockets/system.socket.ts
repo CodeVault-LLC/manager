@@ -1,12 +1,17 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, powerMonitor } from 'electron'
 import { ISystemStatistics } from '@shared/types/system'
 import { getNetworkUsage } from '../utils/system.helper'
 
 import si from 'systeminformation'
 import os from 'node:os'
+import { getAppState, setAppState } from '@main/states/app-state'
 
 export const loadSystemSockets = (mainWindow: BrowserWindow) => {
   const interval = setInterval(async () => {
+    if (getAppState() !== 'active') {
+      return
+    }
+
     const load = await si.currentLoad()
 
     const memoryData = await si.mem()
@@ -51,8 +56,32 @@ export const loadSystemSockets = (mainWindow: BrowserWindow) => {
     }
   }, 1000)
 
+  const idleTimer = setInterval(() => {
+    const idleSeconds = powerMonitor.getSystemIdleTime()
+
+    const idleTime = 5 * 60
+
+    if (idleSeconds > idleTime && getAppState() !== 'inactive') {
+      setAppState('inactive')
+      if (mainWindow && mainWindow.webContents) {
+        mainWindow.webContents.send('system:inactivity', {
+          inactive: true,
+          pid: process.pid
+        })
+      }
+    } else if (idleSeconds <= 5 && getAppState() !== 'active') {
+      setAppState('active')
+      if (mainWindow && mainWindow.webContents) {
+        mainWindow.webContents.send('system:inactivity', {
+          inactive: false,
+          pid: process.pid
+        })
+      }
+    }
+  }, 10000)
+
   return () => {
-    console.log('Stopping system sockets...')
     clearInterval(interval)
+    clearInterval(idleTimer)
   }
 }
