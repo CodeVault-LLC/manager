@@ -21,15 +21,16 @@ export const News: FC = observer(() => {
   })
 
   return (
-    <div className="py-4">
+    <div className="p-4 shadow-md">
       <div ref={sliderRef} className="keen-slider">
-        {news.map((item) => (
+        {news.map((item, index) => (
           <div key={item.id} className="keen-slider__slide">
             <div className="flex rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 w-full h-[140px]">
               {/* Left Side: Image */}
               <div className="w-[180px] h-full">
                 <img
                   src={`${item.thumbnail.url}?h=140&w=180`}
+                  loading={index > 3 ? 'lazy' : 'eager'}
                   alt={item.title}
                   className="object-cover w-full h-full"
                 />

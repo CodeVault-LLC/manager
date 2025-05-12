@@ -2,23 +2,22 @@ import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { INews } from '@shared/types/news'
 import { ipcMain } from 'electron'
-import { msnServices } from './msn.service'
+import { msnNewsServices } from './msn.service'
 import logger from '@main/logger'
+import { msnSportServices } from '../sports/msn-sport.service'
 
 export const registerMsnIPC = async () => {
   ipcMain.handle(
     'msn:news',
     async (): Promise<TCommunicationResponse<INews[]>> => {
       try {
-        const news = await msnServices.getLatestNews()
-
-        console.log('MSN news', news)
+        const news = await msnNewsServices.getLatestNews()
 
         if (
           news.length === 0 ||
           news[0]?.publishedDate < new Date(Date.now() - 60 * 60 * 1000)
         ) {
-          const news = await msnServices.requestLatestNews()
+          const news = await msnNewsServices.requestLatestNews()
 
           return {
             data: news.map((item) => {
@@ -71,6 +70,45 @@ export const registerMsnIPC = async () => {
               }
             }
           })
+        }
+      } catch (error) {
+        logger.error('Failed to fetch news', {
+          error
+        })
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'msn:sport',
+    async (): Promise<TCommunicationResponse<any>> => {
+      try {
+        const latestGames = await msnSportServices.getLatestGames()
+
+        const updateDateThreshold = 60 * 60 * 1000 // 1 hour in milliseconds|
+
+        if (
+          latestGames.length === 0 ||
+          new Date(latestGames[0].league.lastUpdated ?? '').getTime() +
+            updateDateThreshold <
+            Date.now()
+        ) {
+          await msnSportServices.requestLatestGames()
+
+          const latestGames = await msnSportServices.getLatestGames()
+
+          return { data: latestGames }
+        }
+
+        return {
+          data: latestGames
         }
       } catch (error) {
         logger.error('Failed to fetch news', {

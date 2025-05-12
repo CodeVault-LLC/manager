@@ -70,6 +70,7 @@ export interface IpcHandlers {
   ) => Promise<TCommunicationResponse<IDashboardWidget>>;
 
   "msn:news": () => Promise<TCommunicationResponse<INews[]>>;
+  "msn:sport": () => Promise<TCommunicationResponse<any>>;
 }
 
 export interface IpcEmittedEvents {

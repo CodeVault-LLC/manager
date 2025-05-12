@@ -31,7 +31,7 @@ msnApi.interceptors.response.use(
   }
 )
 
-export const msnServices = {
+export const msnNewsServices = {
   requestLatestNews: async () => {
     try {
       const defaultApiKey = '0QfOX3Vn51YCzitbLaRkTTBadtWpgTN8NZLW0C1SEM'
@@ -53,6 +53,7 @@ export const msnServices = {
             const existingNews = await tx.query.news.findFirst({
               where: eq(news.newsId, card.id)
             })
+
             if (existingNews) {
               return
             }
@@ -91,14 +92,7 @@ export const msnServices = {
           })
       })
 
-      const newsResult = await db.query.news.findMany({
-        with: {
-          provider: true,
-          thumbnail: true
-        },
-        orderBy: [desc(news.publishedDate)],
-        limit: 15
-      })
+      const newsResult = await msnNewsServices.getLatestNews(15)
 
       return newsResult
     } catch (error) {
