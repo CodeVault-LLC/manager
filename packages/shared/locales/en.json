@@ -54,7 +54,8 @@
     "navigation": {
       "general": "General",
       "security": "Security & Login",
-      "connections": "Connected Apps"
+      "connections": "Connected Apps",
+      "extensions": "Extensions"
     },
     "profile": {
       "title": "Profile",

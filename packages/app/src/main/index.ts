@@ -11,6 +11,7 @@ import { runMigrations } from './database/data-source'
 import { registerMsnIPC } from './services/news/msn.ipc'
 import { registerSystemIPC } from './services/system'
 import { registerAuthIPC, registerUserIPC } from './services/user'
+import { registerExtensionIPC } from './services/extensions'
 import { registerIntegrations } from './services/integrations'
 
 const gotTheLock = app.requestSingleInstanceLock()
@@ -62,6 +63,8 @@ if (!gotTheLock) {
 
       registerAuthIPC()
       registerUserIPC()
+
+      registerExtensionIPC()
 
       registerIntegrations()
       loadNoteServices()

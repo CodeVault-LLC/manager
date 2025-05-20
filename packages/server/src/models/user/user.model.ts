@@ -14,6 +14,8 @@ import { notes } from './notes.model';
 import { googleAccounts } from './google.model';
 import { userMangas } from '../entertainment/manga.model';
 import { tokens } from './token.model';
+import { extensions } from '../extension.model';
+import { userExtensions } from './user-extensions.model';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -53,6 +55,14 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   googleAccount: one(googleAccounts, {
     fields: [users.id],
     references: [googleAccounts.userId],
+  }),
+
+  extensionsCreated: many(extensions, {
+    relationName: 'createdBy',
+  }),
+
+  extensionsInstalled: many(userExtensions, {
+    relationName: 'installedBy',
   }),
 }));
 

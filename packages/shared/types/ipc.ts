@@ -10,6 +10,7 @@ import {
 } from "./system";
 import { IDashboardWidget } from "./widget";
 import { INews } from "./news";
+import { IExtension } from "./extension";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -61,6 +62,10 @@ export interface IpcHandlers {
 
   "browser:initial": () => Promise<TCommunicationResponse<IBrowser[]>>;
   "browser:refresh": () => Promise<TCommunicationResponse<IBrowser[]>>;
+
+  "extensions:getAll": (
+    marketplace: boolean
+  ) => Promise<TCommunicationResponse<IExtension[]>>;
 
   "dashboard:widgets": () => Promise<
     TCommunicationResponse<IDashboardWidget[]>

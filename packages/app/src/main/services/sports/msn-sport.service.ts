@@ -56,14 +56,13 @@ export const msnSportServices = {
         const league = schedule.league
 
         await db.transaction(async (tx) => {
-          const [_] = await tx
+          await tx
             .insert(sportsLeagues)
             .values({
               id: parseInt(league.id),
               name: league.name.rawName
             })
             .onConflictDoNothing()
-            .returning({ id: sportsLeagues.id })
 
           for (const game of schedule.games) {
             const existingGame = await tx.query.sportGames.findFirst({

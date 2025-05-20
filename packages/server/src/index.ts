@@ -8,9 +8,13 @@ import { createBuckets } from './aws-client.js';
 import { GoogleAccount, type Session } from './models/schema.js';
 import { loadConfigurations } from './config/config.js';
 import { initGoogleClient } from './user/google/google.service.js';
+import { extensionController } from './extensions/extension.controller.js';
+import { runScheduledJobs } from './jobs/jobs.js';
 
 loadConfigurations();
 void createBuckets();
+
+runScheduledJobs();
 
 initGoogleClient();
 
@@ -35,6 +39,7 @@ app.use(bodyParser.json());
 app.use(userMiddleware);
 
 app.use('/users', userRouter);
+app.use('/extensions', extensionController);
 //app.use(errorMiddleware);
 
 app.listen(3000, () => {

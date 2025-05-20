@@ -24,6 +24,7 @@ import { Route as SystemHardwareImport } from './routes/system/hardware'
 import { Route as SystemBrowsersImport } from './routes/system/browsers'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
 import { Route as SettingsGeneralImport } from './routes/settings/general'
+import { Route as SettingsExtensionsImport } from './routes/settings/extensions'
 import { Route as SettingsConnectionsImport } from './routes/settings/connections'
 import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
@@ -109,6 +110,12 @@ const SettingsSecurityRoute = SettingsSecurityImport.update({
 const SettingsGeneralRoute = SettingsGeneralImport.update({
   id: '/general',
   path: '/general',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsExtensionsRoute = SettingsExtensionsImport.update({
+  id: '/extensions',
+  path: '/extensions',
   getParentRoute: () => SettingsRoute,
 } as any)
 
@@ -242,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsConnectionsImport
       parentRoute: typeof SettingsImport
     }
+    '/settings/extensions': {
+      id: '/settings/extensions'
+      path: '/extensions'
+      fullPath: '/settings/extensions'
+      preLoaderRoute: typeof SettingsExtensionsImport
+      parentRoute: typeof SettingsImport
+    }
     '/settings/general': {
       id: '/settings/general'
       path: '/general'
@@ -330,12 +344,14 @@ const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(
 
 interface SettingsRouteChildren {
   SettingsConnectionsRoute: typeof SettingsConnectionsRoute
+  SettingsExtensionsRoute: typeof SettingsExtensionsRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsSecurityRoute: typeof SettingsSecurityRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsConnectionsRoute: SettingsConnectionsRoute,
+  SettingsExtensionsRoute: SettingsExtensionsRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsSecurityRoute: SettingsSecurityRoute,
 }
@@ -372,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
   '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/extensions': typeof SettingsExtensionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
@@ -393,6 +410,7 @@ export interface FileRoutesByTo {
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
   '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/extensions': typeof SettingsExtensionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
@@ -417,6 +435,7 @@ export interface FileRoutesById {
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
   '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/extensions': typeof SettingsExtensionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
@@ -442,6 +461,7 @@ export interface FileRouteTypes {
     | '/policies/privacy'
     | '/policies/terms'
     | '/settings/connections'
+    | '/settings/extensions'
     | '/settings/general'
     | '/settings/security'
     | '/system/browsers'
@@ -462,6 +482,7 @@ export interface FileRouteTypes {
     | '/policies/privacy'
     | '/policies/terms'
     | '/settings/connections'
+    | '/settings/extensions'
     | '/settings/general'
     | '/settings/security'
     | '/system/browsers'
@@ -484,6 +505,7 @@ export interface FileRouteTypes {
     | '/policies/privacy'
     | '/policies/terms'
     | '/settings/connections'
+    | '/settings/extensions'
     | '/settings/general'
     | '/settings/security'
     | '/system/browsers'
@@ -565,6 +587,7 @@ export const routeTree = rootRoute
       "filePath": "settings.tsx",
       "children": [
         "/settings/connections",
+        "/settings/extensions",
         "/settings/general",
         "/settings/security"
       ]
@@ -599,6 +622,10 @@ export const routeTree = rootRoute
     },
     "/settings/connections": {
       "filePath": "settings/connections.tsx",
+      "parent": "/settings"
+    },
+    "/settings/extensions": {
+      "filePath": "settings/extensions.tsx",
       "parent": "/settings"
     },
     "/settings/general": {

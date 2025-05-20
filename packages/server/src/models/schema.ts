@@ -4,6 +4,10 @@ export * from './user/session.model';
 export * from './user/notes.model';
 export * from './user/token.model';
 
+// Extensions
+export * from './extension.model';
+export * from './user/user-extensions.model';
+
 // Entertainment
 export * from './entertainment';
 

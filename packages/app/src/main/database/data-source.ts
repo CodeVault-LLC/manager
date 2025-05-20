@@ -11,5 +11,7 @@ const storageDatabase = new Database(STORAGE_FILE)
 export const db = drizzle({ client: storageDatabase, schema })
 
 export const runMigrations = async () => {
-  migrate(db, { migrationsFolder: path.join(__dirname, '../../migrations') })
+  migrate(db, {
+    migrationsFolder: path.join(__dirname, '../../migrations')
+  })
 }

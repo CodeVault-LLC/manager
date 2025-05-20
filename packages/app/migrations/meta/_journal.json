@@ -15,6 +15,13 @@
       "when": 1745753406538,
       "tag": "0001_greedy_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1747767675804,
+      "tag": "0002_wild_harry_osborn",
+      "breakpoints": true
     }
   ]
 }

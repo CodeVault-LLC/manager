@@ -55,6 +55,10 @@ export const msnNewsServices = {
             })
 
             if (existingNews) {
+              logger.debug('News already exists in the database', {
+                newsId: card.id
+              })
+              tx.rollback()
               return
             }
 

@@ -4,7 +4,7 @@ import { sportsTeams } from './sport-teams.schema'
 import { sportGames } from './sport-games.schema'
 
 export const sportsLeagues = sqliteTable('sports_leagues', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
 
   lastUpdated: integer({ mode: 'timestamp' }).defaultNow()

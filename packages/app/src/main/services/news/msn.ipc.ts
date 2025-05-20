@@ -17,7 +17,10 @@ export const registerMsnIPC = async () => {
           news.length === 0 ||
           news[0]?.publishedDate < new Date(Date.now() - 60 * 60 * 1000)
         ) {
-          const news = await msnNewsServices.requestLatestNews()
+          //const news = await msnNewsServices.requestLatestNews()
+          const news: Awaited<
+            ReturnType<(typeof msnNewsServices)['getLatestNews']>
+          > = []
 
           return {
             data: news.map((item) => {

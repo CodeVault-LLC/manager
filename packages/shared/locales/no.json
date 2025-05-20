@@ -54,7 +54,8 @@
     "navigation": {
       "general": "General",
       "security": "Sikkerhet & innlogging",
-      "connections": "Tilkoblede apper"
+      "connections": "Tilkoblede apper",
+      "extensions": "Utvidelser"
     },
 
     "profile": {

@@ -4,7 +4,7 @@ import { sportsLeagues } from './sport-leagues.schema'
 import { sportGameParticipants } from './sport-game-participants.schema'
 
 export const sportGames = sqliteTable('sports_games', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
   externalId: text('external_id').notNull(), // For tracking SportRadar/GameCenter ID
   startDateTime: text('start_date_time').notNull(), // Store as ISO 8601 string
   status: text('status').notNull(), // e.g., PreGame, Live, Final

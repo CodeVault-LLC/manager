@@ -43,6 +43,11 @@ function RouteComponent() {
       value: 'connections',
       label: t('settings.navigation.connections'),
       link: '/settings/connections'
+    },
+    {
+      value: 'extensions',
+      label: t('settings.navigation.extensions'),
+      link: '/settings/extensions'
     }
   ]
 
@@ -56,6 +61,9 @@ function RouteComponent() {
         break
       case '/settings/connections':
         setTab('connections')
+        break
+      case '/settings/extensions':
+        setTab('extensions')
         break
       default:
         if (pathname === '/settings') {

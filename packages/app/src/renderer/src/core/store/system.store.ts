@@ -9,6 +9,7 @@ import {
   ISystemStatistics
 } from '@shared/types/system'
 import { ipcClient } from '@renderer/utils/ipcClient'
+import { IExtension } from '@shared/types/extension'
 
 export interface ISystemStore {
   // observables
@@ -16,6 +17,8 @@ export interface ISystemStore {
   system: ISystem
   hardware: ISystemHardware | null
   inactive: boolean
+
+  extensions: IExtension[]
 
   browsers: IBrowser[]
 
@@ -30,6 +33,8 @@ export interface ISystemStore {
 
   getBrowserInitial(): void
   doBrowserRefresh(): void
+
+  getExtensions(marketplace?: boolean): void
 
   subscribeToSystemStatistics(): void
   unsubscribeFromSystemStatistics(): void
@@ -65,6 +70,8 @@ export class SystemStore implements ISystemStore {
 
   inactive: boolean = false
 
+  extensions: IExtension[] = []
+
   hardware: ISystemHardware | null = null
   browsers: IBrowser[] = []
 
@@ -86,12 +93,15 @@ export class SystemStore implements ISystemStore {
       systemStatistics: observable.shallow,
 
       inactive: observable,
+      extensions: observable,
 
       // action
       toggleNewUserPopup: action,
       setTheme: action,
       setSystemStatistics: action,
       setLanguage: action,
+
+      getExtensions: action,
 
       subscribeToSystemInactivity: action
     })
@@ -194,6 +204,16 @@ export class SystemStore implements ISystemStore {
         this.setBrowsers(response.data)
       } else {
         console.error('getting initial browser data error', response.error)
+      }
+    })
+  }
+
+  getExtensions(marketplace = false): void {
+    ipcClient.invoke('extensions:getAll', marketplace).then((response) => {
+      if (response.data) {
+        this.extensions = response.data
+      } else {
+        console.error('getting initial extension data error', response.error)
       }
     })
   }
