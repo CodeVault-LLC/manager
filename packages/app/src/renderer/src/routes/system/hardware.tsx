@@ -6,7 +6,7 @@ import {
   TableRow
 } from '@renderer/components/ui/table'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { useSystem } from '@renderer/hooks'
+import { useSystemStore } from '@renderer/core/store/system.store'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, useLocation } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/system/hardware')({
 
 function RouteComponent() {
   const { pathname } = useLocation()
-  const { hardware, getSystemHardware } = useSystem()
+  const { hardware, getSystemHardware } = useSystemStore()
 
   useEffect(() => {
     getSystemHardware()

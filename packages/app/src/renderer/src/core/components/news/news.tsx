@@ -4,11 +4,11 @@ import { useKeenSlider } from 'keen-slider/react'
 import { Badge } from '@renderer/components/ui/badge'
 import { Msn } from '@renderer/components/brands/msn'
 import { useDashboardStore } from '@renderer/core/store/dashboard.store'
-import { useSystemStore } from '@renderer/core/store/system.store'
+import { useApplicationStore } from '@renderer/core/store/application.store'
 
 export const News: FC = () => {
   const { news } = useDashboardStore()
-  const { openExternal } = useSystemStore()
+  const { openExternalLink } = useApplicationStore()
 
   const [sliderRef] = useKeenSlider({
     slides: {
@@ -52,7 +52,7 @@ export const News: FC = () => {
                   <a
                     className="text-sm font-medium dark:text-blue-500 text-blue-600 cursor-pointer"
                     onClick={() => {
-                      openExternal(item.homepageUrl)
+                      openExternalLink(item.homepageUrl)
                     }}
                   >
                     <h3 className="text-base font-semibold leading-tight truncate">
@@ -85,7 +85,7 @@ export const News: FC = () => {
 
       <div className="flex justify-end">
         <a
-          onClick={() => openExternal('https://www.msn.com')}
+          onClick={() => openExternalLink('https://www.msn.com')}
           className="cursor-pointer"
         >
           <Msn />

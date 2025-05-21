@@ -40,17 +40,17 @@ function RouteComponent() {
     {
       value: 'network',
       label: t('common.network'),
-      link: '/system/network'
+      link: '/'
     },
     {
       value: 'storage',
       label: t('common.storage'),
-      link: '/system/storage'
+      link: '/'
     },
     {
       value: 'security',
       label: t('common.security'),
-      link: '/system/security'
+      link: '/'
     }
   ]
 

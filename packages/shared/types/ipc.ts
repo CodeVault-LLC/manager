@@ -5,7 +5,7 @@ import { IDashboardWidget } from "./widget";
 import { INews } from "./news";
 import { IExtension } from "./extension";
 import { ETheme, IApplication } from "./application/application";
-import { TErrorInfo } from "helpers";
+import { TErrorInfo } from "../helpers";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }

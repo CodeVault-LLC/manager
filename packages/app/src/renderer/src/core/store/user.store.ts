@@ -81,7 +81,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
             isLoading: false,
             userStatus: {
               status: EUserStatus.NOT_AUTHENTICATED,
-              message: currentUser?.error || ''
+              message: currentUser?.error?.message || ''
             }
           })
           return
@@ -146,9 +146,9 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           isLoading: false
         })
 
-        toast.error(currentUser?.error.message || 'Login failed')
+        toast.error(currentUser?.error?.message || 'Login failed')
 
-        throw new Error(currentUser?.error || 'Login failed')
+        throw new Error(currentUser?.error?.message || 'Login failed')
       }
 
       return currentUser.data || false
@@ -226,7 +226,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           isLoading: false
         })
 
-        toast.error(response?.error || 'Registration failed')
+        toast.error(response?.error?.message || 'Registration failed')
       }
 
       return response.data || false
@@ -278,7 +278,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           isLoading: false
         })
 
-        toast.error(response?.error || 'Update failed')
+        toast.error(response?.error?.message || 'Update failed')
       }
     } catch (error: any) {
       set({
@@ -350,7 +350,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
         toast.success('Session deleted successfully')
         get().fetchAllSessions()
       } else {
-        toast.error(response?.error || 'Failed to delete session')
+        toast.error(response?.error?.message || 'Failed to delete session')
       }
     } catch (error: any) {
       console.error(error)
@@ -366,7 +366,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
 
         get().fetchAllSessions()
       } else {
-        toast.error(response?.error || 'Failed to delete all sessions')
+        toast.error(response?.error?.message || 'Failed to delete all sessions')
       }
     } catch (error: any) {
       console.error(error)
@@ -382,11 +382,11 @@ export const useUserStore = create<IUserStore>((set, get) => ({
         set({
           userStatus: {
             status: EUserStatus.ERROR,
-            message: response?.error || 'Email verification failed'
+            message: response?.error?.message || 'Email verification failed'
           }
         })
 
-        toast.error(response?.error || 'Email verification failed')
+        toast.error(response?.error?.message || 'Email verification failed')
       }
     } catch (error: any) {
       console.error(error)
@@ -411,15 +411,15 @@ export const useUserStore = create<IUserStore>((set, get) => ({
 
         return true
       } else {
-        if (response.error.code === EErrorCodes.BAD_REQUEST) {
+        if (response.error && response.error.code === EErrorCodes.BAD_REQUEST) {
           set({
             userStatus: {
               status: EUserStatus.ERROR,
-              message: response?.error.message || 'Invalid or expired token'
+              message: response?.error?.message || 'Invalid or expired token'
             }
           })
 
-          toast.error(response?.error.message || 'Invalid or expired token')
+          toast.error(response?.error?.message || 'Invalid or expired token')
         }
 
         return false
@@ -454,7 +454,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           currentUser: undefined,
           userStatus: {
             status: EUserStatus.ERROR,
-            message: response?.error || 'Google authentication failed'
+            message: response?.error?.message || 'Google authentication failed'
           }
         })
 
@@ -475,11 +475,11 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           currentUser: undefined,
           userStatus: {
             status: EUserStatus.ERROR,
-            message: response?.error || 'Google authentication failed'
+            message: response?.error?.message || 'Google authentication failed'
           }
         })
 
-        toast.error(response?.error || 'Google authentication failed')
+        toast.error(response?.error?.message || 'Google authentication failed')
       }
     } catch (error: any) {
       console.error(error)
@@ -500,7 +500,9 @@ export const useUserStore = create<IUserStore>((set, get) => ({
 
         get().fetchCurrentUser()
       } else {
-        toast.error(response?.error || 'Failed to disconnect Google account')
+        toast.error(
+          response?.error?.message || 'Failed to disconnect Google account'
+        )
       }
     } catch (error: any) {
       console.error(error)

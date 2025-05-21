@@ -3,7 +3,7 @@ import './index.css'
 import { createRouter } from './router'
 import { RouterProvider } from '@tanstack/react-router'
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { Locale, Translations } from '@shared/types/i18n'
+import { Translations } from '@shared/types/i18n'
 
 declare global {
   interface Window {
@@ -12,7 +12,7 @@ declare global {
 
     i18n: {
       getLocale: () => Translations
-      setLocale: (lang: Locale) => Translations
+      setLocale: (lang: string) => Translations
     }
   }
 }

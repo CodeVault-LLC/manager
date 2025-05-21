@@ -111,7 +111,7 @@ const LoginPage = () => {
                     {t('forms.rememberMe')}
                   </Label>
                   <Link
-                    to="/forgot-password"
+                    to="/"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
                     {t('common.forgotPassword')}

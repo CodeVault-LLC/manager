@@ -1,9 +1,9 @@
 import { PremierLeague } from '@renderer/components/brands'
-import { useSystemStore } from '@renderer/core/store/system.store'
+import { useApplicationStore } from '@renderer/core/store/application.store'
 import { FC } from 'react'
 
 export const FeaturedMatches: FC = () => {
-  const { openExternal } = useSystemStore()
+  const { openExternalLink } = useApplicationStore()
 
   return (
     <div className="p-4 rounded-lg shadow-md">
@@ -12,7 +12,7 @@ export const FeaturedMatches: FC = () => {
       <a
         className="flex items-center cursor-pointer my-2 py-4 px-12 rounded-sm hover:bg-gray-100 hover:dark:bg-gray-600 transition-colors duration-200"
         onClick={() =>
-          openExternal(
+          openExternalLink(
             'https://www.msn.com/en-sg/sport/premier_league/fixtures?ocid=hpmsn&cvid=49699dcce6a74be193ee9c90184b0a5d&ei=18'
           )
         }

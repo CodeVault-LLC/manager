@@ -45,9 +45,7 @@ export const ipcClient = {
   },
 
   // Get all listeners for a given event
-  listeners: <T extends keyof IpcEmittedEvents>(channel: T): Function[] => {
-    const listenerList = window.electron.ipcRenderer.listeners(channel)
-
-    return listenerList
+  listeners: <T extends keyof IpcEmittedEvents>(_: T): Function[] => {
+    return [] as Function[]
   }
 }

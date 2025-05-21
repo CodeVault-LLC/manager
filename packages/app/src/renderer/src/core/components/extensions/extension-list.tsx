@@ -19,7 +19,7 @@ export const ExtensionList: FC<ExtensionListProps> = (props) => {
       {extensions.map((extension) => (
         <div className="border rounded-xl p-3" key={extension.name}>
           <div className="flex flex-row items-center justify-between gap-2">
-            {extension.icon}
+            {'ICON'}
           </div>
 
           <h2 className="mt-2 font-medium">{extension.name}</h2>
@@ -32,7 +32,7 @@ export const ExtensionList: FC<ExtensionListProps> = (props) => {
             <Separator className="my-2" />
 
             <div className="flex flex-row items-center justify-between">
-              {extension?.status === 'ACTIVE' && (
+              {false && (
                 <Button
                   variant="outline"
                   size={'sm'}
