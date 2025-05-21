@@ -1,32 +1,31 @@
-import { action, observable, runInAction, makeObservable } from 'mobx'
 import {
   IAvatarWithBuffer,
   IRegistrationData,
   ISession,
   IUser
 } from '../../../../../../shared/types'
-import { CoreRootStore } from './root.store'
 import { EUserStatus, TUserStatus } from '@shared/constants'
 import { toast } from 'sonner'
 import { EErrorCodes } from '@shared/helpers'
 import { ipcClient } from '@renderer/utils/ipcClient'
+import { create } from 'zustand'
+import { useErrorStore } from './error.store'
 
 export interface IUserStore {
-  // observables
   isLoading: boolean
   userStatus: TUserStatus | undefined
   isUserLoggedIn: boolean | undefined
   currentUser: IUser | undefined
   sessions: ISession[] | undefined
 
-  hydrate: (data: any) => void
-  // fetch actions
   fetchCurrentUser: () => Promise<void>
   login: (email: string, password: string) => Promise<boolean>
   register: (data: IRegistrationData) => Promise<boolean>
   updateUser: (data: Partial<IUser>) => Promise<void>
   reset: () => void
   signOut: () => void
+
+  resetOnSignOut: () => void
 
   verifyEmail: () => Promise<void>
   verifyEmailToken: (token: string) => Promise<boolean>
@@ -41,106 +40,83 @@ export interface IUserStore {
   revokeGoogle: () => Promise<void>
 }
 
-export class UserStore implements IUserStore {
-  // observables
-  isLoading: boolean = false
-  userStatus: TUserStatus | undefined = undefined
-  isUserLoggedIn: boolean | undefined = undefined
-  currentUser: IUser | undefined = undefined
-  sessions: ISession[] | undefined = undefined
-
-  constructor(private store: CoreRootStore) {
-    makeObservable(this, {
-      // observables
-      isLoading: observable,
-      userStatus: observable.shallow,
-      isUserLoggedIn: observable,
-      currentUser: observable.shallow,
-      sessions: observable.shallow,
-
-      // action
-      fetchCurrentUser: action,
-      login: action,
-      register: action,
-      reset: action,
-      signOut: action,
-
-      updateUser: action,
-      authenticateGoogle: action,
-      revokeGoogle: action,
-      verifyEmail: action,
-      verifyEmailToken: action,
-      fetchAllSessions: action,
-      deleteSession: action,
-      deleteAllSessions: action
-    })
-  }
-
-  hydrate = (data: IUser) => {
-    if (data) this.currentUser = data
-  }
+export const useUserStore = create<IUserStore>((set, get) => ({
+  isLoading: false,
+  userStatus: undefined,
+  isUserLoggedIn: undefined,
+  currentUser: undefined,
+  sessions: undefined,
 
   /**
    * @description Fetches the current user
    * @returns Promise<void>
    */
-  fetchCurrentUser = async (): Promise<void> => {
+  fetchCurrentUser: async (): Promise<void> => {
     try {
-      if (this.isLoading) return
-      if (this.isUserLoggedIn) return
-      if (this.store.error.getError(EErrorCodes.UNAUTHORIZED)) return
-      if (this.userStatus?.status === EUserStatus.NOT_AUTHENTICATED) return
+      const { isLoading, isUserLoggedIn, userStatus } = get()
 
-      this.isLoading = true
+      if (isLoading) return
+      if (isUserLoggedIn) return
+      if (useErrorStore.getState().getError(EErrorCodes.UNAUTHORIZED)) return
+      if (userStatus?.status === EUserStatus.NOT_AUTHENTICATED) return
+
+      set({ isLoading: true })
 
       const currentUser = await ipcClient.invoke('user:adminDetails')
 
       if (currentUser?.data) {
-        runInAction(() => {
-          this.isUserLoggedIn = true
-          this.currentUser = currentUser?.data
-          this.userStatus = undefined
-          this.isLoading = false
+        set({
+          isLoading: false,
+          currentUser: currentUser.data,
+          userStatus: undefined,
+          isUserLoggedIn: true
         })
       } else {
-        this.store.error.addError(currentUser.error)
+        useErrorStore.getState().addError(currentUser.error)
 
         if (currentUser.error.code === EErrorCodes.UNAUTHORIZED) {
-          runInAction(() => {
-            this.isUserLoggedIn = false
-            this.currentUser = undefined
-            this.isLoading = false
-            this.userStatus = {
+          set({
+            isUserLoggedIn: false,
+            currentUser: undefined,
+            isLoading: false,
+            userStatus: {
               status: EUserStatus.NOT_AUTHENTICATED,
               message: currentUser?.error || ''
             }
           })
-
           return
         }
 
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
-          this.isLoading = false
+        set({
+          isUserLoggedIn: false,
+          currentUser: undefined,
+          isLoading: false
         })
       }
     } catch (error: any) {
-      this.isLoading = false
-      this.isUserLoggedIn = false
+      set({
+        isLoading: false,
+        isUserLoggedIn: false
+      })
+
       if (error.status === 403)
-        this.userStatus = {
-          status: EUserStatus.AUTHENTICATION_NOT_DONE,
-          message: error?.message || ''
-        }
+        set({
+          userStatus: {
+            status: EUserStatus.AUTHENTICATION_NOT_DONE,
+            message: error?.message || ''
+          }
+        })
       else
-        this.userStatus = {
-          status: EUserStatus.ERROR,
-          message: error?.message || ''
-        }
+        set({
+          userStatus: {
+            status: EUserStatus.ERROR,
+            message: error?.message || ''
+          }
+        })
+
       throw error
     }
-  }
+  },
 
   /**
    * @description Login in the current user
@@ -148,57 +124,67 @@ export class UserStore implements IUserStore {
    * @param {string} password
    * @returns Promise<IUser>
    */
-  login = async (email: string, password: string): Promise<boolean> => {
+  login: async (email: string, password: string): Promise<boolean> => {
     try {
-      this.isLoading = true
+      set({ isLoading: true })
+
       const currentUser = await ipcClient.invoke('auth:login', email, password)
 
       if (currentUser?.data) {
-        runInAction(() => {
-          this.isLoading = false
-          this.userStatus = undefined
+        set({
+          isLoading: false,
+          userStatus: undefined
         })
 
-        this.store.error.removeError(EErrorCodes.UNAUTHORIZED)
+        useErrorStore.getState().removeError(EErrorCodes.UNAUTHORIZED)
 
-        await this.fetchCurrentUser()
+        get().fetchCurrentUser()
       } else {
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
-          this.isLoading = false
-          toast.error(currentUser?.error.message || 'Login failed')
+        set({
+          isUserLoggedIn: false,
+          currentUser: undefined,
+          isLoading: false
         })
+
+        toast.error(currentUser?.error.message || 'Login failed')
 
         throw new Error(currentUser?.error || 'Login failed')
       }
 
       return currentUser.data || false
     } catch (error: any) {
-      this.isLoading = false
-      this.isUserLoggedIn = false
+      set({
+        isLoading: false,
+        isUserLoggedIn: false
+      })
+
       if (error.status === 403)
-        this.userStatus = {
-          status: EUserStatus.AUTHENTICATION_NOT_DONE,
-          message: error?.message || ''
-        }
+        set({
+          userStatus: {
+            status: EUserStatus.AUTHENTICATION_NOT_DONE,
+            message: error?.message || ''
+          }
+        })
       else
-        this.userStatus = {
-          status: EUserStatus.ERROR,
-          message: error?.message || ''
-        }
+        set({
+          userStatus: {
+            status: EUserStatus.ERROR,
+            message: error?.message || ''
+          }
+        })
+
       throw error
     }
-  }
+  },
 
   /**
    * @description Register the current user
    * @param data any
    * @returns Promise<IUser>
    */
-  register = async (data: IRegistrationData): Promise<boolean> => {
+  register: async (data: IRegistrationData): Promise<boolean> => {
     try {
-      this.isLoading = true
+      set({ isLoading: true })
 
       // Handle file conversion for IPC transfer
       let dataToSend = { ...data } as IRegistrationData & {
@@ -227,110 +213,133 @@ export class UserStore implements IUserStore {
       const response = await ipcClient.invoke('auth:register', dataToSend)
 
       if (response?.data) {
-        runInAction(() => {
-          this.isLoading = false
-          this.userStatus = undefined
+        set({
+          isLoading: false,
+          userStatus: undefined
         })
 
-        await this.fetchCurrentUser()
+        get().fetchCurrentUser()
       } else {
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
-          this.isLoading = false
-          toast.error(response?.error || 'Registration failed')
+        set({
+          isUserLoggedIn: false,
+          currentUser: undefined,
+          isLoading: false
         })
+
+        toast.error(response?.error || 'Registration failed')
       }
 
       return response.data || false
     } catch (error: any) {
-      this.isLoading = false
-      this.isUserLoggedIn = false
+      set({
+        isLoading: false,
+        isUserLoggedIn: false
+      })
 
       if (error.status === 403)
-        this.userStatus = {
-          status: EUserStatus.AUTHENTICATION_NOT_DONE,
-          message: error?.message || ''
-        }
+        set({
+          userStatus: {
+            status: EUserStatus.AUTHENTICATION_NOT_DONE,
+            message: error?.message || ''
+          }
+        })
       else
-        this.userStatus = {
-          status: EUserStatus.ERROR,
-          message: error?.message || ''
-        }
+        set({
+          userStatus: {
+            status: EUserStatus.ERROR,
+            message: error?.message || ''
+          }
+        })
 
       toast.error(error?.message || 'Registration failed')
       throw error
     }
-  }
+  },
 
   /**
    * @description Update the current user
    * @param data any
    */
-  updateUser = async (data: Partial<IUser>): Promise<void> => {
+  updateUser: async (data: Partial<IUser>): Promise<void> => {
     try {
-      this.isLoading = true
+      set({ isLoading: true })
 
       const response = await ipcClient.invoke('user:update', data)
 
       if (response?.data) {
-        runInAction(() => {
-          this.currentUser = response.data
-          this.isLoading = false
+        set({
+          isLoading: false,
+          currentUser: response.data
         })
       } else {
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
-          this.isLoading = false
-          toast.error(response?.error || 'Update failed')
+        set({
+          isUserLoggedIn: false,
+          currentUser: undefined,
+          isLoading: false
         })
+
+        toast.error(response?.error || 'Update failed')
       }
     } catch (error: any) {
-      this.isLoading = false
-      this.isUserLoggedIn = false
+      set({
+        isLoading: false,
+        isUserLoggedIn: false
+      })
       toast.error(error?.message || 'Update failed')
     }
-  }
+  },
 
-  reset = async () => {
-    this.isUserLoggedIn = false
-    this.currentUser = undefined
-    this.isLoading = false
-    this.userStatus = undefined
-  }
+  reset: async () => {
+    set({
+      isUserLoggedIn: false,
+      currentUser: undefined,
+      isLoading: false,
+      userStatus: undefined
+    })
+  },
 
-  signOut = async () => {
+  signOut: async () => {
     const response = await ipcClient.invoke('auth:signOut')
-    if (response?.data) this.store.resetOnSignOut()
-  }
+    if (response?.data) get().resetOnSignOut()
+  },
 
-  fetchAllSessions = async () => {
+  resetOnSignOut: () => {
+    localStorage.setItem('theme', 'dark'),
+      (window.location.href = '/'),
+      set({
+        isUserLoggedIn: false,
+        currentUser: undefined,
+        isLoading: false,
+        userStatus: undefined
+      })
+  },
+
+  fetchAllSessions: async () => {
     try {
       const sessions = await ipcClient.invoke('user:getAllSessions')
 
       if (sessions?.data) {
-        runInAction(() => {
-          const sortedSessions = (sessions.data ?? []).sort((a, b) => {
-            if (a.isCurrentSession && !b.isCurrentSession) return -1
-            if (!a.isCurrentSession && b.isCurrentSession) return 1
+        const sortedSessions = (sessions.data ?? []).sort((a, b) => {
+          if (a.isCurrentSession && !b.isCurrentSession) return -1
+          if (!a.isCurrentSession && b.isCurrentSession) return 1
 
-            return 0
-          })
+          return 0
+        })
 
-          this.sessions = sortedSessions
+        set({
+          sessions: sortedSessions
         })
       } else {
-        runInAction(() => {
-          this.sessions = undefined
+        set({
+          sessions: undefined
         })
       }
     } catch (error: any) {
       console.error(error)
     }
-  }
+  },
 
-  deleteSession = async (sessionId: number) => {
+  deleteSession: async (sessionId: number) => {
     try {
       const response = await ipcClient.invoke(
         'user:deleteSession',
@@ -339,38 +348,39 @@ export class UserStore implements IUserStore {
 
       if (response?.data) {
         toast.success('Session deleted successfully')
-        await this.fetchAllSessions()
+        get().fetchAllSessions()
       } else {
         toast.error(response?.error || 'Failed to delete session')
       }
     } catch (error: any) {
       console.error(error)
     }
-  }
+  },
 
-  deleteAllSessions = async () => {
+  deleteAllSessions: async () => {
     try {
       const response = await ipcClient.invoke('user:deleteAllSessions')
 
       if (response?.data) {
         toast.success('All sessions deleted successfully')
-        await this.fetchAllSessions()
+
+        get().fetchAllSessions()
       } else {
         toast.error(response?.error || 'Failed to delete all sessions')
       }
     } catch (error: any) {
       console.error(error)
     }
-  }
+  },
 
-  verifyEmail = async () => {
+  verifyEmail: async () => {
     try {
       const response = await ipcClient.invoke('user:verifyEmail')
 
       if (response?.data) {
       } else {
-        runInAction(() => {
-          this.userStatus = {
+        set({
+          userStatus: {
             status: EUserStatus.ERROR,
             message: response?.error || 'Email verification failed'
           }
@@ -381,24 +391,29 @@ export class UserStore implements IUserStore {
     } catch (error: any) {
       console.error(error)
     }
-  }
+  },
 
-  verifyEmailToken = async (token: string) => {
+  verifyEmailToken: async (token: string) => {
     try {
       const response = await ipcClient.invoke('user:verifyEmailToken', token)
 
       if (response?.data) {
-        runInAction(() => {
-          if (this.currentUser) {
-            this.currentUser.verified_email = true
-          }
-        })
+        const prevUser = get().currentUser
+
+        if (prevUser) {
+          set({
+            currentUser: {
+              ...prevUser,
+              verified_email: true
+            }
+          })
+        }
 
         return true
       } else {
         if (response.error.code === EErrorCodes.BAD_REQUEST) {
-          runInAction(() => {
-            this.userStatus = {
+          set({
+            userStatus: {
               status: EUserStatus.ERROR,
               message: response?.error.message || 'Invalid or expired token'
             }
@@ -411,8 +426,8 @@ export class UserStore implements IUserStore {
       }
     } catch (error: any) {
       console.error(error)
-      runInAction(() => {
-        this.userStatus = {
+      set({
+        userStatus: {
           status: EUserStatus.ERROR,
           message: error?.message || 'Email verification failed'
         }
@@ -422,21 +437,22 @@ export class UserStore implements IUserStore {
 
       return false
     }
-  }
+  },
 
-  authenticateGoogle: () => Promise<void> = async () => {
+  authenticateGoogle: async () => {
     const onAuthSuccess = (response: any) => {
       if (response?.data) {
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.userStatus = undefined
-          this.fetchCurrentUser()
+        set({
+          isUserLoggedIn: false,
+          userStatus: undefined
         })
+
+        get().fetchCurrentUser()
       } else {
-        runInAction(() => {
-          this.isUserLoggedIn = false
-          this.currentUser = undefined
-          this.userStatus = {
+        set({
+          isUserLoggedIn: false,
+          currentUser: undefined,
+          userStatus: {
             status: EUserStatus.ERROR,
             message: response?.error || 'Google authentication failed'
           }
@@ -454,10 +470,10 @@ export class UserStore implements IUserStore {
       if (response?.data) {
         ipcClient.on('auth:google:callback', onAuthSuccess)
       } else {
-        runInAction(() => {
-          this.currentUser = undefined
-          this.isUserLoggedIn = false
-          this.userStatus = {
+        set({
+          isUserLoggedIn: false,
+          currentUser: undefined,
+          userStatus: {
             status: EUserStatus.ERROR,
             message: response?.error || 'Google authentication failed'
           }
@@ -468,20 +484,21 @@ export class UserStore implements IUserStore {
     } catch (error: any) {
       console.error(error)
     }
-  }
+  },
 
-  revokeGoogle: () => Promise<void> = async () => {
+  revokeGoogle: async () => {
     try {
       const response = await ipcClient.invoke('auth:google:revoke')
 
       if (response?.data) {
-        runInAction(() => {
-          this.currentUser = undefined
-          this.isUserLoggedIn = false
+        set({
+          currentUser: undefined,
+          isUserLoggedIn: false
         })
 
         toast.success('Google account disconnected successfully')
-        await this.fetchCurrentUser()
+
+        get().fetchCurrentUser()
       } else {
         toast.error(response?.error || 'Failed to disconnect Google account')
       }
@@ -489,4 +506,4 @@ export class UserStore implements IUserStore {
       console.error(error)
     }
   }
-}
+}))

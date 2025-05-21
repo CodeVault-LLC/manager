@@ -19,7 +19,6 @@ import { Route as LoginImport } from './routes/login'
 import { Route as EntertainmentImport } from './routes/entertainment'
 import { Route as IndexImport } from './routes/index'
 import { Route as SystemIndexImport } from './routes/system/index'
-import { Route as NotesIndexImport } from './routes/notes/index'
 import { Route as SystemHardwareImport } from './routes/system/hardware'
 import { Route as SystemBrowsersImport } from './routes/system/browsers'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
@@ -81,12 +80,6 @@ const SystemIndexRoute = SystemIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SystemRoute,
-} as any)
-
-const NotesIndexRoute = NotesIndexImport.update({
-  id: '/notes/',
-  path: '/notes/',
-  getParentRoute: () => rootRoute,
 } as any)
 
 const SystemHardwareRoute = SystemHardwareImport.update({
@@ -284,13 +277,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemHardwareImport
       parentRoute: typeof SystemImport
     }
-    '/notes/': {
-      id: '/notes/'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/system/': {
       id: '/system/'
       path: '/'
@@ -393,7 +379,6 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
-  '/notes': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -415,7 +400,6 @@ export interface FileRoutesByTo {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
-  '/notes': typeof NotesIndexRoute
   '/system': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga': typeof EntertainmentMangaIndexRoute
@@ -440,7 +424,6 @@ export interface FileRoutesById {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
-  '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -466,7 +449,6 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
-    | '/notes'
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -487,7 +469,6 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
-    | '/notes'
     | '/system'
     | '/entertainment/manga/$id'
     | '/entertainment/manga'
@@ -510,7 +491,6 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
-    | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -528,7 +508,6 @@ export interface RootRouteChildren {
   PoliciesFaqRoute: typeof PoliciesFaqRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
-  NotesIndexRoute: typeof NotesIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -542,7 +521,6 @@ const rootRouteChildren: RootRouteChildren = {
   PoliciesFaqRoute: PoliciesFaqRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
-  NotesIndexRoute: NotesIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -564,8 +542,7 @@ export const routeTree = rootRoute
         "/verify-email",
         "/policies/faq",
         "/policies/privacy",
-        "/policies/terms",
-        "/notes/"
+        "/policies/terms"
       ]
     },
     "/": {
@@ -643,9 +620,6 @@ export const routeTree = rootRoute
     "/system/hardware": {
       "filePath": "system/hardware.tsx",
       "parent": "/system"
-    },
-    "/notes/": {
-      "filePath": "notes/index.tsx"
     },
     "/system/": {
       "filePath": "system/index.tsx",

@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createRouter } from './router'
 import { RouterProvider } from '@tanstack/react-router'
-import { StoreProvider } from './utils/store-context'
 import { ElectronAPI } from '@electron-toolkit/preload'
 import { Locale, Translations } from '@shared/types/i18n'
 
@@ -21,8 +20,4 @@ declare global {
 const router = createRouter()
 
 const root = createRoot(document.getElementById('root') as HTMLElement)
-root.render(
-  <StoreProvider>
-    <RouterProvider router={router} />
-  </StoreProvider>
-)
+root.render(<RouterProvider router={router} />)

@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { observer } from 'mobx-react'
 import { Badge } from '@renderer/components/ui/badge'
 import { Button } from '@renderer/components/ui/button'
 import {
@@ -7,7 +6,6 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { useUser } from '@renderer/hooks'
 import { Clock, Globe } from 'lucide-react'
 import { useEffect } from 'react'
 import { prettifyToHumanReadableDate } from '@shared/helpers/date.helper'
@@ -16,10 +14,11 @@ import { ISession } from '@shared/types'
 import { WindowsIcon } from '@renderer/components/brands'
 import { Separator } from '@renderer/components/ui/separator'
 import { SessionModal } from '@renderer/core/components/session/session-modal'
+import { useUserStore } from '@renderer/core/store/user.store'
 
-const RouteComponent = observer(() => {
+const RouteComponent = () => {
   const { t } = useI18n()
-  const { sessions, fetchAllSessions, signOut, deleteSession } = useUser()
+  const { sessions, fetchAllSessions, signOut, deleteSession } = useUserStore()
 
   useEffect(() => {
     fetchAllSessions()
@@ -122,7 +121,7 @@ const RouteComponent = observer(() => {
       </div>
     </>
   )
-})
+}
 
 export const Route = createFileRoute('/settings/security')({
   component: RouteComponent

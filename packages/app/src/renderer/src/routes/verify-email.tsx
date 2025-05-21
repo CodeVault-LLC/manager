@@ -17,7 +17,7 @@ import {
 } from '@renderer/components/ui/input-otp'
 import { Label } from '@renderer/components/ui/label'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { useUser } from '@renderer/hooks'
+import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { useForm } from '@tanstack/react-form'
@@ -31,7 +31,8 @@ export const Route = createFileRoute('/verify-email')({
 function RouteComponent() {
   const navigate = useNavigate()
   const { t } = useI18n()
-  const { currentUser, isLoading, verifyEmail, verifyEmailToken } = useUser()
+  const { currentUser, isLoading, verifyEmail, verifyEmailToken } =
+    useUserStore()
   const [verifyOpen, setVerifyOpen] = useState(!currentUser?.verified_email)
   const [successful, setSuccessful] = useState(false)
 

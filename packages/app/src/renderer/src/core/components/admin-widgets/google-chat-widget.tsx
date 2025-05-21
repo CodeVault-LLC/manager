@@ -1,9 +1,8 @@
-import { useDashboard } from '@renderer/hooks/use-dashboard'
-import { observer } from 'mobx-react'
+import { useDashboardStore } from '@renderer/core/store/dashboard.store'
 import { FC, useEffect } from 'react'
 
-export const GoogleChatWidget: FC = observer(() => {
-  const { fetchWidgetData: getWidgetData, widgets } = useDashboard()
+export const GoogleChatWidget: FC = () => {
+  const { fetchWidgetData: getWidgetData, widgets } = useDashboardStore()
   const movieWidget = widgets.find(
     (widget) => widget.name === 'recent_google_chats'
   )
@@ -25,4 +24,4 @@ export const GoogleChatWidget: FC = observer(() => {
       )}
     </div>
   )
-})
+}

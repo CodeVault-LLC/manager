@@ -4,6 +4,12 @@ import { ipcMain } from 'electron'
 import { api } from '../api.service'
 import { EErrorCodes } from '@shared/helpers'
 
+/**
+ * Register all IPC handlers related to user management
+ * @description This function registers the IPC handlers for user-related actions.
+ * It uses the `ipcMain` module from Electron to handle requests from the renderer process.
+ * @returns {void}
+ */
 export const registerUserIPC = () => {
   ipcMain.handle(
     'user:adminDetails',

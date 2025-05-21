@@ -13,6 +13,7 @@ import { registerSystemIPC } from './services/system'
 import { registerAuthIPC, registerUserIPC } from './services/user'
 import { registerExtensionIPC } from './services/extensions'
 import { registerIntegrations } from './services/integrations'
+import { registerApplicationIPC } from './services/application/application.ipc'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -61,17 +62,7 @@ if (!gotTheLock) {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
 
-      registerAuthIPC()
-      registerUserIPC()
-
-      registerExtensionIPC()
-
-      registerIntegrations()
-      loadNoteServices()
-      loadDashboardServices()
-
-      registerSystemIPC()
-      registerMsnIPC()
+      registerIpc()
     } catch (error) {
       console.error(error)
     }
@@ -134,4 +125,23 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+}
+
+/**
+ * Register all IPC handlers
+ * @returns {void}
+ */
+function registerIpc() {
+  registerAuthIPC()
+  registerUserIPC()
+
+  registerExtensionIPC()
+
+  registerIntegrations()
+  loadNoteServices()
+  loadDashboardServices()
+
+  registerApplicationIPC()
+  registerSystemIPC()
+  registerMsnIPC()
 }

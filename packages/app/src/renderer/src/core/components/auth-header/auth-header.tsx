@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { observer } from 'mobx-react'
 import { useRouterState } from '@tanstack/react-router'
 import { SidebarTrigger } from '@renderer/components/ui/sidebar'
 import { Separator } from '@renderer/components/ui/separator'
@@ -11,12 +10,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@renderer/components/ui/breadcrumb'
-import { useUser } from '@renderer/hooks'
 import { useI18n } from '@renderer/hooks/use-i18n'
+import { useUserStore } from '@renderer/core/store/user.store'
 
-export const InstanceHeader: FC = observer(() => {
+export const InstanceHeader: FC = () => {
   const { location } = useRouterState()
-  const { isUserLoggedIn } = useUser()
+  const { isUserLoggedIn } = useUserStore()
   const { t } = useI18n()
 
   if (!isUserLoggedIn) return null
@@ -90,4 +89,4 @@ export const InstanceHeader: FC = observer(() => {
       </div>
     </header>
   )
-})
+}

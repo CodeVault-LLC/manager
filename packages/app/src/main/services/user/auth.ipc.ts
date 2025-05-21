@@ -6,6 +6,12 @@ import { EErrorCodes } from '@shared/helpers'
 import { IRegistrationData } from '@shared/types'
 import { authServices } from './auth.service'
 
+/**
+ * Register all IPC handlers related to authentication
+ * @description This function registers the IPC handlers for login, registration, and sign-out actions.
+ * It uses the `ipcMain` module from Electron to handle requests from the renderer process.
+ * @returns {void}
+ */
 export const registerAuthIPC = () => {
   ipcMain.handle(
     'auth:login',

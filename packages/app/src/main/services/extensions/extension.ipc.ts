@@ -2,6 +2,14 @@ import { EErrorCodes } from '@shared/helpers'
 import { ipcMain } from 'electron'
 import { extensionService } from './extension.service'
 
+/**
+ * Register all IPC handlers related to extensions
+ * @description This function registers the IPC handlers for fetching all extensions.
+ * It uses the `ipcMain` module from Electron to handle requests from the renderer process.
+ * @returns {void}
+ * 
+ * @deprecated This function is not recommended for use in production, still in development.
+ */
 export const registerExtensionIPC = async () => {
   ipcMain.handle('extensions:getAll', async (_, marketplace = false) => {
     try {

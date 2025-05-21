@@ -1,7 +1,6 @@
 import { TranslationKeys, Translations } from '@shared/types/i18n'
 import { useEffect, useState } from 'react'
-import { useSystem } from './use-theme'
-import { autorun } from 'mobx'
+import { useApplicationStore } from '@renderer/core/store/application.store'
 
 declare global {
   interface Window {
@@ -13,15 +12,13 @@ declare global {
 }
 
 export const useI18n = () => {
-  const { system } = useSystem()
+  const { language } = useApplicationStore()
   const [locale, setLocale] = useState<Translations | null>(null)
 
   useEffect(() => {
-    autorun(() => {
-      if (system.language) {
-        changeLanguage(system.language)
-      }
-    })
+    if (language) {
+      changeLanguage(language)
+    }
   }, [])
 
   const changeLanguage = (lang: string) => {

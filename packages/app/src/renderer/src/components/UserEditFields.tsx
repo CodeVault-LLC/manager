@@ -1,5 +1,3 @@
-import { useUser } from '@renderer/hooks'
-import { observer } from 'mobx-react'
 import { FC } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
@@ -11,6 +9,7 @@ import { MailCheckIcon, VerifiedIcon } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 import { Link } from '@tanstack/react-router'
+import { useUserStore } from '@renderer/core/store/user.store'
 
 type UserEditFieldsProps = {
   onSubmit?: <T>(values: T) => Promise<void>
@@ -19,9 +18,9 @@ type UserEditFieldsProps = {
   password?: boolean
 }
 
-export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
+export const UserEditFields: FC<UserEditFieldsProps> = (props) => {
   const { t } = useI18n()
-  const { isUserLoggedIn, currentUser } = useUser()
+  const { isUserLoggedIn, currentUser } = useUserStore()
 
   const { Field, handleSubmit } = useForm({
     defaultValues: {
@@ -208,4 +207,4 @@ export const UserEditFields: FC<UserEditFieldsProps> = observer((props) => {
       </Button>
     </form>
   )
-})
+}

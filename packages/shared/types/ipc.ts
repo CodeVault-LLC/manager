@@ -1,16 +1,11 @@
-import { TErrorInfo } from "helpers";
 import { IRegistrationData, ISession, IUser } from "./users";
 import { INote, TNotePage } from "./note";
-import {
-  ETheme,
-  IBrowser,
-  ISystem,
-  ISystemHardware,
-  ISystemStatistics,
-} from "./system";
+import { IBrowser, ISystemHardware, ISystemStatistics } from "./system";
 import { IDashboardWidget } from "./widget";
 import { INews } from "./news";
 import { IExtension } from "./extension";
+import { ETheme, IApplication } from "./application/application";
+import { TErrorInfo } from "helpers";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -48,15 +43,15 @@ export interface IpcHandlers {
   "auth:google": () => Promise<TCommunicationResponse<boolean>>;
   "auth:google:revoke": () => Promise<TCommunicationResponse<boolean>>;
 
-  "system:initial": () => Promise<
+  "application:initial": () => Promise<
     TCommunicationResponse<{ theme: ETheme; language: string }>
   >;
-  "system:setSystem": (
-    system: ISystem
+  "application:setAppSettings": (
+    application: IApplication
   ) => Promise<TCommunicationResponse<boolean>>;
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
-  "system:openExternal": (
+  "application:openExternal": (
     url: string
   ) => Promise<TCommunicationResponse<boolean>>;
 

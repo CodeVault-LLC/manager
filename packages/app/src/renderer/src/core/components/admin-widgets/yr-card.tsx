@@ -5,10 +5,9 @@ import {
   TableHead,
   TableRow
 } from '@renderer/components/ui/table'
-import { observer } from 'mobx-react'
 import { FC } from 'react'
 
-export const YrCard: FC = observer(() => {
+export const YrCard: FC = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-row items-center justify-between">
@@ -153,4 +152,4 @@ export const YrCard: FC = observer(() => {
       </Table>
     </div>
   )
-})
+}

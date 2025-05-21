@@ -11,12 +11,11 @@ import {
 import { NavMain, NavMainProps } from './sidebar-main'
 import { TeamSwitcher } from './sidebar-workspace'
 import { NavUser } from './sidebar-user'
-import { useUser } from '@renderer/hooks'
-import { observer } from 'mobx-react'
 import { useI18n } from '@renderer/hooks/use-i18n'
+import { useUserStore } from '@renderer/core/store/user.store'
 
-export const AppSidebar = observer((props: { className?: string }) => {
-  const { isUserLoggedIn } = useUser()
+export const AppSidebar = (props: { className?: string }) => {
+  const { isUserLoggedIn } = useUserStore()
   const { t } = useI18n()
 
   if (!isUserLoggedIn) return null
@@ -95,4 +94,4 @@ export const AppSidebar = observer((props: { className?: string }) => {
       <SidebarRail />
     </Sidebar>
   )
-})
+}

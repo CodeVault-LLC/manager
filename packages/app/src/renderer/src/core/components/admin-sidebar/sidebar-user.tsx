@@ -27,15 +27,14 @@ import {
   SidebarMenuItem,
   useSidebar
 } from '@renderer/components/ui/sidebar'
-import { useUser } from '@renderer/hooks'
-import { observer } from 'mobx-react'
 import { Link } from '@tanstack/react-router'
 import { useI18n } from '@renderer/hooks/use-i18n'
+import { useUserStore } from '@renderer/core/store/user.store'
 
-export const NavUser = observer(() => {
+export const NavUser = () => {
   const { t } = useI18n()
   const { isMobile } = useSidebar()
-  const { currentUser, signOut } = useUser()
+  const { currentUser, signOut } = useUserStore()
 
   if (!currentUser) return null
 
@@ -121,7 +120,7 @@ export const NavUser = observer(() => {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
 
@@ -136,4 +135,4 @@ export const NavUser = observer(() => {
       </SidebarMenuItem>
     </SidebarMenu>
   )
-})
+}

@@ -1,16 +1,14 @@
 import { useEffect } from 'react'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { useUser } from '@renderer/hooks'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Link } from '@tanstack/react-router'
-
-import { observer } from 'mobx-react'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { UserEditFields } from '@renderer/components/UserEditFields'
+import { useUserStore } from '@renderer/core/store/user.store'
 
-const RegisterPage = observer(() => {
+const RegisterPage = () => {
   const { t } = useI18n()
-  const { register, currentUser } = useUser()
+  const { register, currentUser } = useUserStore()
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -44,7 +42,7 @@ const RegisterPage = observer(() => {
       </div>
     </AuthenticationWrapper>
   )
-})
+}
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage

@@ -1,15 +1,14 @@
 import { FC } from 'react'
 import 'keen-slider/keen-slider.min.css'
 import { useKeenSlider } from 'keen-slider/react'
-import { observer } from 'mobx-react'
-import { useDashboard } from '@renderer/hooks/use-dashboard'
 import { Badge } from '@renderer/components/ui/badge'
 import { Msn } from '@renderer/components/brands/msn'
-import { useSystem } from '@renderer/hooks'
+import { useDashboardStore } from '@renderer/core/store/dashboard.store'
+import { useSystemStore } from '@renderer/core/store/system.store'
 
-export const News: FC = observer(() => {
-  const { news } = useDashboard()
-  const { openExternal } = useSystem()
+export const News: FC = () => {
+  const { news } = useDashboardStore()
+  const { openExternal } = useSystemStore()
 
   const [sliderRef] = useKeenSlider({
     slides: {
@@ -94,4 +93,4 @@ export const News: FC = observer(() => {
       </div>
     </div>
   )
-})
+}

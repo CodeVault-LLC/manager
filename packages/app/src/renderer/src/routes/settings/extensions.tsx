@@ -1,4 +1,3 @@
-import { Separator } from '@renderer/components/ui/separator'
 import {
   Tabs,
   TabsContent,
@@ -6,12 +5,10 @@ import {
   TabsTrigger
 } from '@renderer/components/ui/tabs'
 import { ExtensionList } from '@renderer/core/components/extensions/extension-list'
-import { useI18n } from '@renderer/hooks/use-i18n'
 import { createFileRoute } from '@tanstack/react-router'
-import { observer } from 'mobx-react'
 
-const RouteComponent = observer(() => {
-  const { t } = useI18n()
+const RouteComponent = () => {
+  //const { t } = useI18n()
 
   return (
     <>
@@ -48,7 +45,7 @@ const RouteComponent = observer(() => {
       <ExtensionList />
     </>
   )
-})
+}
 
 export const Route = createFileRoute('/settings/extensions')({
   component: RouteComponent

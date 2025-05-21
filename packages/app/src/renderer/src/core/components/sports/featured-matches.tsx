@@ -1,10 +1,9 @@
 import { PremierLeague } from '@renderer/components/brands'
-import { useSystem } from '@renderer/hooks'
-import { observer } from 'mobx-react'
+import { useSystemStore } from '@renderer/core/store/system.store'
 import { FC } from 'react'
 
-export const FeaturedMatches: FC = observer(() => {
-  const { openExternal } = useSystem()
+export const FeaturedMatches: FC = () => {
+  const { openExternal } = useSystemStore()
 
   return (
     <div className="p-4 rounded-lg shadow-md">
@@ -25,4 +24,4 @@ export const FeaturedMatches: FC = observer(() => {
       </a>
     </div>
   )
-})
+}

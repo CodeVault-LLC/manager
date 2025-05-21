@@ -6,16 +6,14 @@ import { Label } from '@renderer/components/ui/label'
 import { Separator } from '@renderer/components/ui/separator'
 import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { useUser } from '@renderer/hooks'
+import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, Link } from '@tanstack/react-router'
-
-import { observer } from 'mobx-react'
 import { useEffect } from 'react'
 
-const LoginPage = observer(() => {
+const LoginPage = () => {
   const { t } = useI18n()
 
   const { Field, handleSubmit } = useForm({
@@ -28,7 +26,7 @@ const LoginPage = observer(() => {
     }
   })
 
-  const { login, currentUser } = useUser()
+  const { login, currentUser } = useUserStore()
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -135,7 +133,7 @@ const LoginPage = observer(() => {
       </div>
     </AuthenticationWrapper>
   )
-})
+}
 
 export const Route = createFileRoute('/login')({
   component: LoginPage

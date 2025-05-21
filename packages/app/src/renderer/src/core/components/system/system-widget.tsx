@@ -2,9 +2,8 @@ import { Card, CardContent } from '@renderer/components/ui/card'
 import { Progress } from '@renderer/components/ui/progress'
 import { FC } from 'react'
 import { LoadingSpinner } from '../loader/loading-spinner'
-import { observer } from 'mobx-react'
-import { useSystem } from '@renderer/hooks'
 import { useI18n } from '@renderer/hooks/use-i18n'
+import { useSystemStore } from '@renderer/core/store/system.store'
 
 const formatUptime = (seconds: number) => {
   const weeks = Math.floor(seconds / 604800)
@@ -23,9 +22,9 @@ const formatUptime = (seconds: number) => {
   return formattedUptime.join(' ')
 }
 
-export const SystemWidget: FC = observer(() => {
+export const SystemWidget: FC = () => {
   const { t } = useI18n()
-  const { systemStatistics } = useSystem()
+  const { systemStatistics } = useSystemStore()
 
   return (
     <div className="grid sm:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-4 sm:gap-6 w-full lg:grid-cols-4 xl:grid-cols-4">
@@ -135,4 +134,4 @@ export const SystemWidget: FC = observer(() => {
       </Card>
     </div>
   )
-})
+}

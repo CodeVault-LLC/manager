@@ -9,16 +9,17 @@ import {
 } from '@renderer/components/ui/select'
 import { Separator } from '@renderer/components/ui/separator'
 import { UserEditFields } from '@renderer/components/UserEditFields'
-import { useSystem, useUser } from '@renderer/hooks'
+import { useApplicationStore } from '@renderer/core/store/application.store'
+import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { ETheme } from '@shared/types/system'
+import { ETheme } from '@shared/types/application'
 import { createFileRoute } from '@tanstack/react-router'
-import { observer } from 'mobx-react'
 
-const RouteComponent = observer(() => {
+const RouteComponent = () => {
   const { t } = useI18n()
-  const { updateUser } = useUser()
-  const { setTheme, system, setLanguage } = useSystem()
+  const { updateUser } = useUserStore()
+  const { setTheme, setLanguage, language, theme, themes, languages } =
+    useApplicationStore()
 
   return (
     <>
@@ -53,20 +54,20 @@ const RouteComponent = observer(() => {
           <Label htmlFor="language">{t('common.theme')}</Label>
 
           <Select
-            value={system.theme}
+            value={theme}
             onValueChange={(value) => {
               const theme = value as ETheme
 
               setTheme(theme)
             }}
-            defaultValue={system.theme}
+            defaultValue={theme}
           >
             <SelectTrigger className="w-[180px]" id="language">
               <SelectValue placeholder="Select a theme" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {system.themes.map((theme) => (
+                {themes.map((theme) => (
                   <SelectItem key={theme.id} value={theme.id}>
                     <div className="flex items-center gap-2">
                       {theme.id === ETheme.SYSTEM ? (
@@ -94,20 +95,20 @@ const RouteComponent = observer(() => {
           <Label htmlFor="language">{t('common.language')}</Label>
 
           <Select
-            value={system.language}
+            value={language}
             onValueChange={(value) => {
               const theme = value as ETheme
 
               setLanguage(theme)
             }}
-            defaultValue={system.language}
+            defaultValue={language}
           >
             <SelectTrigger className="w-[180px]" id="language">
               <SelectValue placeholder="Select a theme" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {system.languages.map((language) => (
+                {languages.map((language) => (
                   <SelectItem key={language.code} value={language.code}>
                     <div className="flex items-center gap-2">
                       <span>{language.flag}</span>
@@ -122,7 +123,7 @@ const RouteComponent = observer(() => {
       </div>
     </>
   )
-})
+}
 
 export const Route = createFileRoute('/settings/general')({
   component: RouteComponent

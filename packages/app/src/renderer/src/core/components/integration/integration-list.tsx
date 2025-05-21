@@ -1,7 +1,5 @@
-import { observer } from 'mobx-react'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { Button } from '@renderer/components/ui/button'
-import { useUser } from '@renderer/hooks'
 import { Badge } from '@renderer/components/ui/badge'
 import { Separator } from '@renderer/components/ui/separator'
 import { Settings } from 'lucide-react'
@@ -11,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
+import { useUserStore } from '@renderer/core/store/user.store'
 
 type Integration = {
   name: string
@@ -21,9 +20,9 @@ type Integration = {
   revoke?: () => void
 }
 
-export const IntegrationList = observer(() => {
+export const IntegrationList = () => {
   const { t } = useI18n()
-  const { currentUser, authenticateGoogle, revokeGoogle } = useUser()
+  const { currentUser, authenticateGoogle, revokeGoogle } = useUserStore()
 
   const integrations: Integration[] = [
     {
@@ -176,4 +175,4 @@ export const IntegrationList = observer(() => {
       </div>
     </>
   )
-})
+}

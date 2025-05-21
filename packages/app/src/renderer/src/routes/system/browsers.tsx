@@ -1,19 +1,18 @@
 import { Separator } from '@renderer/components/ui/separator'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { useSystem } from '@renderer/hooks'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
-import { observer } from 'mobx-react'
 import { Button } from '@renderer/components/ui/button'
 import { Badge } from '@renderer/components/ui/badge'
 import { Settings } from 'lucide-react'
 import { Chrome } from '@renderer/components/brands/chrome'
 import { Edge } from '@renderer/components/brands'
+import { useSystemStore } from '@renderer/core/store/system.store'
 
-const RouteComponent = observer(() => {
+const RouteComponent = () => {
   const { t } = useI18n()
-  const { browsers } = useSystem()
+  const { browsers } = useSystemStore()
 
   const browserIcons = {
     chrome: <Chrome className="size-6" />,
@@ -72,7 +71,7 @@ const RouteComponent = observer(() => {
       </div>
     </AuthenticationWrapper>
   )
-})
+}
 
 export const Route = createFileRoute('/system/browsers')({
   component: RouteComponent

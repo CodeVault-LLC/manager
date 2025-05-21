@@ -1,46 +1,45 @@
 import { FC, ReactNode, useEffect } from 'react'
-import { observer } from 'mobx-react'
 import { InstanceHeader } from '../components/auth-header/auth-header'
 import { SidebarInset, SidebarProvider } from '@renderer/components/ui/sidebar'
 import { AppSidebar } from '../components/admin-sidebar'
 import { Toaster } from '@renderer/components/ui/sonner'
-import { useSystem } from '@renderer/hooks'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { useDashboard } from '@renderer/hooks/use-dashboard'
 import { AuthenticationWrapper } from '../lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { CopyrightIcon } from 'lucide-react'
+import { useSystemStore } from '../store/system.store'
+import { useDashboardStore } from '../store/dashboard.store'
+import { useApplicationStore } from '../store/application.store'
 
 type TAdminLayout = {
   children: ReactNode
 }
 
-export const AdminLayout: FC<TAdminLayout> = observer((props) => {
+export const AdminLayout: FC<TAdminLayout> = (props) => {
   const { children } = props
   const { changeLanguage } = useI18n()
   const {
-    fetchInitial: getInitialData,
-    system,
     doBrowserRefresh,
     subscribeToSystemStatistics,
     unsubscribeFromSystemStatistics,
     subscribeToSystemInactivity,
     unsubscribeFromSystemInactivity,
-    inactive
-  } = useSystem()
+    systemInactivity
+  } = useSystemStore()
 
-  const { fetchNews } = useDashboard()
+  const { fetchInitialSettings, language } = useApplicationStore()
+
+  const { fetchNews } = useDashboardStore()
 
   useEffect(() => {
-    getInitialData()
+    fetchInitialSettings()
     doBrowserRefresh()
     subscribeToSystemStatistics()
     subscribeToSystemInactivity()
     fetchNews()
 
-    const initialLanguage = system.language
-    if (initialLanguage) {
-      changeLanguage(initialLanguage)
+    if (language) {
+      changeLanguage(language)
     }
 
     return () => {
@@ -54,7 +53,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset className="overflow-x-hidden">
-          {inactive && (
+          {systemInactivity && (
             <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
               <div className="absolute top-4 right-4 bg-background rounded-md p-4 shadow-md max-w-lg w-full flex flex-row gap-4 items-center">
                 <div>
@@ -89,7 +88,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
             </AuthenticationWrapper>
           )}
 
-          {!inactive && (
+          {!systemInactivity && (
             <>
               <InstanceHeader />
               <Toaster closeButton richColors />
@@ -106,4 +105,4 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
       {/*<NewUserPopup />*/}
     </div>
   )
-})
+}

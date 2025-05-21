@@ -1,11 +1,10 @@
-import { useDashboard } from '@renderer/hooks/use-dashboard'
-import { observer } from 'mobx-react'
 import { FC } from 'react'
 import { MoviesWidget } from './movies-widget'
 import { GoogleChatWidget } from './google-chat-widget'
+import { useDashboardStore } from '@renderer/core/store/dashboard.store'
 
-export const RenderWidgets: FC = observer(() => {
-  const { widgets } = useDashboard()
+export const RenderWidgets: FC = () => {
+  const { widgets } = useDashboardStore()
 
   if (!widgets) {
     return <div className="flex flex-col gap-4">No widgets found</div>
@@ -21,4 +20,4 @@ export const RenderWidgets: FC = observer(() => {
         return <div key={widget.name}>Widget not found</div>
     }
   })
-})
+}
