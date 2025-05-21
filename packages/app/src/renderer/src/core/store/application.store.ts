@@ -66,10 +66,10 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   },
 
   setHtmlTheme: (theme: ETheme) => {
-    const html = document.querySelector('html')
-    if (html) {
-      html.setAttribute('data-theme', theme)
-    }
+    const root = window.document.documentElement
+
+    root.classList.remove('dark', 'light')
+    root.classList.add(theme)
   },
 
   setTheme: async (theme: ETheme) => {
@@ -79,6 +79,8 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
         language: get().language,
         theme
       })
+
+      get().setHtmlTheme(theme)
     } catch (error) {
       console.error('setting user theme error', error)
     }
@@ -87,6 +89,7 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   setLanguage: async (language: string) => {
     try {
       set({ language })
+      console.log('setting user language', language)
       await ipcClient.invoke('application:setAppSettings', {
         language,
         theme: get().theme

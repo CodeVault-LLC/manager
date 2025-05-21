@@ -1,3 +1,5 @@
+import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
+import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/system/')({
@@ -5,5 +7,9 @@ export const Route = createFileRoute('/system/')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/system/"!</div>
+  return (
+    <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
+      s
+    </AuthenticationWrapper>
+  )
 }

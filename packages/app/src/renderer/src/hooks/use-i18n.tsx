@@ -19,7 +19,7 @@ export const useI18n = () => {
     if (language) {
       changeLanguage(language)
     }
-  }, [])
+  }, [language])
 
   const changeLanguage = (lang: string) => {
     if (!window.i18n) return
