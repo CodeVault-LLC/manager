@@ -29,6 +29,7 @@ import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 import { Route as PoliciesFaqImport } from './routes/policies/faq'
 import { Route as EntertainmentMangaImport } from './routes/entertainment/manga'
+import { Route as DeveloperIconsImport } from './routes/developer/icons'
 import { Route as EntertainmentMangaIndexImport } from './routes/entertainment/manga/index'
 import { Route as EntertainmentMangaIdImport } from './routes/entertainment/manga/$id'
 
@@ -142,6 +143,12 @@ const EntertainmentMangaRoute = EntertainmentMangaImport.update({
   getParentRoute: () => EntertainmentRoute,
 } as any)
 
+const DeveloperIconsRoute = DeveloperIconsImport.update({
+  id: '/developer/icons',
+  path: '/developer/icons',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const EntertainmentMangaIndexRoute = EntertainmentMangaIndexImport.update({
   id: '/',
   path: '/',
@@ -205,6 +212,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-email'
       fullPath: '/verify-email'
       preLoaderRoute: typeof VerifyEmailImport
+      parentRoute: typeof rootRoute
+    }
+    '/developer/icons': {
+      id: '/developer/icons'
+      path: '/developer/icons'
+      fullPath: '/developer/icons'
+      preLoaderRoute: typeof DeveloperIconsImport
       parentRoute: typeof rootRoute
     }
     '/entertainment/manga': {
@@ -369,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/system': typeof SystemRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/developer/icons': typeof DeveloperIconsRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
@@ -391,6 +406,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/developer/icons': typeof DeveloperIconsRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -414,6 +430,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/system': typeof SystemRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/developer/icons': typeof DeveloperIconsRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
@@ -439,6 +456,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/system'
     | '/verify-email'
+    | '/developer/icons'
     | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
@@ -460,6 +478,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/verify-email'
+    | '/developer/icons'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -481,6 +500,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/system'
     | '/verify-email'
+    | '/developer/icons'
     | '/entertainment/manga'
     | '/policies/faq'
     | '/policies/privacy'
@@ -505,6 +525,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   SystemRoute: typeof SystemRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
+  DeveloperIconsRoute: typeof DeveloperIconsRoute
   PoliciesFaqRoute: typeof PoliciesFaqRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
@@ -518,6 +539,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   SystemRoute: SystemRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
+  DeveloperIconsRoute: DeveloperIconsRoute,
   PoliciesFaqRoute: PoliciesFaqRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,
@@ -540,6 +562,7 @@ export const routeTree = rootRoute
         "/settings",
         "/system",
         "/verify-email",
+        "/developer/icons",
         "/policies/faq",
         "/policies/privacy",
         "/policies/terms"
@@ -579,6 +602,9 @@ export const routeTree = rootRoute
     },
     "/verify-email": {
       "filePath": "verify-email.tsx"
+    },
+    "/developer/icons": {
+      "filePath": "developer/icons.tsx"
     },
     "/entertainment/manga": {
       "filePath": "entertainment/manga.tsx",

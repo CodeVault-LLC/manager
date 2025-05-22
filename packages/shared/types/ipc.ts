@@ -6,6 +6,7 @@ import { INews } from "./news";
 import { IExtension } from "./extension";
 import { ETheme, IApplication } from "./application/application";
 import { TErrorInfo } from "../helpers";
+import { IConvertedImageData, IConvertedImageResponse } from "./image/image";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -42,6 +43,10 @@ export interface IpcHandlers {
 
   "auth:google": () => Promise<TCommunicationResponse<boolean>>;
   "auth:google:revoke": () => Promise<TCommunicationResponse<boolean>>;
+
+  "images:convert": (
+    data: IConvertedImageData
+  ) => Promise<TCommunicationResponse<IConvertedImageResponse>>;
 
   "application:initial": () => Promise<
     TCommunicationResponse<{ theme: ETheme; language: string }>

@@ -36,6 +36,9 @@ export enum EErrorCodes {
 
   BAD_REQUEST = "4000",
 
+  // File
+  FILE_CONVERSION_ERROR = "4005",
+
   // Global
   INSTANCE_NOT_CONFIGURED = "5000",
   INVALID_EMAIL = "5005",

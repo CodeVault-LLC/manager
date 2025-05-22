@@ -20,7 +20,8 @@
     "network": "Nettverk",
     "storage": "Lagring",
     "security": "Sikkerhet",
-    "tryAgain": "Prøv igjen"
+    "tryAgain": "Prøv igjen",
+    "icons": "Ikoner"
   },
   "navigation": {
     "home": "Hjem",

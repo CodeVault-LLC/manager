@@ -20,7 +20,8 @@
     "network": "Network",
     "storage": "Storage",
     "security": "Security",
-    "tryAgain": "Try Again"
+    "tryAgain": "Try Again",
+    "icons": "Icons"
   },
   "navigation": {
     "home": "Home",

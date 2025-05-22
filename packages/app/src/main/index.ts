@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow } from 'electron'
 import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.ico?asset'
 import { ConfStorage } from './store'
 import { loadNoteServices } from './services/note.service'
 import handleDeepLink from './deep-link'
@@ -14,6 +14,7 @@ import { registerAuthIPC, registerUserIPC } from './services/user'
 import { registerExtensionIPC } from './services/extensions'
 import { registerIntegrations } from './services/integrations'
 import { registerApplicationIPC } from './services/application/application.ipc'
+import { registerDeveloperIPC } from './services/developer/developer.ipc'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -140,6 +141,8 @@ function registerIpc() {
   registerIntegrations()
   loadNoteServices()
   loadDashboardServices()
+
+  registerDeveloperIPC()
 
   registerApplicationIPC()
   registerSystemIPC()

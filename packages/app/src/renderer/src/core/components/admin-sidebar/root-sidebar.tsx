@@ -1,5 +1,11 @@
 import * as React from 'react'
-import { Frame, PieChart, SquareTerminal } from 'lucide-react'
+import {
+  FilmIcon,
+  Frame,
+  MonitorIcon,
+  PieChart,
+  TerminalIcon
+} from 'lucide-react'
 
 import {
   Sidebar,
@@ -55,7 +61,7 @@ export const AppSidebar = (props: { className?: string }) => {
         // Entertainment (e.g. games, movies, etc.)
         title: 'Entertainment',
         url: '/entertainment',
-        icon: SquareTerminal,
+        icon: FilmIcon,
         isActive: false,
         items: [
           {
@@ -67,7 +73,7 @@ export const AppSidebar = (props: { className?: string }) => {
       {
         title: 'System',
         url: '/system/browsers',
-        icon: SquareTerminal,
+        icon: MonitorIcon,
         items: [
           {
             title: t('common.overview'),
@@ -76,6 +82,17 @@ export const AppSidebar = (props: { className?: string }) => {
           {
             title: t('common.browsers'),
             url: '/system/browsers'
+          }
+        ]
+      },
+      {
+        title: 'Developer',
+        url: '/developer/icons',
+        icon: TerminalIcon,
+        items: [
+          {
+            title: t('common.icons'),
+            url: '/developer/icons'
           }
         ]
       }

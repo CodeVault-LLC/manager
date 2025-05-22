@@ -28,21 +28,12 @@ export const systemServices = {
     const battery = await si.battery()
     logger.debug('Battery:', battery)
 
-    const networkParsed = Array.isArray(network)
-      ? network.map((item) => ({
-          name: item.iface,
-          ip4: item.ip4,
-          mac: item.mac,
-          ip6: item.ip6
-        }))
-      : [
-          {
-            name: network.iface,
-            ip4: network.ip4,
-            mac: network.mac,
-            ip6: network.ip6
-          }
-        ]
+    const networkParsed = network.map((item) => ({
+      name: item.iface,
+      ip4: item.ip4,
+      mac: item.mac,
+      ip6: item.ip6
+    }))
 
     const hardware: ISystemHardware = {
       cpu: {
