@@ -1,7 +1,17 @@
 appId: no.codevault.manager
 productName: Manager
+artifactName: ${name}-${version}-${os}-${arch}.${ext}
+
+publish: { provider: github, releaseType: draft, vPrefixedTagName: true }
+forceCodeSigning: false
+
+# native dependencies compiling gets triggered in ./scripts/prepare-native-deps.ts
+npmRebuild: false
+
 directories:
   buildResources: build
+  output: ./dist
+
 files:
   - out/**
   - migrations/**
@@ -11,16 +21,25 @@ files:
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+
+compression: normal
+asar: true
 asarUnpack:
   - resources/**
   - out/**
+
 win:
   executableName: Manager
+  artifactName: ${name}-${version}-${arch}.${ext}
+  target:
+    - { target: nsis }
+
 nsis:
-  artifactName: ${name}-${version}-setup.${ext}
+  artifactName: ${name}-${version}-windows-${arch}-manager-installer.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
@@ -38,11 +57,9 @@ linux:
     - deb
   maintainer: electronjs.org
   category: Utility
+
 appImage:
-  artifactName: ${name}-${version}.${ext}
-npmRebuild: false
-publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  artifactName: ${name}-${version}-${arch}.${ext}
+
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

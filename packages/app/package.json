@@ -8,6 +8,13 @@
     "name": "Lukas Olsen",
     "email": "lukmarwil@gmail.com"
   },
+  "repository": {
+    "url": "https://github.com/codevault-llc/manager",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/codevault-llc/manager/issues"
+  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "electron",
