@@ -1,7 +1,7 @@
 import { FC, ReactNode, useEffect } from 'react'
 import { EErrorCodes, EPageTypes } from '@shared/helpers'
 import { useNavigate } from '@tanstack/react-router'
-import { LoadingSpinner } from '@renderer/core/components/loader/loading-spinner'
+import { Loader } from '@renderer/core/components/loader/loading-spinner'
 import { NetworkError } from '@renderer/core/components/errors/network-error'
 import { useErrorStore } from '@renderer/core/store/error.store'
 import { useDashboardStore } from '@renderer/core/store/dashboard.store'
@@ -26,10 +26,8 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   const { fetchWidgets } = useDashboardStore()
   const { getError } = useErrorStore()
 
-  // Helper to get redirect URL
   const getWorkspaceRedirectionUrl = (): string => {
     return '/'
-    // You can expand this if you want to handle workspace slugs
   }
 
   useEffect(() => {
@@ -87,7 +85,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
   if (isUserLoading && !currentUser?.id) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <LoadingSpinner />
+        <Loader />
       </div>
     )
   }

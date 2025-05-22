@@ -9,6 +9,7 @@ export interface IErrorStore {
   addError: (error: TErrorInfo) => void
   getError: (code: EErrorCodes) => TErrorInfo | undefined
   removeError: (code: EErrorCodes) => void
+  clearErrors: () => void
 }
 
 export const useErrorStore = create<IErrorStore>((set, get) => ({
@@ -45,5 +46,7 @@ export const useErrorStore = create<IErrorStore>((set, get) => ({
       errors: state.errors.filter((error) => error.code !== code),
       isCurrentError: state.errors.length > 0
     }))
-  }
+  },
+
+  clearErrors: () => set({ errors: [], isCurrentError: false })
 }))

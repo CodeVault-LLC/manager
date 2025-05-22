@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { Progress } from '@renderer/components/ui/progress'
 import { FC } from 'react'
-import { LoadingSpinner } from '../loader/loading-spinner'
+import { Loader } from '../loader/loading-spinner'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { useSystemStore } from '@renderer/core/store/system.store'
 
@@ -47,7 +47,7 @@ export const SystemWidget: FC = () => {
                   </span>
                 </div>
               ) : (
-                <LoadingSpinner className="size-6" />
+                <Loader className="size-6" />
               )}
             </div>
             <Progress value={systemStatistics?.cpu.current} className="mt-6" />
@@ -74,7 +74,7 @@ export const SystemWidget: FC = () => {
                   </span>
                 </div>
               ) : (
-                <LoadingSpinner className="size-6" />
+                <Loader className="size-6" />
               )}
             </div>
             <Progress
@@ -104,7 +104,7 @@ export const SystemWidget: FC = () => {
                   </span>
                 </div>
               ) : (
-                <LoadingSpinner className="size-6" />
+                <Loader className="size-6" />
               )}
             </div>
             <Progress value={systemStatistics?.disk.current} className="mt-6" />
@@ -125,7 +125,7 @@ export const SystemWidget: FC = () => {
                   {formatUptime(systemStatistics.uptime)}
                 </h3>
               ) : (
-                <LoadingSpinner className="size-6" />
+                <Loader className="size-6" />
               )}
             </div>
             {/* No progress bar for uptime needed, you can remove this */}

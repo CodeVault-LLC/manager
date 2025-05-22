@@ -19,7 +19,8 @@
     "hardware": "Maskinvare",
     "network": "Nettverk",
     "storage": "Lagring",
-    "security": "Sikkerhet"
+    "security": "Sikkerhet",
+    "tryAgain": "Prøv igjen"
   },
   "navigation": {
     "home": "Hjem",
@@ -135,6 +136,9 @@
     }
   },
   "error": {
-    "invalidToken": "Ugyldig eller utløpt bekreftelsestoken"
+    "invalidToken": "Ugyldig eller utløpt bekreftelsestoken",
+    "networkError": "Kan ikke koble til serveren",
+    "networkErrorDescription": "Det oppstod et problem med å koble til serveren. Sjekk om du har internettforbindelse og prøv igjen. Hvis problemet vedvarer, kontakt kundestøtte for videre hjelp.",
+    "networkErrorTip": "Tips: Sjekk brannmur, VPN eller nettverksinnstillinger hvis du er tilkoblet, men fortsatt får denne feilen."
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "managerapp",
+  "name": "manager",
   "version": "1.0.0",
   "description": "Manage your applications with ease",
   "main": "./out/main/index.js",

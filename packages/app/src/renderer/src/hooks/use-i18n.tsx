@@ -24,6 +24,8 @@ export const useI18n = () => {
   const changeLanguage = (lang: string) => {
     if (!window.i18n) return
 
+    console.log('Changing language to:', lang)
+
     setLocale(window.i18n.setLocale(lang))
   }
 

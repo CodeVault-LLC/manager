@@ -1,11 +1,28 @@
 import { cn } from '@renderer/utils/helpers'
 import { FC } from 'react'
 
-type TLoadingSpinner = {
+type TLoaderProps = {
   className?: string
+  type?: 'spinner' | 'text'
+  length?: number | string // width of the text loader
 }
 
-export const LoadingSpinner: FC<TLoadingSpinner> = ({ className }) => {
+export const Loader: FC<TLoaderProps> = ({
+  className,
+  type = 'spinner',
+  length = 100
+}) => {
+  if (type === 'text') {
+    return (
+      <div
+        className={cn('h-4 bg-gray-300 rounded animate-pulse', className)}
+        style={{
+          width: typeof length === 'number' ? `${length}px` : length
+        }}
+      />
+    )
+  }
+
   return (
     <div
       className={cn(

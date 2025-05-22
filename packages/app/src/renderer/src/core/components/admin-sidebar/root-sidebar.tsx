@@ -13,12 +13,15 @@ import { TeamSwitcher } from './sidebar-workspace'
 import { NavUser } from './sidebar-user'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { useUserStore } from '@renderer/core/store/user.store'
+import { useErrorStore } from '@renderer/core/store/error.store'
+import { EErrorCodes } from '@shared/helpers'
 
 export const AppSidebar = (props: { className?: string }) => {
   const { isUserLoggedIn } = useUserStore()
+  const { getError } = useErrorStore()
   const { t } = useI18n()
 
-  if (!isUserLoggedIn) return null
+  if (!isUserLoggedIn && !getError(EErrorCodes.NETWORK_ERROR)) return null
 
   const data: {
     teams: {
