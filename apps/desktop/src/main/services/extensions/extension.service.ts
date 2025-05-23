@@ -1,5 +1,7 @@
 import { IExtension } from '@shared/types/extension'
+
 import { api } from '../api.service'
+
 import { db } from '@main/database/data-source'
 
 export const extensionService = {

@@ -2,9 +2,12 @@ import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { INews } from '@shared/types/news'
 import { ipcMain } from 'electron'
-import { msnNewsServices } from './msn.service'
-import logger from '@main/logger'
+
 import { msnSportServices } from '../sports/msn-sport.service'
+
+import { msnNewsServices } from './msn.service'
+
+import logger from '@main/logger'
 
 export const registerMsnIPC = async () => {
   ipcMain.handle(

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
 import {
   Select,
@@ -7,9 +7,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@renderer/components/ui/select'
-import { Button } from '@renderer/components/ui/button'
-import { X } from 'lucide-react'
 import { IOutput } from '@shared/types/image/image'
+import { X } from 'lucide-react'
+import { FC } from 'react'
 
 interface Props {
   output: IOutput

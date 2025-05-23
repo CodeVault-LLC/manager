@@ -1,7 +1,3 @@
-import { FC } from 'react'
-import { useRouterState } from '@tanstack/react-router'
-import { SidebarTrigger } from '@renderer/components/ui/sidebar'
-import { Separator } from '@renderer/components/ui/separator'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,8 +6,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@renderer/components/ui/breadcrumb'
-import { useI18n } from '@renderer/hooks/use-i18n'
+import { Separator } from '@renderer/components/ui/separator'
+import { SidebarTrigger } from '@renderer/components/ui/sidebar'
 import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { useRouterState } from '@tanstack/react-router'
+import { FC } from 'react'
 
 export const InstanceHeader: FC = () => {
   const { location } = useRouterState()

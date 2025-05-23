@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
+import { UserEditFields } from '@renderer/components/UserEditFields'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
+import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { UserEditFields } from '@renderer/components/UserEditFields'
-import { useUserStore } from '@renderer/core/store/user.store'
+import { useEffect } from 'react'
 
 const RegisterPage = () => {
   const { t } = useI18n()

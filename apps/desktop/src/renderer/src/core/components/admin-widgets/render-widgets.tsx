@@ -1,7 +1,8 @@
-import { FC } from 'react'
-import { MoviesWidget } from './movies-widget'
-import { GoogleChatWidget } from './google-chat-widget'
 import { useDashboardStore } from '@renderer/core/store/dashboard.store'
+import { FC } from 'react'
+
+import { GoogleChatWidget } from './google-chat-widget'
+import { MoviesWidget } from './movies-widget'
 
 export const RenderWidgets: FC = () => {
   const { widgets } = useDashboardStore()

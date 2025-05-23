@@ -1,8 +1,9 @@
 import { MsnNewsResponse } from '@shared/types/msn/msn-news'
 import axios from 'axios'
+import { desc, eq } from 'drizzle-orm'
+
 import { db } from '@main/database/data-source'
 import { news, newsProvider, newsThumbnail } from '@main/database/models/schema'
-import { desc, eq } from 'drizzle-orm'
 import logger from '@main/logger'
 
 const msnApi = axios.create({

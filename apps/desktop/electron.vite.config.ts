@@ -9,7 +9,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@main': path.resolve('src/main'),
-        '@shared': path.resolve(__dirname, '../shared')
+        '@shared': path.resolve(__dirname, '../../packages/shared')
       }
     },
     build: {
@@ -22,7 +22,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
-        '@shared': path.resolve(__dirname, '../shared')
+        '@shared': path.resolve(__dirname, '../../packages/shared')
       }
     }
   },
@@ -30,7 +30,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': path.resolve('src/renderer/src'),
-        '@shared': path.resolve(__dirname, '../shared')
+        '@shared': path.resolve(__dirname, '../../packages/shared')
       }
     },
     plugins: [

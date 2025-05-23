@@ -58,7 +58,7 @@ export async function getNetworkUsage() {
   let rx = 0 // received bytes
   let tx = 0 // transmitted bytes
 
-  for (let iface of stats) {
+  for (const iface of stats) {
     rx += iface.rx_bytes
     tx += iface.tx_bytes
   }

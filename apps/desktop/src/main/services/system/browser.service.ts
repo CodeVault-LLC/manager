@@ -1,6 +1,7 @@
-import { IBrowser } from '@shared/types/system'
 import fs from 'node:fs'
 import os from 'node:os'
+
+import { IBrowser } from '@shared/types/system'
 
 const username = os.userInfo().username
 

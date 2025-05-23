@@ -1,7 +1,8 @@
-import { api } from '@main/services/api.service'
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain, shell } from 'electron'
+
+import { api } from '@main/services/api.service'
 
 export const registerGoogleIPC = () => {
   ipcMain.handle(

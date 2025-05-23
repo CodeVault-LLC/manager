@@ -1,5 +1,6 @@
-import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { contextBridge, ipcRenderer } from 'electron'
+
 import { exposeToMainWorld } from './i18n'
 
 // Custom APIs for renderer

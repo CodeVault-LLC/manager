@@ -1,15 +1,15 @@
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { Button } from '@renderer/components/ui/button'
-import { Badge } from '@renderer/components/ui/badge'
-import { Separator } from '@renderer/components/ui/separator'
-import { Settings } from 'lucide-react'
 import { Google } from '@renderer/components/brands/google'
+import { Badge } from '@renderer/components/ui/badge'
+import { Button } from '@renderer/components/ui/button'
+import { Separator } from '@renderer/components/ui/separator'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
 import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { Settings } from 'lucide-react'
 
 type Integration = {
   name: string

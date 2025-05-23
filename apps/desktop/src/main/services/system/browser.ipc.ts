@@ -1,11 +1,14 @@
-import { db } from '@main/database/data-source'
+import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { IBrowser } from '@shared/types/system'
-import { ipcMain } from 'electron'
-import { browserList, browserServices } from './browser.service'
-import { EErrorCodes } from '@shared/helpers'
-import { browsers } from '@main/database/models/browser.model'
 import { eq } from 'drizzle-orm'
+import { ipcMain } from 'electron'
+
+import { browserList, browserServices } from './browser.service'
+
+import { db } from '@main/database/data-source'
+import { browsers } from '@main/database/models/browser.model'
+
 
 export const registerBrowserIPC = async () => {
   ipcMain.handle(

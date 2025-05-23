@@ -1,10 +1,10 @@
+import { ipcClient } from '@renderer/utils/ipcClient'
+import { IExtension } from '@shared/types/extension'
 import {
   IBrowser,
   ISystemHardware,
   ISystemStatistics
 } from '@shared/types/system'
-import { ipcClient } from '@renderer/utils/ipcClient'
-import { IExtension } from '@shared/types/extension'
 import { create } from 'zustand'
 
 export interface ISystemStore {

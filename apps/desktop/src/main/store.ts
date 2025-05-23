@@ -1,7 +1,9 @@
-import { app } from 'electron'
-import path from 'node:path'
-import fs from 'fs/promises'
 import { EventEmitter } from 'events'
+import fs from 'fs/promises'
+import path from 'node:path'
+
+import { app } from 'electron'
+
 import { api } from './services/api.service'
 
 const STORAGE_FILE = path.join(app.getPath('userData'), 'config.json')

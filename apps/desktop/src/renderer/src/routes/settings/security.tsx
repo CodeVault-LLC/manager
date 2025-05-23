@@ -1,20 +1,20 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { WindowsIcon } from '@renderer/components/brands'
 import { Badge } from '@renderer/components/ui/badge'
 import { Button } from '@renderer/components/ui/button'
+import { Separator } from '@renderer/components/ui/separator'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { Clock, Globe } from 'lucide-react'
-import { useEffect } from 'react'
-import { prettifyToHumanReadableDate } from '@shared/helpers/date.helper'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { ISession } from '@shared/types'
-import { WindowsIcon } from '@renderer/components/brands'
-import { Separator } from '@renderer/components/ui/separator'
 import { SessionModal } from '@renderer/core/components/session/session-modal'
 import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { prettifyToHumanReadableDate } from '@shared/helpers/date.helper'
+import { ISession } from '@shared/types'
+import { createFileRoute } from '@tanstack/react-router'
+import { Clock, Globe } from 'lucide-react'
+import { useEffect } from 'react'
 
 const RouteComponent = () => {
   const { t } = useI18n()

@@ -1,15 +1,17 @@
+import { Buffer } from 'buffer'
+import { PassThrough } from 'stream'
+
+import { EErrorCodes } from '@shared/helpers'
 import {
   IConvertedImageData,
   IConvertedImageResponse
 } from '@shared/types/image/image'
-import { ipcMain } from 'electron'
-import sharp from 'sharp'
-import archiver from 'archiver'
-import { PassThrough } from 'stream'
-import { Buffer } from 'buffer'
 import { TCommunicationResponse } from '@shared/types/ipc'
-import { EErrorCodes } from '@shared/helpers'
+import archiver from 'archiver'
+import { ipcMain } from 'electron'
 import pngToIco from 'png-to-ico'
+import sharp from 'sharp'
+
 
 export const registerImageIPC = async () => {
   ipcMain.handle(

@@ -1,6 +1,7 @@
-import { createLogger, format, transports } from 'winston'
 import path from 'node:path'
+
 import { app } from 'electron'
+import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, printf, colorize, json, align } = format
 

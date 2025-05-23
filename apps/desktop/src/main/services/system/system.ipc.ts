@@ -1,10 +1,13 @@
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
-import { ipcMain } from 'electron'
 import { ISystemHardware } from '@shared/types/system'
-import logger from '@main/logger'
-import { systemServices } from './system.service'
+import { ipcMain } from 'electron'
+
 import { registerBrowserIPC } from './browser.ipc'
+import { systemServices } from './system.service'
+
+import logger from '@main/logger'
+
 
 /**
  * Register all IPC handlers related to system management

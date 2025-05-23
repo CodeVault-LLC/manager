@@ -1,12 +1,3 @@
-import * as React from 'react'
-import {
-  FilmIcon,
-  Frame,
-  MonitorIcon,
-  PieChart,
-  TerminalIcon
-} from 'lucide-react'
-
 import {
   Sidebar,
   SidebarContent,
@@ -14,13 +5,24 @@ import {
   SidebarHeader,
   SidebarRail
 } from '@renderer/components/ui/sidebar'
-import { NavMain, NavMainProps } from './sidebar-main'
-import { TeamSwitcher } from './sidebar-workspace'
-import { NavUser } from './sidebar-user'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { useUserStore } from '@renderer/core/store/user.store'
 import { useErrorStore } from '@renderer/core/store/error.store'
+import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
 import { EErrorCodes } from '@shared/helpers'
+import {
+  FilmIcon,
+  Frame,
+  MonitorIcon,
+  PieChart,
+  TerminalIcon
+} from 'lucide-react'
+import * as React from 'react'
+
+
+import { NavMain, NavMainProps } from './sidebar-main'
+import { NavUser } from './sidebar-user'
+import { TeamSwitcher } from './sidebar-workspace'
+
 
 export const AppSidebar = (props: { className?: string }) => {
   const { isUserLoggedIn } = useUserStore()

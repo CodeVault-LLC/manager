@@ -1,5 +1,6 @@
 import { EErrorCodes } from '@shared/helpers'
 import { ipcMain } from 'electron'
+
 import { extensionService } from './extension.service'
 
 /**

@@ -4,8 +4,8 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "../shared/**/*.d.ts",
-    "../shared/**/*.ts"
+    "../../packages/shared/**/*.d.ts",
+    "../../packages/shared/**/*.ts"
   ],
   "compilerOptions": {
     "composite": true,
@@ -13,7 +13,7 @@
     "baseUrl": ".",
     "paths": {
       "@renderer/*": ["./src/renderer/src/*"],
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["../../packages/shared/*"]
     }
   }
 }

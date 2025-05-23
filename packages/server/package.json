@@ -37,6 +37,8 @@
     "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.6",
+    "eslint-config-sheriff": "^27.1.0",
+    "eslint-define-config": "^2.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   }

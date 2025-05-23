@@ -1,15 +1,16 @@
-import { FC, ReactNode, useEffect } from 'react'
-import { InstanceHeader } from '../components/auth-header/auth-header'
 import { SidebarInset, SidebarProvider } from '@renderer/components/ui/sidebar'
-import { AppSidebar } from '../components/admin-sidebar'
 import { Toaster } from '@renderer/components/ui/sonner'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { AuthenticationWrapper } from '../lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { CopyrightIcon } from 'lucide-react'
-import { useSystemStore } from '../store/system.store'
-import { useDashboardStore } from '../store/dashboard.store'
+import { FC, ReactNode, useEffect } from 'react'
+
+import { AppSidebar } from '../components/admin-sidebar'
+import { InstanceHeader } from '../components/auth-header/auth-header'
+import { AuthenticationWrapper } from '../lib/wrappers/authentication-wrapper'
 import { useApplicationStore } from '../store/application.store'
+import { useDashboardStore } from '../store/dashboard.store'
+import { useSystemStore } from '../store/system.store'
 
 type TAdminLayout = {
   children: ReactNode

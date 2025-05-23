@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import 'keen-slider/keen-slider.min.css'
-import { useKeenSlider } from 'keen-slider/react'
-import { Badge } from '@renderer/components/ui/badge'
 import { Msn } from '@renderer/components/brands/msn'
-import { useDashboardStore } from '@renderer/core/store/dashboard.store'
+import { Badge } from '@renderer/components/ui/badge'
 import { useApplicationStore } from '@renderer/core/store/application.store'
+import { useDashboardStore } from '@renderer/core/store/dashboard.store'
+import { useKeenSlider } from 'keen-slider/react'
 
 export const News: FC = () => {
   const { news } = useDashboardStore()

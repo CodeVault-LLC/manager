@@ -1,9 +1,10 @@
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { Progress } from '@renderer/components/ui/progress'
-import { FC } from 'react'
-import { Loader } from '../loader/loading-spinner'
-import { useI18n } from '@renderer/hooks/use-i18n'
 import { useSystemStore } from '@renderer/core/store/system.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { FC } from 'react'
+
+import { Loader } from '../loader/loading-spinner'
 
 const formatUptime = (seconds: number) => {
   const weeks = Math.floor(seconds / 604800)

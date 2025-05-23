@@ -1,9 +1,10 @@
-import logger from '@main/logger'
-import { ConfStorage } from '@main/store'
 import { EErrorCodes } from '@shared/helpers'
 import { ETheme, IApplication } from '@shared/types/application'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain, shell } from 'electron'
+
+import logger from '@main/logger'
+import { ConfStorage } from '@main/store'
 
 /**
  * Register all IPC handlers related to application settings

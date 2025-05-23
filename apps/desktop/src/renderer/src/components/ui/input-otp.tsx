@@ -1,7 +1,7 @@
-import * as React from 'react'
+import { cn } from '@renderer/utils/helpers'
 import { OTPInput, OTPInputContext } from 'input-otp'
 import { Minus } from 'lucide-react'
-import { cn } from '@renderer/utils/helpers'
+import * as React from 'react'
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,

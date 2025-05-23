@@ -1,4 +1,5 @@
 import { FC } from 'react'
+
 import { BrandIconProps } from './utilities'
 
 export const Edge: FC<BrandIconProps> = (props) => {

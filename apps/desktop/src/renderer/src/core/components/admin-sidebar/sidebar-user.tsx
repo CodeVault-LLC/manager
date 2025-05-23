@@ -1,13 +1,4 @@
 import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Settings2,
-  Sparkles
-} from 'lucide-react'
-import {
   Avatar,
   AvatarFallback,
   AvatarImage
@@ -27,9 +18,19 @@ import {
   SidebarMenuItem,
   useSidebar
 } from '@renderer/components/ui/sidebar'
-import { Link } from '@tanstack/react-router'
-import { useI18n } from '@renderer/hooks/use-i18n'
 import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { Link } from '@tanstack/react-router'
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Settings2,
+  Sparkles
+} from 'lucide-react'
+
 import { Loader } from '../loader/loading-spinner'
 
 export const NavUser = () => {

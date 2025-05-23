@@ -1,4 +1,5 @@
 import { createHashHistory, createRouter as TanstackCreateRouter } from '@tanstack/react-router'
+
 import { NotFound } from './components/NotFound'
 import { routeTree } from './routeTree.gen'
 

@@ -1,9 +1,13 @@
-import { BrowserWindow, powerMonitor } from 'electron'
+import os from 'node:os'
+
 import { ISystemStatistics } from '@shared/types/system'
+import { BrowserWindow, powerMonitor } from 'electron'
+import si from 'systeminformation'
+
 import { getNetworkUsage } from '../utils/system.helper'
 
-import si from 'systeminformation'
-import os from 'node:os'
+
+
 import { getAppState, setAppState } from '@main/states/app-state'
 
 export const loadSystemSockets = (mainWindow: BrowserWindow) => {
@@ -23,7 +27,7 @@ export const loadSystemSockets = (mainWindow: BrowserWindow) => {
 
     let totalDisk = 0
     let usedDisk = 0
-    for (let disk of disks) {
+    for (const disk of disks) {
       totalDisk += disk.size
       usedDisk += disk.used
     }

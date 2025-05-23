@@ -1,8 +1,9 @@
-import { ipcMain } from 'electron'
-import { api } from './api.service'
 import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { INote, TNotePage } from '@shared/types/note'
+import { ipcMain } from 'electron'
+
+import { api } from './api.service'
 
 const loadNoteServices = () => {
   ipcMain.handle('note:all', async (): Promise<TCommunicationResponse<TNotePage[]>> => {

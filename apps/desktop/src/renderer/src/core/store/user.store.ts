@@ -1,14 +1,15 @@
+import { ipcClient } from '@renderer/utils/ipcClient'
+import { EUserStatus, TUserStatus } from '@shared/constants'
+import { EErrorCodes } from '@shared/helpers'
 import {
   IAvatarWithBuffer,
   IRegistrationData,
   ISession,
   IUser
-} from '../../../../../../shared/types'
-import { EUserStatus, TUserStatus } from '@shared/constants'
+} from '@shared/types'
 import { toast } from 'sonner'
-import { EErrorCodes } from '@shared/helpers'
-import { ipcClient } from '@renderer/utils/ipcClient'
 import { create } from 'zustand'
+
 import { useErrorStore } from './error.store'
 
 export interface IUserStore {
@@ -187,7 +188,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
       set({ isLoading: true })
 
       // Handle file conversion for IPC transfer
-      let dataToSend = { ...data } as IRegistrationData & {
+      const dataToSend = { ...data } as IRegistrationData & {
         avatar?: IAvatarWithBuffer
       }
 

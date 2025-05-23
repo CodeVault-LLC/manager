@@ -1,5 +1,5 @@
-import { ipcMain } from 'electron'
 import { EErrorCodes } from '@shared/helpers'
+import { ipcMain } from 'electron'
 
 export const googleServices = {
   handleGoogleAuthCallback: (urlObj: URL) => {

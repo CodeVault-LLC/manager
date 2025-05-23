@@ -1,6 +1,7 @@
-import logger from '@main/logger'
 import { ISystemHardware } from '@shared/types/system'
 import si from 'systeminformation'
+
+import logger from '@main/logger'
 
 export const systemServices = {
   getSystemHardware: async (): Promise<ISystemHardware> => {

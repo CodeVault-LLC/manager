@@ -1,7 +1,7 @@
-import { IpcHandlers, IpcEmittedEvents } from '@shared/types/ipc'
-import { EErrorCodes } from '@shared/helpers'
 import { IpcRendererListener } from '@electron-toolkit/preload'
 import { useErrorStore } from '@renderer/core/store/error.store'
+import { EErrorCodes } from '@shared/helpers'
+import { IpcHandlers, IpcEmittedEvents } from '@shared/types/ipc'
 
 export const ipcClient = {
   // Wrapper for invoking IPC methods
@@ -18,6 +18,7 @@ export const ipcClient = {
     try {
       return await window.electron.ipcRenderer.invoke(channel, ...args)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(`IPC Invoke Error [${channel}]:`, error)
       throw error
     }
@@ -45,7 +46,9 @@ export const ipcClient = {
   },
 
   // Get all listeners for a given event
-  listeners: <T extends keyof IpcEmittedEvents>(_: T): Function[] => {
-    return [] as Function[]
+  listeners: <T extends keyof IpcEmittedEvents>(
+    _: T
+  ): Array<(...args: any[]) => any> => {
+    return [] as Array<(...args: any[]) => any>
   }
 }

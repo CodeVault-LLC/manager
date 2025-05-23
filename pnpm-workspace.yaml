@@ -1,5 +1,6 @@
 packages:
-  - "packages/app/**"
+  - "apps/desktop/**"
   - "packages/server/**"
   - "packages/**"
+  - "libs/eslint/**"
 hoist: false

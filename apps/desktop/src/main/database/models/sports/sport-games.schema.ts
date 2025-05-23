@@ -1,7 +1,8 @@
 import { relations } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { sportsLeagues } from './sport-leagues.schema'
+
 import { sportGameParticipants } from './sport-game-participants.schema'
+import { sportsLeagues } from './sport-leagues.schema'
 
 export const sportGames = sqliteTable('sports_games', {
   id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),

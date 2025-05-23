@@ -4,8 +4,8 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
-    "../shared/**/*.d.ts",
-    "../shared/**/*.ts"
+    "../../packages/shared/**/*.d.ts",
+    "../../packages/shared/**/*.ts"
   ],
   "compilerOptions": {
     "composite": true,
@@ -13,8 +13,8 @@
     "baseUrl": ".",
     "paths": {
       "@main/*": ["./src/main/*"],
-      "@shared/*": ["../shared/*"]
-    },
+      "@shared/*": ["../../packages/shared/*"]
+  },
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ES2022"]

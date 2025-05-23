@@ -1,8 +1,8 @@
+import en from '@shared/locales/en.json'
+import no from '@shared/locales/no.json'
 import { Locale, Translations } from '@shared/types/i18n'
 import { contextBridge } from 'electron'
 
-import en from '@shared/locales/en.json'
-import no from '@shared/locales/no.json'
 
 export const loadLocale = (lang: Locale): Translations => {
   switch (lang) {

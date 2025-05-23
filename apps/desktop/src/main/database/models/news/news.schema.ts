@@ -1,7 +1,8 @@
 import { relations } from 'drizzle-orm'
 import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { newsThumbnail } from './news-thumbnail.schema'
+
 import { newsProvider } from './news-provider.schema'
+import { newsThumbnail } from './news-thumbnail.schema'
 
 export const news = sqliteTable('news', {
   id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),

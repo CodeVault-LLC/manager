@@ -1,4 +1,3 @@
-import { ChevronRight, type LucideIcon } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,6 +14,7 @@ import {
   SidebarMenuSubItem
 } from '@renderer/components/ui/sidebar'
 import { Link, LinkProps } from '@tanstack/react-router'
+import { ChevronRight, type LucideIcon } from 'lucide-react'
 
 export interface NavMainProps {
   items: {

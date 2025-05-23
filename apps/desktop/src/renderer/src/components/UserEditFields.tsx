@@ -1,15 +1,17 @@
-import { FC } from 'react'
-import { Label } from './ui/label'
-import { Input } from './ui/input'
 import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
-import { Button } from './ui/button'
-import { useForm } from '@tanstack/react-form'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { MailCheckIcon, VerifiedIcon } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
-import { Link } from '@tanstack/react-router'
 import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { useForm } from '@tanstack/react-form'
+import { Link } from '@tanstack/react-router'
+import { MailCheckIcon, VerifiedIcon } from 'lucide-react'
+import { FC } from 'react'
+
+import { Alert, AlertDescription, AlertTitle } from './ui/alert'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
+
 
 type UserEditFieldsProps = {
   onSubmit?: <T>(values: T) => Promise<void>

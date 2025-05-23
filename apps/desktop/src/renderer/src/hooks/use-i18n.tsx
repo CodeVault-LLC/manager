@@ -1,6 +1,6 @@
+import { useApplicationStore } from '@renderer/core/store/application.store'
 import { TranslationKeys, Translations } from '@shared/types/i18n'
 import { useEffect, useState } from 'react'
-import { useApplicationStore } from '@renderer/core/store/application.store'
 
 declare global {
   interface Window {

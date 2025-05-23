@@ -1,20 +1,23 @@
-import { app, shell, BrowserWindow } from 'electron'
 import path, { join } from 'path'
+
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { app, shell, BrowserWindow } from 'electron'
+
 import icon from '../../resources/icon.ico?asset'
-import { ConfStorage } from './store'
-import { loadNoteServices } from './services/note.service'
-import handleDeepLink from './deep-link'
-import { loadSystemSockets } from './sockets/system.socket'
-import { loadDashboardServices } from './services/dashboard.service'
+
 import { runMigrations } from './database/data-source'
-import { registerMsnIPC } from './services/news/msn.ipc'
-import { registerSystemIPC } from './services/system'
-import { registerAuthIPC, registerUserIPC } from './services/user'
+import handleDeepLink from './deep-link'
+import { registerApplicationIPC } from './services/application/application.ipc'
+import { loadDashboardServices } from './services/dashboard.service'
+import { registerDeveloperIPC } from './services/developer/developer.ipc'
 import { registerExtensionIPC } from './services/extensions'
 import { registerIntegrations } from './services/integrations'
-import { registerApplicationIPC } from './services/application/application.ipc'
-import { registerDeveloperIPC } from './services/developer/developer.ipc'
+import { registerMsnIPC } from './services/news/msn.ipc'
+import { loadNoteServices } from './services/note.service'
+import { registerSystemIPC } from './services/system'
+import { registerAuthIPC, registerUserIPC } from './services/user'
+import { loadSystemSockets } from './sockets/system.socket'
+import { ConfStorage } from './store'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {

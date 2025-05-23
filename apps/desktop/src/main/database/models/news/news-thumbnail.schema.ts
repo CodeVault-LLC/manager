@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm'
 import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+
 import { news } from './news.schema'
 
 type NewsThumbnailResolution = {}

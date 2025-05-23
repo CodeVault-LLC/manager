@@ -1,7 +1,7 @@
 import { ipcClient } from '@renderer/utils/ipcClient'
+import { INews } from '@shared/types/news'
 import { IDashboardWidget } from '@shared/types/widget'
 import { toast } from 'sonner'
-import { INews } from '@shared/types/news'
 import { create } from 'zustand'
 
 export interface IDashboardStore {
