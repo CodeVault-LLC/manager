@@ -25,7 +25,7 @@ export const OutputItem: FC<Props> = ({
   onRemove
 }) => {
   return (
-    <div className="flex items-center gap-2 border p-3 rounded-lg">
+    <div className="flex items-center gap-2 border p-3 rounded-lg w-full">
       <div className="flex gap-2 items-center">
         <Input
           type="number"
@@ -66,7 +66,12 @@ export const OutputItem: FC<Props> = ({
         </SelectContent>
       </Select>
 
-      <Button variant="ghost" size="icon" onClick={() => onRemove(index)}>
+      <Button
+        className="ml-auto"
+        variant="ghost"
+        size="icon"
+        onClick={() => onRemove(index)}
+      >
         <X className="text-destructive" />
       </Button>
     </div>
