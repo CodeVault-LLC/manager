@@ -1,17 +1,18 @@
+import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { useRouterState } from '@tanstack/react-router'
+import { FC } from 'react'
+
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@renderer/components/ui/breadcrumb'
-import { Separator } from '@renderer/components/ui/separator'
-import { SidebarTrigger } from '@renderer/components/ui/sidebar'
-import { useUserStore } from '@renderer/core/store/user.store'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { useRouterState } from '@tanstack/react-router'
-import { FC } from 'react'
+  BreadcrumbSeparator,
+  Separator,
+  SidebarTrigger
+} from '@manager/ui'
 
 export const InstanceHeader: FC = () => {
   const { location } = useRouterState()

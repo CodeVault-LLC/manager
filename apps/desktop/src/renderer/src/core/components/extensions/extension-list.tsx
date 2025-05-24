@@ -1,7 +1,7 @@
-import { Button } from '@renderer/components/ui/button'
-import { Separator } from '@renderer/components/ui/separator'
 import { useSystemStore } from '@renderer/core/store/system.store'
 import { FC, useEffect } from 'react'
+
+import { Button, Separator } from '@manager/ui'
 
 type ExtensionListProps = {
   marketplace?: boolean

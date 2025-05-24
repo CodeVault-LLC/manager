@@ -1,1 +1,1 @@
-export * from './admin-upcoming'
+export { default } from './admin-upcoming'

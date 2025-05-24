@@ -1,9 +1,4 @@
 import { Google } from '@renderer/components/brands/google'
-import { Button } from '@renderer/components/ui/button'
-import { Checkbox } from '@renderer/components/ui/checkbox'
-import { Input } from '@renderer/components/ui/input'
-import { Label } from '@renderer/components/ui/label'
-import { Separator } from '@renderer/components/ui/separator'
 import { PasswordInput } from '@renderer/core/components/input/PasswordInput'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useUserStore } from '@renderer/core/store/user.store'
@@ -12,6 +7,8 @@ import { EPageTypes } from '@shared/helpers'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect } from 'react'
+
+import { Button, Separator, Label, Input, Checkbox } from '@manager/ui'
 
 const LoginPage = () => {
   const { t } = useI18n()
@@ -43,7 +40,7 @@ const LoginPage = () => {
             onSubmit={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              handleSubmit()
+              void handleSubmit()
             }}
           >
             <div className="flex flex-col gap-6">

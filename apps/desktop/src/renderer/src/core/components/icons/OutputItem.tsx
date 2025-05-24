@@ -1,15 +1,16 @@
-import { Button } from '@renderer/components/ui/button'
-import { Input } from '@renderer/components/ui/input'
+import { IOutput } from '@shared/types/image/image'
+import { X } from 'lucide-react'
+import { FC } from 'react'
+
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@renderer/components/ui/select'
-import { IOutput } from '@shared/types/image/image'
-import { X } from 'lucide-react'
-import { FC } from 'react'
+  SelectValue,
+  Button,
+  Input
+} from '@manager/ui'
 
 interface Props {
   output: IOutput

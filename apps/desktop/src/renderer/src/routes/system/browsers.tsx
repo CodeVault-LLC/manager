@@ -1,14 +1,13 @@
 import { Edge } from '@renderer/components/brands'
 import { Chrome } from '@renderer/components/brands/chrome'
-import { Badge } from '@renderer/components/ui/badge'
-import { Button } from '@renderer/components/ui/button'
-import { Separator } from '@renderer/components/ui/separator'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useSystemStore } from '@renderer/core/store/system.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 import { Settings } from 'lucide-react'
+
+import { Button, Badge, Separator } from '@manager/ui'
 
 const RouteComponent = () => {
   const { t } = useI18n()

@@ -1,12 +1,4 @@
 import { WindowsIcon } from '@renderer/components/brands'
-import { Badge } from '@renderer/components/ui/badge'
-import { Button } from '@renderer/components/ui/button'
-import { Separator } from '@renderer/components/ui/separator'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@renderer/components/ui/tooltip'
 import { SessionModal } from '@renderer/core/components/session/session-modal'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
@@ -15,6 +7,15 @@ import { ISession } from '@shared/types'
 import { createFileRoute } from '@tanstack/react-router'
 import { Clock, Globe } from 'lucide-react'
 import { useEffect } from 'react'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  Separator,
+  Badge,
+  Button
+} from '@manager/ui'
 
 const RouteComponent = () => {
   const { t } = useI18n()

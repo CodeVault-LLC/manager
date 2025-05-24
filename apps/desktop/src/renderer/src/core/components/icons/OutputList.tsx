@@ -1,7 +1,8 @@
-import { Button } from '@renderer/components/ui/button'
 import { IOutput } from '@shared/types/image/image'
 import { Plus, Trash2Icon } from 'lucide-react'
 import { FC } from 'react'
+
+import { Button } from '@manager/ui'
 
 import { OutputItem } from './OutputItem'
 

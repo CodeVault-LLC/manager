@@ -1,19 +1,20 @@
 import { UserEditFields } from '@renderer/components/UserEditFields'
-import { Label } from '@renderer/components/ui/label'
+import { useApplicationStore } from '@renderer/core/store/application.store'
+import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { ETheme } from '@shared/types/application'
+import { createFileRoute } from '@tanstack/react-router'
+
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@renderer/components/ui/select'
-import { Separator } from '@renderer/components/ui/separator'
-import { useApplicationStore } from '@renderer/core/store/application.store'
-import { useUserStore } from '@renderer/core/store/user.store'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { ETheme } from '@shared/types/application'
-import { createFileRoute } from '@tanstack/react-router'
+  SelectValue,
+  Separator,
+  Label
+} from '@manager/ui'
 
 const RouteComponent = () => {
   const { t } = useI18n()

@@ -1,8 +1,8 @@
-import { Card, CardContent } from '@renderer/components/ui/card'
-import { Progress } from '@renderer/components/ui/progress'
 import { useSystemStore } from '@renderer/core/store/system.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { FC } from 'react'
+
+import { Progress, Card, CardContent } from '@manager/ui'
 
 import { Loader } from '../loader/loading-spinner'
 

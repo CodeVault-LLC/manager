@@ -1,11 +1,7 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from '@renderer/components/ui/tabs'
 import { ExtensionList } from '@renderer/core/components/extensions/extension-list'
 import { createFileRoute } from '@tanstack/react-router'
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@manager/ui'
 
 const RouteComponent = () => {
   //const { t } = useI18n()

@@ -1,15 +1,10 @@
-import { Separator } from '@renderer/components/ui/separator'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow
-} from '@renderer/components/ui/table'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useSystemStore } from '@renderer/core/store/system.store'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, useLocation } from '@tanstack/react-router'
 import { useEffect } from 'react'
+
+import { Table, TableBody, TableCell, TableRow, Separator } from '@manager/ui'
 
 export const Route = createFileRoute('/system/hardware')({
   component: RouteComponent

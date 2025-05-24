@@ -1,4 +1,7 @@
-import { Button } from '@renderer/components/ui/button'
+import { useUserStore } from '@renderer/core/store/user.store'
+import { useI18n } from '@renderer/hooks/use-i18n'
+import { useState } from 'react'
+
 import {
   Dialog,
   DialogContent,
@@ -6,11 +9,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from '@renderer/components/ui/dialog'
-import { useUserStore } from '@renderer/core/store/user.store'
-import { useI18n } from '@renderer/hooks/use-i18n'
-import { useState } from 'react'
+  DialogTrigger,
+  Button
+} from '@manager/ui'
 
 export const SessionModal = () => {
   const { t } = useI18n()

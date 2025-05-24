@@ -1,23 +1,3 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage
-} from '@renderer/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@renderer/components/ui/dropdown-menu'
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar
-} from '@renderer/components/ui/sidebar'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { Link } from '@tanstack/react-router'
@@ -30,6 +10,23 @@ import {
   Settings2,
   Sparkles
 } from 'lucide-react'
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from '@manager/ui'
 
 import { Loader } from '../loader/loading-spinner'
 

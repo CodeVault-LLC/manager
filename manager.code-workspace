@@ -19,6 +19,10 @@
     {
       "name": "eslint",
       "path": "libs/eslint"
+    },
+    {
+      "name": "ui",
+      "path": "libs/ui"
     }
   ],
   "settings": {

@@ -1,5 +1,6 @@
-import { Badge } from '@renderer/components/ui/badge'
 import { FC } from 'react'
+
+import { Badge } from '@manager/ui'
 
 export const MangaHeader: FC = () => {
   return (

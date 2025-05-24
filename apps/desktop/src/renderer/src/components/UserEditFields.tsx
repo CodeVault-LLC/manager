@@ -6,12 +6,17 @@ import { Link } from '@tanstack/react-router'
 import { MailCheckIcon, VerifiedIcon } from 'lucide-react'
 import { FC } from 'react'
 
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
-
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Input,
+  Label,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@manager/ui'
 
 type UserEditFieldsProps = {
   onSubmit?: <T>(values: T) => Promise<void>

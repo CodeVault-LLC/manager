@@ -30,6 +30,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': path.resolve('src/renderer/src'),
+        '@manager': path.resolve(__dirname, '../../libs/'),
         '@shared': path.resolve(__dirname, '../../packages/shared')
       }
     },

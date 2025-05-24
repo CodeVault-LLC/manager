@@ -1,7 +1,8 @@
-import { Input } from '@renderer/components/ui/input'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
+
+import { Input } from '@manager/ui'
 
 export const Route = createFileRoute('/policies/faq')({
   component: RouteComponent

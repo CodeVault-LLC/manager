@@ -1,21 +1,3 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle
-} from '@renderer/components/ui/alert'
-import { Button } from '@renderer/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader
-} from '@renderer/components/ui/dialog'
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot
-} from '@renderer/components/ui/input-otp'
-import { Label } from '@renderer/components/ui/label'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
@@ -23,6 +5,21 @@ import { EPageTypes } from '@shared/helpers'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+
+import {
+  Button,
+  Label,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot
+} from '@manager/ui'
 
 export const Route = createFileRoute('/verify-email')({
   component: RouteComponent

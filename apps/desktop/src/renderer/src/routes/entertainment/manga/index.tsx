@@ -1,12 +1,8 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle
-} from '@renderer/components/ui/alert'
-import { Input } from '@renderer/components/ui/input'
 import { MangaHeader } from '@renderer/core/components/entertainment/manga/manga-header'
 import { createFileRoute } from '@tanstack/react-router'
 import { TriangleAlertIcon } from 'lucide-react'
+
+import { Input, Alert, AlertDescription, AlertTitle } from '@manager/ui'
 
 export const Route = createFileRoute('/entertainment/manga/')({
   component: RouteComponent

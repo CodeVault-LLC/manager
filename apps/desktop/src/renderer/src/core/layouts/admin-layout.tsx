@@ -1,9 +1,9 @@
-import { SidebarInset, SidebarProvider } from '@renderer/components/ui/sidebar'
-import { Toaster } from '@renderer/components/ui/sonner'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
 import { CopyrightIcon } from 'lucide-react'
 import { FC, ReactNode, useEffect } from 'react'
+
+import { Toaster, SidebarInset, SidebarProvider } from '@manager/ui'
 
 import { AppSidebar } from '../components/admin-sidebar'
 import { InstanceHeader } from '../components/auth-header/auth-header'

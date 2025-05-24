@@ -1,15 +1,16 @@
 import { Google } from '@renderer/components/brands/google'
-import { Badge } from '@renderer/components/ui/badge'
-import { Button } from '@renderer/components/ui/button'
-import { Separator } from '@renderer/components/ui/separator'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@renderer/components/ui/tooltip'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { Settings } from 'lucide-react'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  Separator,
+  Badge,
+  Button
+} from '@manager/ui'
 
 type Integration = {
   name: string

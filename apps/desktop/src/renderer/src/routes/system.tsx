@@ -1,4 +1,3 @@
-import { Tabs, TabsList, TabsTrigger } from '@renderer/components/ui/tabs'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EPageTypes } from '@shared/helpers'
@@ -10,6 +9,8 @@ import {
   useLocation
 } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+
+import { Tabs, TabsList, TabsTrigger } from '@manager/ui'
 
 export const Route = createFileRoute('/system')({
   component: RouteComponent

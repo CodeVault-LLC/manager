@@ -4,7 +4,7 @@ import {
   TableCell,
   TableHead,
   TableRow
-} from '@renderer/components/ui/table'
+} from '@manager/uitable'
 import { FC } from 'react'
 
 export const YrCard: FC = () => {

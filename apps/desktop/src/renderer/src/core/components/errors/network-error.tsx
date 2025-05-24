@@ -1,11 +1,11 @@
-import { Button } from '@renderer/components/ui/button'
-import { SidebarInset, SidebarProvider } from '@renderer/components/ui/sidebar'
 import { useApplicationStore } from '@renderer/core/store/application.store'
 import { useErrorStore } from '@renderer/core/store/error.store'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { WifiOff, ServerOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
+
+import { Button, SidebarInset, SidebarProvider } from '@manager/ui'
 
 import { AppSidebar } from '../admin-sidebar'
 

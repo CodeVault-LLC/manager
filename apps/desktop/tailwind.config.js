@@ -5,7 +5,8 @@ module.exports = {
   darkMode: ['class'],
   content: [
     './src/renderer/index.html',
-    './src/renderer/src/**/*.{ts,tsx,js,jsx}'
+    './src/renderer/src/**/*.{ts,tsx,js,jsx}',
+    '../../libs/ui/src/**/*.{ts,tsx,js,jsx}'
   ],
   theme: {
     extend: {

@@ -1,8 +1,6 @@
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '@renderer/components/ui/collapsible'
+import { Link, LinkProps } from '@tanstack/react-router'
+import { ChevronRight, type LucideIcon } from 'lucide-react'
+
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -11,10 +9,11 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem
-} from '@renderer/components/ui/sidebar'
-import { Link, LinkProps } from '@tanstack/react-router'
-import { ChevronRight, type LucideIcon } from 'lucide-react'
+  SidebarMenuSubItem,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from '@manager/ui'
 
 export interface NavMainProps {
   items: {
