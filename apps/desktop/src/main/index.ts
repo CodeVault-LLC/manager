@@ -3,10 +3,11 @@ import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { app, shell, BrowserWindow } from 'electron'
 
-import icon from '../../resources/icon.ico?asset'
+import icon from '../../resources/icons/icon.ico?asset'
 
 import { runMigrations } from './database/data-source'
 import handleDeepLink from './deep-link'
+import logger from './logger'
 import { registerApplicationIPC } from './services/application/application.ipc'
 import { loadDashboardServices } from './services/dashboard.service'
 import { registerDeveloperIPC } from './services/developer/developer.ipc'
@@ -31,12 +32,12 @@ if (!gotTheLock) {
 
       const deepLink = argv.find((arg) => arg.startsWith('managerapp://'))
       if (deepLink) {
-        handleDeepLink(deepLink)
+        void handleDeepLink(deepLink)
       }
     }
   })
 
-  app.whenReady().then(async () => {
+  void app.whenReady().then(async () => {
     try {
       electronApp.setAppUserModelId('com.electron')
 
@@ -57,7 +58,7 @@ if (!gotTheLock) {
 
       await ConfStorage.validateExistence()
       await runMigrations().catch((error) => {
-        console.error('Error running migrations:', error)
+        logger.error('Error running migrations:', error)
       })
 
       createWindow()
@@ -68,21 +69,21 @@ if (!gotTheLock) {
 
       registerIpc()
     } catch (error) {
-      console.error(error)
+      logger.error('Error during app initialization:', error)
     }
   })
 
   // Handle Deep Links (macOS)
   app.on('open-url', (event, url) => {
     event.preventDefault()
-    handleDeepLink(url)
+    void handleDeepLink(url)
   })
 
   // Handle Deep Links (Windows/Linux)
   if (process.platform !== 'darwin') {
     const deepLink = process.argv.find((arg) => arg.startsWith('managerapp://'))
     if (deepLink) {
-      handleDeepLink(deepLink)
+      void handleDeepLink(deepLink)
     }
   }
 }
@@ -120,14 +121,14 @@ function createWindow(): void {
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
+    void shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    void mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
 
@@ -139,7 +140,7 @@ function registerIpc() {
   registerAuthIPC()
   registerUserIPC()
 
-  registerExtensionIPC()
+  void registerExtensionIPC()
 
   registerIntegrations()
   loadNoteServices()
@@ -149,5 +150,5 @@ function registerIpc() {
 
   registerApplicationIPC()
   registerSystemIPC()
-  registerMsnIPC()
+  void registerMsnIPC()
 }

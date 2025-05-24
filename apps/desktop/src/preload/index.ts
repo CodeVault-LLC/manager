@@ -34,11 +34,10 @@ if (process.contextIsolated) {
 
     exposeToMainWorld()
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error)
   }
 } else {
-  // @ts-ignore (define in dts)
   window.electron = electronAPI
-  // @ts-ignore (define in dts)
   window.api = api
 }

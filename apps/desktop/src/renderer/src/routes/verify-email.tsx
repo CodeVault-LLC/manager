@@ -48,7 +48,7 @@ function RouteComponent() {
   useEffect(() => {
     if (currentUser?.verified_email || successful) {
       const timeout = setTimeout(() => {
-        navigate({ to: '/' })
+        void navigate({ to: '/' })
       }, 5000)
 
       return () => {
@@ -110,7 +110,7 @@ function RouteComponent() {
             onSubmit={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              handleSubmit()
+              void handleSubmit()
             }}
           >
             <Field
@@ -182,7 +182,7 @@ function RouteComponent() {
               e.preventDefault()
               e.stopPropagation()
 
-              handleVerifyEmail()
+              void handleVerifyEmail()
             }}
           >
             Resend Verification Code

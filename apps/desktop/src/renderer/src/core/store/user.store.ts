@@ -139,7 +139,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
 
         useErrorStore.getState().removeError(EErrorCodes.UNAUTHORIZED)
 
-        get().fetchCurrentUser()
+        void get().fetchCurrentUser()
       } else {
         set({
           isUserLoggedIn: false,
@@ -219,7 +219,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           userStatus: undefined
         })
 
-        get().fetchCurrentUser()
+        void get().fetchCurrentUser()
       } else {
         set({
           isUserLoggedIn: false,
@@ -305,14 +305,14 @@ export const useUserStore = create<IUserStore>((set, get) => ({
   },
 
   resetOnSignOut: () => {
-    localStorage.setItem('theme', 'dark'),
-      (window.location.href = '/'),
-      set({
-        isUserLoggedIn: false,
-        currentUser: undefined,
-        isLoading: false,
-        userStatus: undefined
-      })
+    localStorage.setItem('theme', 'dark')
+    window.location.href = '/'
+    set({
+      isUserLoggedIn: false,
+      currentUser: undefined,
+      isLoading: false,
+      userStatus: undefined
+    })
   },
 
   fetchAllSessions: async () => {
@@ -336,6 +336,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
         })
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   },
@@ -349,11 +350,12 @@ export const useUserStore = create<IUserStore>((set, get) => ({
 
       if (response?.data) {
         toast.success('Session deleted successfully')
-        get().fetchAllSessions()
+        void get().fetchAllSessions()
       } else {
         toast.error(response?.error?.message || 'Failed to delete session')
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   },
@@ -365,11 +367,12 @@ export const useUserStore = create<IUserStore>((set, get) => ({
       if (response?.data) {
         toast.success('All sessions deleted successfully')
 
-        get().fetchAllSessions()
+        void get().fetchAllSessions()
       } else {
         toast.error(response?.error?.message || 'Failed to delete all sessions')
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   },
@@ -379,6 +382,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
       const response = await ipcClient.invoke('user:verifyEmail')
 
       if (response?.data) {
+        // If the user is already logged in, update the current user
       } else {
         set({
           userStatus: {
@@ -390,6 +394,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
         toast.error(response?.error?.message || 'Email verification failed')
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   },
@@ -426,6 +431,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
         return false
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
       set({
         userStatus: {
@@ -448,7 +454,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
           userStatus: undefined
         })
 
-        get().fetchCurrentUser()
+        void get().fetchCurrentUser()
       } else {
         set({
           isUserLoggedIn: false,
@@ -483,6 +489,7 @@ export const useUserStore = create<IUserStore>((set, get) => ({
         toast.error(response?.error?.message || 'Google authentication failed')
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   },
@@ -499,13 +506,14 @@ export const useUserStore = create<IUserStore>((set, get) => ({
 
         toast.success('Google account disconnected successfully')
 
-        get().fetchCurrentUser()
+        void get().fetchCurrentUser()
       } else {
         toast.error(
           response?.error?.message || 'Failed to disconnect Google account'
         )
       }
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   }

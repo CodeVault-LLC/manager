@@ -41,7 +41,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
     }
 
     if (unauthorizedError && pageType === EPageTypes.AUTHENTICATED) {
-      navigate({ to: '/login' })
+      void navigate({ to: '/login' })
       return
     }
 
@@ -52,12 +52,12 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
 
     if (pageType === EPageTypes.NON_AUTHENTICATED && currentUser?.id) {
       const redirectionRoute = getWorkspaceRedirectionUrl()
-      navigate({ to: redirectionRoute })
+      void navigate({ to: redirectionRoute })
       return
     }
 
     if (pageType === EPageTypes.AUTHENTICATED && !currentUser?.id) {
-      navigate({ to: '/login' })
+      void navigate({ to: '/login' })
       return
     }
 

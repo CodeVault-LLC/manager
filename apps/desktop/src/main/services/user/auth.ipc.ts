@@ -3,12 +3,12 @@ import { IRegistrationData } from '@shared/types'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain } from 'electron'
 
+import logger from '../../logger'
 import { api } from '../api.service'
 
 import { authServices } from './auth.service'
 
 import { ConfStorage } from '@main/store'
-
 
 /**
  * Register all IPC handlers related to authentication
@@ -76,7 +76,8 @@ export const registerAuthIPC = () => {
         if (token) await ConfStorage.setSecureData('userToken', token)
 
         return { data: true }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error('Error during user registration:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -95,7 +96,8 @@ export const registerAuthIPC = () => {
 
         await ConfStorage.deleteSecureData('userToken')
         return { data: true }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error('Error during user sign-out:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,

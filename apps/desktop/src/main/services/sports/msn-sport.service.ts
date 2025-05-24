@@ -74,7 +74,7 @@ export const msnSportServices = {
 
             for (const participant of game.participants) {
               const team = participant.team
-              const [_] = await tx
+              await tx
                 .insert(sportsTeams)
                 .values({
                   id: parseInt(team.id),

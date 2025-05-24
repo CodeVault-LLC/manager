@@ -34,7 +34,7 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
         toast.error('Failed to fetch widgets')
       }
     } catch (error) {
-      toast.error('Failed to fetch widgets')
+      toast.error(`Failed to fetch widgets: ${error}`)
     } finally {
       set({ isLoading: false })
     }
@@ -59,16 +59,15 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
           )
         })
       } else {
-        console.error('Failed to fetch widget data', response.error)
         toast.error('Failed to fetch widget data')
       }
     } catch (error) {
-      console.error('Failed to fetch widget data', error)
-      toast.error('Failed to fetch widget data')
+      toast.error(`Failed to fetch widget data: ${error}`)
     } finally {
       set({ isLoading: false })
-      return get().widgets.find((widget) => widget.name === widget_name)?.data
     }
+
+    return get().widgets.find((widget) => widget.name === widget_name)?.data
   },
 
   fetchNews: async () => {
@@ -80,12 +79,10 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
       if (response.data) {
         set({ news: response.data })
       } else {
-        console.log('Failed to fetch news', response.error)
         toast.error('Failed to fetch news')
       }
     } catch (error) {
-      console.log('Failed to fetch news', error)
-      toast.error('Failed to fetch news')
+      toast.error(`Failed to fetch news: ${error}`)
     } finally {
       set({ isLoading: false })
     }

@@ -2,6 +2,8 @@ import { EErrorCodes } from '@shared/helpers'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain, shell } from 'electron'
 
+import logger from '../../../logger'
+
 import { api } from '@main/services/api.service'
 
 export const registerGoogleIPC = () => {
@@ -14,12 +16,16 @@ export const registerGoogleIPC = () => {
         )
         const authUrl = authUrlResponse.data.authURL
 
-        shell.openExternal(authUrl)
+        void shell.openExternal(authUrl)
 
         return {
           data: true
         }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error(
+          'Error while trying to open Google authentication URL',
+          error
+        )
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -42,7 +48,11 @@ export const registerGoogleIPC = () => {
         return {
           data: revoked
         }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error(
+          'Error while trying to revoke Google authentication',
+          error
+        )
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,

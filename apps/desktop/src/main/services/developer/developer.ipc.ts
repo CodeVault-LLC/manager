@@ -1,5 +1,5 @@
 import { registerImageIPC } from './images'
 
 export const registerDeveloperIPC = () => {
-  registerImageIPC()
+  void registerImageIPC()
 }

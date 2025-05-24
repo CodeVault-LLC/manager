@@ -12,6 +12,7 @@ import { ipcMain } from 'electron'
 import pngToIco from 'png-to-ico'
 import sharp from 'sharp'
 
+import logger from '../../../logger'
 
 export const registerImageIPC = async () => {
   ipcMain.handle(
@@ -76,7 +77,7 @@ export const registerImageIPC = async () => {
           }
         }
       } catch (error) {
-        console.error('Error converting images:', error)
+        logger.error('Error converting images:', error)
         return {
           error: {
             code: EErrorCodes.FILE_CONVERSION_ERROR,

@@ -57,10 +57,12 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
       }
 
       if (system.error) {
+        // eslint-disable-next-line no-console
         console.error('getting initial system data error', system.error)
         return
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('getting initial system data error', error)
     }
   },
@@ -82,19 +84,21 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
 
       get().setHtmlTheme(theme)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('setting user theme error', error)
     }
   },
 
   setLanguage: async (language: string) => {
     try {
-      set({ language })
+      set({ language }) // eslint-disable-next-line no-console
       console.log('setting user language', language)
       await ipcClient.invoke('application:setAppSettings', {
         language,
         theme: get().theme
       })
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('setting user language error', error)
     }
   },
@@ -103,6 +107,7 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     try {
       await ipcClient.invoke('application:openExternal', url)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('opening external link error', error)
     }
   }

@@ -8,7 +8,6 @@ import { systemServices } from './system.service'
 
 import logger from '@main/logger'
 
-
 /**
  * Register all IPC handlers related to system management
  * @description This function registers the IPC handlers for system-related actions.
@@ -43,5 +42,5 @@ export const registerSystemIPC = () => {
     }
   )
 
-  registerBrowserIPC()
+  void registerBrowserIPC()
 }

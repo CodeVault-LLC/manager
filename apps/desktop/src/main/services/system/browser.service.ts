@@ -3,6 +3,8 @@ import os from 'node:os'
 
 import { IBrowser } from '@shared/types/system'
 
+import logger from '../../logger'
+
 const username = os.userInfo().username
 
 export const browserList = [
@@ -55,7 +57,11 @@ export const browserServices = {
     return paths.some((path: string) => {
       try {
         return fs.existsSync(path)
-      } catch (e) {
+      } catch (error) {
+        logger.error(
+          `Error checking if browser is installed at path ${path}:`,
+          error
+        )
         return false
       }
     })

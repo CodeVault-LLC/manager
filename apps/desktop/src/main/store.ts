@@ -34,6 +34,7 @@ export const ConfStorage = {
       const content = await fs.readFile(STORAGE_FILE, 'utf8')
       return content ? JSON.parse(content) : {}
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error reading config file:', error)
       return {}
     }
@@ -44,6 +45,7 @@ export const ConfStorage = {
       await fs.writeFile(STORAGE_FILE, JSON.stringify(data, null, 2), 'utf8')
       storageEvents.emit('storage-updated', data)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error writing to config file:', error)
     }
   },
@@ -111,7 +113,7 @@ export const ConfStorage = {
 
 // Add IPC handlers for storage
 export function setupStorageIPC() {
-  storageEvents.on('storage-updated', async data => {
+  storageEvents.on('storage-updated', async (data) => {
     const windows = require('electron').BrowserWindow.getAllWindows()
     for (const win of windows) {
       if (win.webContents) {

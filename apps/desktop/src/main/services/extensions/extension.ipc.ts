@@ -1,6 +1,8 @@
 import { EErrorCodes } from '@shared/helpers'
 import { ipcMain } from 'electron'
 
+import logger from '../../logger'
+
 import { extensionService } from './extension.service'
 
 /**
@@ -8,7 +10,7 @@ import { extensionService } from './extension.service'
  * @description This function registers the IPC handlers for fetching all extensions.
  * It uses the `ipcMain` module from Electron to handle requests from the renderer process.
  * @returns {void}
- * 
+ *
  * @deprecated This function is not recommended for use in production, still in development.
  */
 export const registerExtensionIPC = async () => {
@@ -30,7 +32,7 @@ export const registerExtensionIPC = async () => {
         data: extensions
       }
     } catch (error) {
-      console.error('Error loading extensions:', error)
+      logger.error('Error loading extensions:', error)
       return {
         error: {
           code: EErrorCodes.FORBIDDEN,

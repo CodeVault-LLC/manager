@@ -33,11 +33,11 @@ export const AdminLayout: FC<TAdminLayout> = (props) => {
   const { fetchNews } = useDashboardStore()
 
   useEffect(() => {
-    fetchInitialSettings()
+    void fetchInitialSettings()
     doBrowserRefresh()
     subscribeToSystemStatistics()
     subscribeToSystemInactivity()
-    fetchNews()
+    void fetchNews()
 
     if (language) {
       changeLanguage(language)

@@ -9,7 +9,6 @@ import {
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
-
 export const useIconGenerator = () => {
   const [files, setFiles] = useState<File[]>([])
   const [outputs, setOutputs] = useState<IOutput[]>([])
@@ -42,8 +41,9 @@ export const useIconGenerator = () => {
   }
 
   const handleGeneration = async () => {
+    // eslint-disable-next-line no-console
     console.log('Generating icons with outputs:', outputs, files)
-    const file = files[0]
+    const file = files[0] // eslint-disable-next-line no-console
     console.log('Selected file:', file)
     if (!(file instanceof File) || file.size === 0) return
 
@@ -65,6 +65,7 @@ export const useIconGenerator = () => {
     const response = await ipcClient.invoke('images:convert', dataToSend)
 
     if (response?.error) {
+      // eslint-disable-next-line no-console
       console.error('Conversion failed:', response.error.message)
       return
     }

@@ -1,11 +1,6 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from '@manager/uitable'
 import { FC } from 'react'
+
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@manager/ui'
 
 export const YrCard: FC = () => {
   return (

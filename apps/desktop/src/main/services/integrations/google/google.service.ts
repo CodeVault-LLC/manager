@@ -4,7 +4,6 @@ import { ipcMain } from 'electron'
 export const googleServices = {
   handleGoogleAuthCallback: (urlObj: URL) => {
     const success = urlObj.searchParams.get('success')
-    console.log('success', success)
 
     if (success) {
       ipcMain.emit('auth:google:callback', {

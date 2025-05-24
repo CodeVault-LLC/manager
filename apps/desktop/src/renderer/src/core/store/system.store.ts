@@ -52,6 +52,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
       if (response.data) {
         get().setBrowsers(response.data)
       } else {
+        // eslint-disable-next-line no-console
         console.error('getting initial browser data error', response.error)
       }
     })
@@ -62,6 +63,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
       if (response.data) {
         set({ hardware: response.data })
       } else {
+        // eslint-disable-next-line no-console
         console.error('getting initial system data error', response.error)
       }
     })
@@ -72,6 +74,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
       if (response.data) {
         get().setBrowsers(response.data)
       } else {
+        // eslint-disable-next-line no-console
         console.error('getting initial browser data error', response.error)
       }
     })
@@ -82,6 +85,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
       if (response.data) {
         set({ extensions: response.data })
       } else {
+        // eslint-disable-next-line no-console
         console.error('getting initial extension data error', response.error)
       }
     })
@@ -103,6 +107,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   subscribeToSystemStatistics: () => {
     const listeners = ipcClient.listeners('system:statistics')
     if (listeners.length > 0) {
+      // eslint-disable-next-line no-console
       console.warn('Listener already registered for system:statistics')
       return
     }
@@ -119,6 +124,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   subscribeToSystemInactivity: () => {
     const listeners = ipcClient.listeners('system:inactivity')
     if (listeners.length > 0) {
+      // eslint-disable-next-line no-console
       console.warn('Listener already registered for system:inactivity')
       return
     }

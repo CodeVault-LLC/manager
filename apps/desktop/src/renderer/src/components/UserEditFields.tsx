@@ -42,6 +42,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = (props) => {
       if (props.onSubmit) {
         await props.onSubmit(value)
       } else {
+        // eslint-disable-next-line no-console
         console.log('values', value)
       }
     }
@@ -53,7 +54,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = (props) => {
       onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        handleSubmit()
+        void handleSubmit()
       }}
     >
       <div className="flex flex-row items-center gap-4">

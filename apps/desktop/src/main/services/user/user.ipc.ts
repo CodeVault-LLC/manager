@@ -3,6 +3,7 @@ import { ISession, IUser } from '@shared/types'
 import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain } from 'electron'
 
+import logger from '../../logger'
 import { api } from '../api.service'
 
 /**
@@ -63,7 +64,8 @@ export const registerUserIPC = () => {
         const response = await api.get<ISession[]>('/users/sessions/all/')
 
         return { data: response.data }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error('Error fetching user sessions:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -81,7 +83,8 @@ export const registerUserIPC = () => {
         await api.delete<void>('/users/sessions/all/')
 
         return { data: true }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error('Error deleting all user sessions:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -99,7 +102,8 @@ export const registerUserIPC = () => {
         await api.delete<void>(`/users/sessions/${sessionId}/`)
 
         return { data: true }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error(`Error deleting user session ${sessionId}:`, error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -117,7 +121,8 @@ export const registerUserIPC = () => {
         await api.post<void>('/users/forgot-password/', { email })
 
         return { data: true }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error('Error during forgot password:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -135,7 +140,8 @@ export const registerUserIPC = () => {
         await api.post<void>('/users/verify-email')
 
         return { data: true }
-      } catch (error: any) {
+      } catch (error) {
+        logger.error('Error during email verification:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -153,10 +159,18 @@ export const registerUserIPC = () => {
         await api.post<void>('/users/confirm-verify-email/' + token)
 
         return { data: true }
-      } catch (error: any) {
-        console.error('Error verifying email token:', error)
+      } catch (error) {
+        logger.error('Error verifying email token:', error)
 
-        if (error.error.code === EErrorCodes.BAD_REQUEST) {
+        if (
+          typeof error === 'object' &&
+          error !== null &&
+          'error' in error &&
+          typeof (error as any).error === 'object' &&
+          (error as any).error !== null &&
+          'code' in (error as any).error &&
+          (error as any).error.code === EErrorCodes.BAD_REQUEST
+        ) {
           return {
             error: {
               code: EErrorCodes.BAD_REQUEST,

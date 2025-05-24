@@ -32,7 +32,7 @@ asarUnpack:
 win:
   executableName: Manager
   artifactName: ${name}-${version}-${arch}.${ext}
-  icon: resources/icon.ico
+  icon: resources/icons/icon.ico
   target:
     - { target: nsis }
 
@@ -50,10 +50,10 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
-  icon: resources/icon.icns
+  icon: resources/icons/icon.icns
 dmg:
   artifactName: ${name}-${version}.${ext}
-  icon: resources/icon.icns
+  icon: resources/icons/icon.icns
 linux:
   target:
     - AppImage
@@ -61,7 +61,7 @@ linux:
     - deb
   maintainer: electronjs.org
   category: Utility
-  icon: resources/icon.icns
+  icon: resources/icons/icon.icns
 
 appImage:
   artifactName: ${name}-${version}-${arch}.${ext}
