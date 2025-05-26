@@ -3,10 +3,13 @@ import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { EErrorCodes } from '@shared/helpers'
 import {
+  CheckCircleIcon,
   FilmIcon,
   Frame,
+  HelpCircleIcon,
   MonitorIcon,
   PieChart,
+  SettingsIcon,
   TerminalIcon
 } from 'lucide-react'
 import * as React from 'react'
@@ -20,6 +23,7 @@ import {
 } from '@manager/ui'
 
 import { NavMain, NavMainProps } from './sidebar-main'
+import { NavSecondary, NavSecondaryProps } from './sidebar-secondary'
 import { NavUser } from './sidebar-user'
 import { TeamSwitcher } from './sidebar-workspace'
 
@@ -37,6 +41,7 @@ export const AppSidebar = (props: { className?: string }) => {
       plan: string
     }[]
     navMain: NavMainProps['items']
+    navSecondary: NavSecondaryProps['items']
   } = {
     teams: [
       {
@@ -97,6 +102,23 @@ export const AppSidebar = (props: { className?: string }) => {
           }
         ]
       }
+    ],
+    navSecondary: [
+      {
+        title: 'Status',
+        url: '/status',
+        icon: CheckCircleIcon
+      },
+      {
+        title: 'Settings',
+        url: '/',
+        icon: SettingsIcon
+      },
+      {
+        title: 'Get Help',
+        url: '/',
+        icon: HelpCircleIcon
+      }
     ]
   }
 
@@ -107,6 +129,7 @@ export const AppSidebar = (props: { className?: string }) => {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
         {/*<NavProjects projects={data.projects} />*/}
       </SidebarContent>
       <SidebarFooter>

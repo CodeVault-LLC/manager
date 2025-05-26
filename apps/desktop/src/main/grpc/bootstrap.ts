@@ -13,7 +13,8 @@ export const startGrpc = async () => {
     protoPath,
     packageName,
     serviceName,
-    customPort: 50051 // Use a fixed port for simplicity
+    customPort: 50051, // Use a fixed port for simplicity
+    bin: path.resolve('resources/builds/system.exe')
   })
 
   logger.info(

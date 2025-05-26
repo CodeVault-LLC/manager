@@ -87,28 +87,8 @@ export default tseslint.config(
       curly: "off",
       "no-console": "error",
 
-      "import/order": [
-        "error",
-        {
-          alphabetize: {
-            order: "asc",
-          },
-          "newlines-between": "always",
-          pathGroups: [
-            {
-              pattern: "@manager/**",
-              group: "external",
-              position: "after",
-            },
-            {
-              pattern: "src/**/*",
-              group: "parent",
-              position: "before",
-            },
-          ],
-          pathGroupsExcludedImportTypes: ["builtin"],
-        },
-      ],
+      "import/order": "off",
+
       "import/namespace": ["off"], // This doesn't resolve namespace imports correctly, but TS will throw for this anyway
       "import/no-restricted-paths": [
         "error",

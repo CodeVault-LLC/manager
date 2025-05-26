@@ -1,9 +1,16 @@
+import { spawn, ChildProcessWithoutNullStreams } from 'node:child_process'
 import crypto from 'node:crypto'
+import { existsSync } from 'node:fs'
 
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 
 import logger from '../logger'
+import {
+  EServiceStatus,
+  EServiceType,
+  IServiceStatus
+} from '@manager/common/src'
 
 type TypedServiceClient = Record<string, (...args: any[]) => Promise<any>>
 
@@ -12,6 +19,10 @@ type ServiceRecord<T = any> = {
   address: string
   token: string
   client: T
+  child?: ChildProcessWithoutNullStreams
+  startedAt: number
+  binaryPath?: string
+  crashed?: boolean
 }
 
 class ServiceManager {
@@ -21,14 +32,16 @@ class ServiceManager {
     protoPath,
     packageName,
     serviceName,
-    implementation, // Optional now
-    customPort
+    implementation,
+    customPort,
+    bin
   }: {
     protoPath: string
     packageName: string
     serviceName: string
     implementation?: grpc.UntypedServiceImplementation
     customPort?: number
+    bin?: string
   }): Promise<{ address: string; token: string }> {
     const key = `${packageName}.${serviceName}`
     if (this.services.has(key)) {
@@ -38,7 +51,6 @@ class ServiceManager {
     }
 
     const token = crypto.randomBytes(16).toString('hex')
-
     const packageDef = protoLoader.loadSync(protoPath, {
       keepCase: true,
       longs: String,
@@ -50,17 +62,17 @@ class ServiceManager {
     const loaded = grpc.loadPackageDefinition(packageDef)
     const serviceDef = loaded[packageName]?.[serviceName]
 
-    if (!serviceDef) {
+    if (!serviceDef)
       throw new Error(`Service not found: ${packageName}.${serviceName}`)
-    }
 
     const port = customPort ?? (await getAvailablePort())
     const address = `127.0.0.1:${port}`
+    const startedAt = Date.now()
 
     let server: grpc.Server | undefined
+    let child: ChildProcessWithoutNullStreams | undefined
 
-    // If implementation provided, spin up a local server
-    if (implementation) {
+    if (implementation && !bin) {
       server = new grpc.Server()
 
       const wrappedImpl: grpc.UntypedServiceImplementation = {}
@@ -91,15 +103,56 @@ class ServiceManager {
       })
 
       server.start()
-      logger.info(`✅ Started ${packageName}.${serviceName} on ${address}`)
+      logger.info(`✅ Started ${key} (in-process) on ${address}`)
     }
 
-    const client = new serviceDef(
+    if (bin) {
+      logger.info(`🔄 Starting ${key} from binary: ${bin}`)
+      if (!existsSync(bin)) {
+        logger.error(`❌ Binary not found: ${bin}`)
+        return Promise.reject(new Error(`Binary not found: ${bin}`))
+      }
+
+      child = spawn(bin, ['--port', port.toString()], {
+        stdio: 'pipe',
+        env: {
+          ...process.env,
+          GRPC_PORT: port.toString(),
+          GRPC_TOKEN: token
+        }
+      })
+
+      child.on('error', (err) => {
+        logger.error(`❌ Binary error in ${key}:`, err)
+        const svc = this.services.get(key)
+        if (svc) svc.crashed = true
+      })
+
+      child.on('exit', (code) => {
+        const svc = this.services.get(key)
+        if (svc) svc.crashed = code !== 0
+        logger[code === 0 ? 'info' : 'error'](
+          `🚪 Service ${key} exited ${code === 0 ? 'gracefully' : `with code ${code}`}`
+        )
+      })
+
+      await waitForGrpcStartup(address, 4000)
+    }
+
+    const client = new (serviceDef as any)(
       address,
       grpc.credentials.createInsecure()
     ) as TClient
 
-    this.services.set(key, { server, address, token, client })
+    this.services.set(key, {
+      server,
+      address,
+      token,
+      client,
+      child,
+      startedAt,
+      binaryPath: bin
+    })
 
     return { address, token }
   }
@@ -129,16 +182,79 @@ class ServiceManager {
     if (!svc) return
 
     svc.server?.forceShutdown()
+
+    if (svc.child) {
+      svc.child.kill('SIGTERM')
+      logger.info(`🛑 Sent SIGTERM to binary for ${key}`)
+    }
+
     this.services.delete(key)
     logger.info(`🛑 Stopped ${key}`)
+  }
+
+  async stopAllServices() {
+    for (const key of this.services.keys()) {
+      const [packageName, serviceName] = key.split('.')
+      this.stopService(packageName, serviceName)
+    }
   }
 
   listServices() {
     return [...this.services.keys()]
   }
+
+  getServiceStatus() {
+    return [...this.services.entries()].map(([key, svc]) => {
+      const testFetch = async () => {
+        try {
+          const client = this.getClient(key.split('.')[0], key.split('.')[1])
+          await client.test({}) // Assuming a 'test' method exists
+          return true
+        } catch (error) {
+          logger.error(`Service ${key} is not operational:`, error)
+          return false
+        }
+      }
+
+      testFetch().catch((err) => {
+        logger.error(`Error testing service ${key}:`, err)
+      })
+
+      const data: IServiceStatus = {
+        lastUpdated: new Date(),
+        name: key,
+        description: `${svc.server ? 'In-process' : 'Binary'} service`,
+        status: svc.server ? EServiceStatus.OPERATIONAL : EServiceStatus.OUTAGE,
+        type: EServiceType.API,
+        responseTime: 0 // Placeholder, should be calculated based on actual requests
+      }
+
+      return data
+    })
+  }
 }
 
-// Dynamic free port
+// Utility: Wait for a gRPC server to be ready
+async function waitForGrpcStartup(
+  address: string,
+  timeoutMs = 4000
+): Promise<void> {
+  const { credentials, Client } = await import('@grpc/grpc-js')
+  const deadline = Date.now() + timeoutMs
+
+  return new Promise((resolve, reject) => {
+    const client = new Client(address, credentials.createInsecure())
+    client.waitForReady(deadline, (err) => {
+      if (err) {
+        reject(new Error(`gRPC server at ${address} not ready in time.`))
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+// Dynamic free port allocation
 async function getAvailablePort(): Promise<number> {
   const net = await import('node:net')
   return await new Promise((resolve, reject) => {

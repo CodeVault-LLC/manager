@@ -2,6 +2,8 @@ import { ipcClient } from '@renderer/utils/ipcClient'
 import { ETheme } from '@shared/types/application'
 import { create } from 'zustand'
 
+import { IServiceStatus } from '@manager/common/src'
+
 interface ITheme {
   id: ETheme
   name: string
@@ -18,10 +20,12 @@ interface IApplicationStore {
   theme: ETheme
   language: string
 
+  status: IServiceStatus[]
   themes: ITheme[]
   languages: ILanguage[]
 
   fetchInitialSettings: () => Promise<void>
+  fetchServiceStatus: () => Promise<void>
   setHtmlTheme: (theme: ETheme) => void
 
   setTheme: (theme: ETheme) => Promise<void>
@@ -33,6 +37,7 @@ interface IApplicationStore {
 export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   theme: ETheme.SYSTEM,
   language: 'en',
+  status: [],
 
   themes: [
     { id: ETheme.SYSTEM, name: 'System', previewColor: '#ffffff' },
@@ -86,6 +91,24 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('setting user theme error', error)
+    }
+  },
+
+  fetchServiceStatus: async () => {
+    try {
+      const status = await ipcClient.invoke('application:serviceStatus')
+
+      if (status.data) {
+        set({ status: status.data })
+      }
+
+      if (status.error) {
+        // eslint-disable-next-line no-console
+        console.error('getting service status error', status.error)
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('getting service status error', error)
     }
   },
 

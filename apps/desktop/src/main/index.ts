@@ -8,6 +8,7 @@ import icon from '../../resources/icons/icon.ico?asset'
 import { runMigrations } from './database/data-source'
 import handleDeepLink from './deep-link'
 import { startGrpc } from './grpc/bootstrap'
+import { manager } from './grpc/service-manager'
 import logger from './logger'
 import { registerApplicationIPC } from './services/application/application.ipc'
 import { loadDashboardServices } from './services/dashboard.service'
@@ -68,13 +69,20 @@ if (!gotTheLock) {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
 
+      registerIpc()
+
       await startGrpc()
       logger.info('gRPC services initialized successfully')
-
-      registerIpc()
     } catch (error) {
       logger.error('Error during app initialization:', error)
     }
+  })
+
+  app.on('before-quit', async () => {
+    logger.info('Application is quitting, stopping all services...')
+
+    // Stop all services gracefully
+    await manager.stopAllServices()
   })
 
   // Handle Deep Links (macOS)

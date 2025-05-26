@@ -5,6 +5,7 @@ import { ipcMain, shell } from 'electron'
 
 import logger from '@main/logger'
 import { ConfStorage } from '@main/store'
+import { manager } from '../../grpc/service-manager'
 
 /**
  * Register all IPC handlers related to application settings
@@ -90,4 +91,10 @@ export const registerApplicationIPC = () => {
       }
     }
   )
+
+  ipcMain.handle('application:serviceStatus', async () => {
+    const services = manager.getServiceStatus()
+
+    return { data: services }
+  })
 }

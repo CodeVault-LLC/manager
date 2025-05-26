@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as SystemImport } from './routes/system'
+import { Route as StatusImport } from './routes/status'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
@@ -44,6 +45,12 @@ const VerifyEmailRoute = VerifyEmailImport.update({
 const SystemRoute = SystemImport.update({
   id: '/system',
   path: '/system',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const StatusRoute = StatusImport.update({
+  id: '/status',
+  path: '/status',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -198,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsImport
+      parentRoute: typeof rootRoute
+    }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusImport
       parentRoute: typeof rootRoute
     }
     '/system': {
@@ -381,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/status': typeof StatusRoute
   '/system': typeof SystemRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
@@ -405,6 +420,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/status': typeof StatusRoute
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
   '/policies/faq': typeof PoliciesFaqRoute
@@ -428,6 +444,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/status': typeof StatusRoute
   '/system': typeof SystemRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
@@ -454,6 +471,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/status'
     | '/system'
     | '/verify-email'
     | '/developer/icons'
@@ -477,6 +495,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/status'
     | '/verify-email'
     | '/developer/icons'
     | '/policies/faq'
@@ -498,6 +517,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
+    | '/status'
     | '/system'
     | '/verify-email'
     | '/developer/icons'
@@ -523,6 +543,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRouteWithChildren
+  StatusRoute: typeof StatusRoute
   SystemRoute: typeof SystemRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
   DeveloperIconsRoute: typeof DeveloperIconsRoute
@@ -537,6 +558,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRouteWithChildren,
+  StatusRoute: StatusRoute,
   SystemRoute: SystemRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
   DeveloperIconsRoute: DeveloperIconsRoute,
@@ -560,6 +582,7 @@ export const routeTree = rootRoute
         "/login",
         "/register",
         "/settings",
+        "/status",
         "/system",
         "/verify-email",
         "/developer/icons",
@@ -591,6 +614,9 @@ export const routeTree = rootRoute
         "/settings/general",
         "/settings/security"
       ]
+    },
+    "/status": {
+      "filePath": "status.tsx"
     },
     "/system": {
       "filePath": "system.tsx",

@@ -8,7 +8,7 @@ import { ETheme, IApplication } from "./application/application";
 import { TErrorInfo } from "../helpers";
 import { IConvertedImageData, IConvertedImageResponse } from "./image/image";
 
-import { ISystem } from "@manager/common/src";
+import { ISystem, IServiceStatus } from "@manager/common/src";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
@@ -52,6 +52,9 @@ export interface IpcHandlers {
 
   "application:initial": () => Promise<
     TCommunicationResponse<{ theme: ETheme; language: string }>
+  >;
+  "application:serviceStatus": () => Promise<
+    TCommunicationResponse<IServiceStatus[]>
   >;
   "application:setAppSettings": (
     application: IApplication
