@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
 export const useIconGenerator = () => {
+  const [loading, setLoading] = useState<boolean>(false)
   const [files, setFiles] = useState<File[]>([])
   const [outputs, setOutputs] = useState<IOutput[]>([])
   const [selectedPreset, setSelectedPreset] = useState<string>('')
@@ -36,15 +37,14 @@ export const useIconGenerator = () => {
     const preset = presets.find((p) => p.name === presetName)
     if (preset) {
       setOutputs(preset.outputs)
-      setFiles([])
     }
   }
 
   const handleGeneration = async () => {
-    // eslint-disable-next-line no-console
-    console.log('Generating icons with outputs:', outputs, files)
-    const file = files[0] // eslint-disable-next-line no-console
-    console.log('Selected file:', file)
+    if (loading) return
+    setLoading(true)
+
+    const file = files[0]
     if (!(file instanceof File) || file.size === 0) return
 
     const fileBuffer = await new Promise<ArrayBuffer>((resolve) => {
@@ -73,6 +73,9 @@ export const useIconGenerator = () => {
     const zipBuffer = Buffer.from(response.data.buffer)
     const blob = new Blob([zipBuffer], { type: response.data.mime })
     const url = URL.createObjectURL(blob)
+
+    setLoading(false)
+
     const a = document.createElement('a')
     a.href = url
     a.download = response.data.filename
@@ -80,6 +83,7 @@ export const useIconGenerator = () => {
   }
 
   return {
+    loading,
     files,
     setFiles,
     outputs,

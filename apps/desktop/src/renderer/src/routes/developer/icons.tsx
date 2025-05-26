@@ -25,8 +25,11 @@ import {
   Button
 } from '@manager/ui'
 
+import { Loader } from '../../core/components/loader/loading-spinner'
+
 const IconGenerator = () => {
   const {
+    loading,
     files,
     setFiles,
     outputs,
@@ -57,7 +60,7 @@ const IconGenerator = () => {
               <Upload className="size-6 text-muted-foreground" />
               <p className="font-medium text-sm">Drop image here or browse</p>
               <FileUploadTrigger asChild>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" disabled={loading}>
                   Browse
                 </Button>
               </FileUploadTrigger>
@@ -99,8 +102,12 @@ const IconGenerator = () => {
 
         <OutputList outputs={outputs} setOutputs={setOutputs} />
 
-        <Button className="w-full mt-4" onClick={handleGeneration}>
-          Generate Icons
+        <Button
+          className="w-full mt-4"
+          onClick={handleGeneration}
+          disabled={loading || files.length === 0}
+        >
+          {loading ? <Loader /> : 'Generate Icons'}
         </Button>
       </div>
     </AuthenticationWrapper>
