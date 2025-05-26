@@ -17,6 +17,7 @@
     "allowJs": true,
     "paths": {
       "@manager/ui": ["../../libs/ui/src"],
+      "@manager/common": ["../../libs/common/src"],
     }
   },
   "files": [

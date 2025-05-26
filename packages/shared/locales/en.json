@@ -140,6 +140,8 @@
     "invalidToken": "Invalid or expired confirmation token",
     "networkError": "Unable to connect to the server",
     "networkErrorDescription": "There was a problem connecting to the server. Please check your internet connection and try again. If the issue persists, please contact our support team for assistance.",
-    "networkErrorTip": "Tip: If you're connected but still see this error, check your firewall, VPN, or network settings."
+    "networkErrorTip": "Tip: If you're connected but still see this error, check your firewall, VPN, or network settings.",
+
+    "systemRetrievalError": "Could not retrieve system information, please try again later."
   }
 }

@@ -1,6 +1,12 @@
 import { ISystemHardware } from '@shared/types/system'
 import si from 'systeminformation'
 
+import { ISystem } from '@manager/common/src'
+
+import { runPowerShellScript } from '../../utils/powershell'
+
+import { systemInformationScript } from './scripts/system-information'
+
 import logger from '@main/logger'
 
 export const systemServices = {
@@ -70,5 +76,18 @@ export const systemServices = {
     }
 
     return hardware
+  },
+
+  getSystemInfo: async (): Promise<ISystem> => {
+    const isWindows = process.platform === 'win32'
+
+    if (isWindows) {
+      const data = await runPowerShellScript<ISystem>(systemInformationScript)
+
+      return data
+    }
+
+    logger.warn('getSystemInfo is not implemented for this platform.')
+    return Promise.reject('getSystemInfo is not implemented for this platform.')
   }
 }

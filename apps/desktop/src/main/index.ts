@@ -7,6 +7,7 @@ import icon from '../../resources/icons/icon.ico?asset'
 
 import { runMigrations } from './database/data-source'
 import handleDeepLink from './deep-link'
+import { startGrpc } from './grpc/bootstrap'
 import logger from './logger'
 import { registerApplicationIPC } from './services/application/application.ipc'
 import { loadDashboardServices } from './services/dashboard.service'
@@ -67,6 +68,9 @@ if (!gotTheLock) {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
 
+      await startGrpc()
+      logger.info('gRPC services initialized successfully')
+
       registerIpc()
     } catch (error) {
       logger.error('Error during app initialization:', error)
@@ -87,7 +91,7 @@ if (!gotTheLock) {
     }
   }
 }
-let stopSystemSockets: (() => void) | null = null // <-- ADD THIS
+let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({

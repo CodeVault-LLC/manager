@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package system;
+
+service ImageConverter {
+  rpc ConvertImage (ConvertImageRequest) returns (ConvertImageResponse);
+}
+
+message OutputFormat {
+  int32 width = 1;
+  int32 height = 2;
+  string format = 3; // "png", "ico", "icns"
+  string name = 4;
+}
+
+message ConvertImageRequest {
+  bytes buffer = 1;
+  repeated OutputFormat outputs = 2;
+}
+
+message ConvertImageResponse {
+  bytes buffer = 1;
+  string filename = 2;
+  string mime = 3;
+}

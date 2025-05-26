@@ -12,6 +12,9 @@ directories:
   buildResources: build
   output: ./dist
 
+extraResources:
+  - 'resources/proto/**'
+
 files:
   - out/**
   - migrations/**

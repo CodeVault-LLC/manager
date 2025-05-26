@@ -11,38 +11,63 @@ declare global {
   }
 }
 
+let currentLocale: Translations | null = null
+
+const getNestedValue = (obj: any, path: string): string | undefined => {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj)
+}
+
+const applyParams = (text: string, params?: Record<string, string>): string => {
+  if (!params) return text
+  return Object.keys(params).reduce(
+    (result, key) => result.replace(`{${key}}`, params[key]),
+    text
+  )
+}
+
+// Shared logic for translation
+export const translate = (
+  key: TranslationKeys,
+  params?: Record<string, string>
+): string => {
+  if (!currentLocale) return key
+  const raw = getNestedValue(currentLocale, key) || key
+  return applyParams(raw, params)
+}
+
+// Can be used in React components
 export const useI18n = () => {
   const { language } = useApplicationStore()
-  const [locale, setLocale] = useState<Translations | null>(null)
+  const [, setLocale] = useState<Translations | null>(currentLocale)
 
   useEffect(() => {
     if (language) {
-      changeLanguage(language)
+      const newLocale = changeLanguage(language)
+      setLocale(newLocale)
     }
   }, [language])
 
-  const changeLanguage = (lang: string) => {
-    if (!window.i18n) return
-
-    setLocale(window.i18n.setLocale(lang))
+  const changeLanguage = (lang: string): Translations | null => {
+    if (!window.i18n) return null
+    currentLocale = window.i18n.setLocale(lang)
+    setLocale(currentLocale)
+    return currentLocale
   }
 
-  // Utility to retrieve nested keys
-  const getNestedValue = (obj: any, path: string): string | undefined => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj)
-  }
+  return { t: translate, changeLanguage }
+}
 
-  const t = (key: TranslationKeys, params?: Record<string, string>) => {
-    if (!locale) return key
+// Can be used in plain TypeScript files
+export const getValue = (
+  key: TranslationKeys,
+  params?: Record<string, string>
+): string => {
+  return translate(key, params)
+}
 
-    let translation = getNestedValue(locale, key) || key
-    if (params) {
-      Object.keys(params).forEach((param) => {
-        translation = translation.replace(`{${param}}`, params[param])
-      })
-    }
-    return translation
-  }
-
-  return { t, changeLanguage }
+// Optional: Expose manual language change for non-hook contexts
+export const setLanguage = (lang: string): Translations | null => {
+  if (!window.i18n) return null
+  currentLocale = window.i18n.setLocale(lang)
+  return currentLocale
 }

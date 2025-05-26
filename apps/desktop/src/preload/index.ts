@@ -3,6 +3,14 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 import { exposeToMainWorld } from './i18n'
 
+// Extend the Window interface to include 'electron' and 'api'
+declare global {
+  interface Window {
+    electron: typeof electronAPI
+    api: typeof api
+  }
+}
+
 // Custom APIs for renderer
 const api = {}
 

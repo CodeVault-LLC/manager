@@ -3,6 +3,8 @@ import { TCommunicationResponse } from '@shared/types/ipc'
 import { ISystemHardware } from '@shared/types/system'
 import { ipcMain } from 'electron'
 
+import { ISystem } from '@manager/common/src'
+
 import { registerBrowserIPC } from './browser.ipc'
 import { systemServices } from './system.service'
 
@@ -15,6 +17,33 @@ import logger from '@main/logger'
  * @returns {void}
  */
 export const registerSystemIPC = () => {
+  ipcMain.handle(
+    'system:getSystemInfo',
+    async (): Promise<TCommunicationResponse<ISystem>> => {
+      try {
+        const systemInfo = await systemServices.getSystemInfo()
+
+        logger.debug('System info data', {
+          systemInfo
+        })
+
+        return { data: systemInfo }
+      } catch (error: any) {
+        logger.error(
+          `Error while getting system info data: ${error.message}`,
+          error
+        )
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
   ipcMain.handle(
     'system:getHardware',
     async (): Promise<TCommunicationResponse<ISystemHardware>> => {

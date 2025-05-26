@@ -17,12 +17,20 @@
       "path": "packages/shared"
     },
     {
-      "name": "eslint",
+      "name": "eslint (libs)",
       "path": "libs/eslint"
     },
     {
-      "name": "ui",
+      "name": "common (libs)",
+      "path": "libs/common"
+    },
+    {
+      "name": "ui (libs)",
       "path": "libs/ui"
+    },
+    {
+      "name": "system (rust)",
+      "path": "crates/system"
     }
   ],
   "settings": {

@@ -8,6 +8,8 @@ import { ETheme, IApplication } from "./application/application";
 import { TErrorInfo } from "../helpers";
 import { IConvertedImageData, IConvertedImageResponse } from "./image/image";
 
+import { ISystem } from "@manager/common/src";
+
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }
   | { error: TErrorInfo; data?: never };
@@ -56,6 +58,8 @@ export interface IpcHandlers {
   ) => Promise<TCommunicationResponse<boolean>>;
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
+  "system:getSystemInfo": () => Promise<TCommunicationResponse<ISystem>>;
+
   "application:openExternal": (
     url: string
   ) => Promise<TCommunicationResponse<boolean>>;

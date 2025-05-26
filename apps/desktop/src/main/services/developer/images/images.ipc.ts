@@ -1,5 +1,4 @@
 import { Buffer } from 'buffer'
-import { PassThrough } from 'stream'
 
 import { EErrorCodes } from '@shared/helpers'
 import {
@@ -7,11 +6,10 @@ import {
   IConvertedImageResponse
 } from '@shared/types/image/image'
 import { TCommunicationResponse } from '@shared/types/ipc'
-import archiver from 'archiver'
 import { ipcMain } from 'electron'
-import pngToIco from 'png-to-ico'
-import sharp from 'sharp'
 
+import { ConvertImageRequest } from '../../../grpc/__generated/system'
+import { manager } from '../../../grpc/service-manager'
 import logger from '../../../logger'
 
 export const registerImageIPC = async () => {
@@ -24,64 +22,47 @@ export const registerImageIPC = async () => {
       try {
         const { image, outputs } = data
 
-        // Step 1: Convert input buffer
-        const inputBuffer = Buffer.from(image.buffer)
+        const client = manager.getClient('system', 'ImageConverter')
 
-        // Step 2: Create an archive and memory stream
-        const archiveStream = new PassThrough()
-        const archive = archiver('zip', { zlib: { level: 9 } })
-        archive.pipe(archiveStream)
-
-        // Step 3: Process outputs
-        const promises = outputs.map(async (output) => {
-          const resized = sharp(inputBuffer).resize(
-            output.width,
-            output.height,
-            {
-              fit: 'cover'
-            }
-          )
-
-          let formatBuffer: Buffer
-
-          if (output.format === 'png') {
-            formatBuffer = await resized.png().toBuffer()
-          } else if (output.format === 'ico') {
-            const pngBuffer = await resized.png().toBuffer()
-            formatBuffer = await pngToIco([pngBuffer]) // Correct ICO format
-          } else if (output.format === 'icns') {
-            formatBuffer = await resized.png().toBuffer() // Use PNG as ICNS requires custom tooling
-          } else {
-            throw new Error(`Unsupported format: ${output.format}`)
-          }
-
-          archive.append(formatBuffer, { name: output.name })
-        })
-
-        await Promise.all(promises)
-        await archive.finalize()
-
-        // Step 4: Collect zip from the stream
-        const chunks: Buffer[] = []
-        for await (const chunk of archiveStream) {
-          chunks.push(chunk)
+        const preparedRequest: ConvertImageRequest = {
+          buffer: Buffer.from(image.buffer),
+          outputs: outputs.map((output) => ({
+            width: output.width,
+            height: output.height,
+            format: output.format,
+            name: output.name
+          }))
         }
 
-        const zipBuffer = Buffer.concat(chunks)
+        const response = await new Promise<IConvertedImageResponse>(
+          (resolve, reject) => {
+            client.ConvertImage(preparedRequest, (err, res) => {
+              if (err || !res) {
+                logger.error('gRPC call failed:', err)
+                return reject(
+                  new Error(err?.message || 'gRPC response missing')
+                )
+              }
+              resolve(res)
+            })
+          }
+        )
+
+        logger.info('gRPC call successful:', response)
 
         return {
           data: {
-            buffer: Array.from(zipBuffer), // Send as number[] for Electron IPC
-            filename: 'icons.zip',
-            mime: 'application/zip'
+            buffer: Array.from(response.buffer), // serialize for IPC
+            filename: response.filename,
+            mime: response.mime
           }
         }
       } catch (error) {
-        logger.error('Error converting images:', error)
+        logger.error('Image conversion failed:', error)
         return {
           error: {
             code: EErrorCodes.FILE_CONVERSION_ERROR,
-            message: 'Failed to convert and zip image outputs.'
+            message: 'Failed to convert image via gRPC.'
           }
         }
       }

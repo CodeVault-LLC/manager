@@ -5,11 +5,17 @@ import {
   ISystemHardware,
   ISystemStatistics
 } from '@shared/types/system'
+import { toast } from 'sonner'
 import { create } from 'zustand'
+
+import { ISystem } from '@manager/common/src'
+
+import { getValue } from '../../hooks/use-i18n'
 
 export interface ISystemStore {
   systemInactivity: boolean
   hardware: ISystemHardware | null
+  system: ISystem | null
   extensions: IExtension[]
   browsers: IBrowser[]
 
@@ -30,6 +36,7 @@ export interface ISystemStore {
   unsubscribeFromSystemInactivity(): void
 
   getSystemHardware(): void
+  getSystem(): void
 }
 
 export const useSystemStore = create<ISystemStore>((set, get) => ({
@@ -37,6 +44,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   extensions: [],
   hardware: null,
   browsers: [],
+  system: null,
 
   systemStatistics: {
     cpu: { current: 0, average: 0 },
@@ -65,6 +73,18 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
       } else {
         // eslint-disable-next-line no-console
         console.error('getting initial system data error', response.error)
+      }
+    })
+  },
+
+  getSystem: (): void => {
+    ipcClient.invoke('system:getSystemInfo').then((response) => {
+      if (response.data) {
+        set({ system: response.data })
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('getting initial system data error', response.error)
+        toast.error(getValue('error.systemRetrievalError'))
       }
     })
   },
