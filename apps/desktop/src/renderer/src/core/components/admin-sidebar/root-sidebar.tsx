@@ -8,6 +8,7 @@ import {
   Frame,
   HelpCircleIcon,
   MonitorIcon,
+  NotebookIcon,
   PieChart,
   SettingsIcon,
   TerminalIcon
@@ -99,6 +100,18 @@ export const AppSidebar = (props: { className?: string }) => {
           {
             title: t('common.icons'),
             url: '/developer/icons'
+          }
+        ]
+      },
+      {
+        title: 'Notes',
+        url: '/notes',
+        icon: NotebookIcon,
+        isActive: false,
+        items: [
+          {
+            title: t('common.overview'),
+            url: '/notes'
           }
         ]
       }

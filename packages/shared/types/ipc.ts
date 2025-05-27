@@ -67,6 +67,15 @@ export interface IpcHandlers {
     url: string
   ) => Promise<TCommunicationResponse<boolean>>;
 
+  "notes:getAll": () => Promise<TCommunicationResponse<INote[]>>;
+  "notes:getNote": (id: number) => Promise<TCommunicationResponse<INote>>;
+  "notes:createNote": (
+    note: Partial<INote>
+  ) => Promise<TCommunicationResponse<INote>>;
+  "notes:updateNote": (
+    note: Partial<INote>
+  ) => Promise<TCommunicationResponse<INote>>;
+
   "browser:initial": () => Promise<TCommunicationResponse<IBrowser[]>>;
   "browser:refresh": () => Promise<TCommunicationResponse<IBrowser[]>>;
 

@@ -16,10 +16,12 @@ import { Route as SystemImport } from './routes/system'
 import { Route as StatusImport } from './routes/status'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as RegisterImport } from './routes/register'
+import { Route as NotesImport } from './routes/notes'
 import { Route as LoginImport } from './routes/login'
 import { Route as EntertainmentImport } from './routes/entertainment'
 import { Route as IndexImport } from './routes/index'
 import { Route as SystemIndexImport } from './routes/system/index'
+import { Route as NotesIndexImport } from './routes/notes/index'
 import { Route as SystemHardwareImport } from './routes/system/hardware'
 import { Route as SystemBrowsersImport } from './routes/system/browsers'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
@@ -66,6 +68,12 @@ const RegisterRoute = RegisterImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const NotesRoute = NotesImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
@@ -88,6 +96,12 @@ const SystemIndexRoute = SystemIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SystemRoute,
+} as any)
+
+const NotesIndexRoute = NotesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NotesRoute,
 } as any)
 
 const SystemHardwareRoute = SystemHardwareImport.update({
@@ -191,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesImport
       parentRoute: typeof rootRoute
     }
     '/register': {
@@ -305,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemHardwareImport
       parentRoute: typeof SystemImport
     }
+    '/notes/': {
+      id: '/notes/'
+      path: '/'
+      fullPath: '/notes/'
+      preLoaderRoute: typeof NotesIndexImport
+      parentRoute: typeof NotesImport
+    }
     '/system/': {
       id: '/system/'
       path: '/'
@@ -356,6 +384,16 @@ const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(
   EntertainmentRouteChildren,
 )
 
+interface NotesRouteChildren {
+  NotesIndexRoute: typeof NotesIndexRoute
+}
+
+const NotesRouteChildren: NotesRouteChildren = {
+  NotesIndexRoute: NotesIndexRoute,
+}
+
+const NotesRouteWithChildren = NotesRoute._addFileChildren(NotesRouteChildren)
+
 interface SettingsRouteChildren {
   SettingsConnectionsRoute: typeof SettingsConnectionsRoute
   SettingsExtensionsRoute: typeof SettingsExtensionsRoute
@@ -393,6 +431,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
+  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
   '/status': typeof StatusRoute
@@ -409,6 +448,7 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -432,6 +472,7 @@ export interface FileRoutesByTo {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/notes': typeof NotesIndexRoute
   '/system': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga': typeof EntertainmentMangaIndexRoute
@@ -442,6 +483,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
+  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
   '/status': typeof StatusRoute
@@ -458,6 +500,7 @@ export interface FileRoutesById {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -469,6 +512,7 @@ export interface FileRouteTypes {
     | '/'
     | '/entertainment'
     | '/login'
+    | '/notes'
     | '/register'
     | '/settings'
     | '/status'
@@ -485,6 +529,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -507,6 +552,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/notes'
     | '/system'
     | '/entertainment/manga/$id'
     | '/entertainment/manga'
@@ -515,6 +561,7 @@ export interface FileRouteTypes {
     | '/'
     | '/entertainment'
     | '/login'
+    | '/notes'
     | '/register'
     | '/settings'
     | '/status'
@@ -531,6 +578,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -541,6 +589,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EntertainmentRoute: typeof EntertainmentRouteWithChildren
   LoginRoute: typeof LoginRoute
+  NotesRoute: typeof NotesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   StatusRoute: typeof StatusRoute
@@ -556,6 +605,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EntertainmentRoute: EntertainmentRouteWithChildren,
   LoginRoute: LoginRoute,
+  NotesRoute: NotesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRouteWithChildren,
   StatusRoute: StatusRoute,
@@ -580,6 +630,7 @@ export const routeTree = rootRoute
         "/",
         "/entertainment",
         "/login",
+        "/notes",
         "/register",
         "/settings",
         "/status",
@@ -602,6 +653,12 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/notes": {
+      "filePath": "notes.tsx",
+      "children": [
+        "/notes/"
+      ]
     },
     "/register": {
       "filePath": "register.tsx"
@@ -672,6 +729,10 @@ export const routeTree = rootRoute
     "/system/hardware": {
       "filePath": "system/hardware.tsx",
       "parent": "/system"
+    },
+    "/notes/": {
+      "filePath": "notes/index.tsx",
+      "parent": "/notes"
     },
     "/system/": {
       "filePath": "system/index.tsx",

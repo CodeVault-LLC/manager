@@ -10,3 +10,5 @@ export * from './sports/sport-game-participants.schema'
 export * from './sports/sport-games.schema'
 
 export * from './extensions.model'
+
+export * from './notes/notes.schema'

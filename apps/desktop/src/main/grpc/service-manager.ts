@@ -110,6 +110,15 @@ class ServiceManager {
       logger.info(`🔄 Starting ${key} from binary: ${bin}`)
       if (!existsSync(bin)) {
         logger.error(`❌ Binary not found: ${bin}`)
+        this.services.set(key, {
+          address,
+          token,
+          client: {} as TClient,
+          startedAt,
+          binaryPath: bin,
+          crashed: true
+        })
+
         return Promise.reject(new Error(`Binary not found: ${bin}`))
       }
 
@@ -203,34 +212,68 @@ class ServiceManager {
     return [...this.services.keys()]
   }
 
-  getServiceStatus() {
-    return [...this.services.entries()].map(([key, svc]) => {
-      const testFetch = async () => {
+  async getServiceStatus(): Promise<IServiceStatus[]> {
+    const statuses: IServiceStatus[] = []
+
+    for (const [key, svc] of this.services.entries()) {
+      const [packageName, serviceName] = key.split('.')
+
+      const serviceType = this.detectServiceType(packageName, serviceName)
+
+      const start = Date.now()
+      let status = EServiceStatus.UNKNOWN
+      let responseTime = 0
+      let description = svc.server ? 'In-process service' : 'Binary service'
+
+      if (svc.crashed) {
+        status = EServiceStatus.OUTAGE
+      } else {
         try {
-          const client = this.getClient(key.split('.')[0], key.split('.')[1])
-          await client.test({}) // Assuming a 'test' method exists
-          return true
+          const client = this.getClient(packageName, serviceName)
+          if (typeof (client as any).test !== 'function') {
+            status = EServiceStatus.DEGRADED
+            description += ' (no .test() method)'
+          } else {
+            await new Promise<void>((resolve, reject) => {
+              ;(client as any).test({}, (err: any, res: any) => {
+                if (err) return reject(err)
+                resolve()
+              })
+            })
+            responseTime = Date.now() - start
+            status = EServiceStatus.OPERATIONAL
+          }
         } catch (error) {
-          logger.error(`Service ${key} is not operational:`, error)
-          return false
+          logger.error(`Service ${key} test failed:`, error)
+          status = EServiceStatus.OUTAGE
+          responseTime = Date.now() - start
         }
       }
 
-      testFetch().catch((err) => {
-        logger.error(`Error testing service ${key}:`, err)
-      })
-
-      const data: IServiceStatus = {
-        lastUpdated: new Date(),
+      statuses.push({
         name: key,
-        description: `${svc.server ? 'In-process' : 'Binary'} service`,
-        status: svc.server ? EServiceStatus.OPERATIONAL : EServiceStatus.OUTAGE,
-        type: EServiceType.API,
-        responseTime: 0 // Placeholder, should be calculated based on actual requests
-      }
+        status,
+        type: serviceType,
+        responseTime,
+        lastUpdated: new Date(),
+        description
+      })
+    }
 
-      return data
-    })
+    return statuses
+  }
+
+  private detectServiceType(
+    packageName: string,
+    serviceName: string
+  ): EServiceType {
+    const name = `${packageName}.${serviceName}`.toLowerCase()
+
+    if (name.includes('db') || name.includes('store'))
+      return EServiceType.DATABASE
+    if (name.includes('ext') || name.includes('plugin'))
+      return EServiceType.EXTENSION
+    return EServiceType.API
   }
 }
 

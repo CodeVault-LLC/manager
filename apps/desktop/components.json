@@ -11,11 +11,11 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "src/renderer/src/components",
+    "components": "@manager/ui/src/components",
     "utils": "@manager/ui/src/utils",
     "ui": "@manager/ui/src/ui",
-    "lib": "src/renderer/src/lib",
-    "hooks": "src/renderer/src/hooks"
+    "lib": "@manager/ui/src/lib",
+    "hooks": "@manager/ui/src/hooks"
   },
   "iconLibrary": "lucide"
 }

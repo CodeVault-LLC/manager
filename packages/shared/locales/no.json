@@ -142,6 +142,10 @@
     "networkErrorDescription": "Det oppstod et problem med å koble til serveren. Sjekk om du har internettforbindelse og prøv igjen. Hvis problemet vedvarer, kontakt kundestøtte for videre hjelp.",
     "networkErrorTip": "Tips: Sjekk brannmur, VPN eller nettverksinnstillinger hvis du er tilkoblet, men fortsatt får denne feilen.",
 
-    "systemRetrievalError": "Kunne ikke hente systeminformasjon, prøv igjen senere."
+    "systemRetrievalError": "Kunne ikke hente systeminformasjon, prøv igjen senere.",
+
+    "fetchingNotes": "Kunne ikke hente notater, prøv igjen senere.",
+    "creatingNote": "Kunne ikke opprette notat, prøv igjen senere.",
+    "updatingNote": "Kunne ikke oppdatere notat, prøv igjen senere."
   }
 }

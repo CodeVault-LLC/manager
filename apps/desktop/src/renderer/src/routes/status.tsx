@@ -132,8 +132,6 @@ function RouteComponent() {
     }
   }
 
-  console.log('Service Status:', status)
-
   return (
     <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
       <div className="w-full mx-auto space-y-6">
