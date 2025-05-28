@@ -31,6 +31,7 @@ import { Route as SettingsConnectionsImport } from './routes/settings/connection
 import { Route as PoliciesTermsImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyImport } from './routes/policies/privacy'
 import { Route as PoliciesFaqImport } from './routes/policies/faq'
+import { Route as NotesIdImport } from './routes/notes/$id'
 import { Route as EntertainmentMangaImport } from './routes/entertainment/manga'
 import { Route as DeveloperIconsImport } from './routes/developer/icons'
 import { Route as EntertainmentMangaIndexImport } from './routes/entertainment/manga/index'
@@ -158,6 +159,12 @@ const PoliciesFaqRoute = PoliciesFaqImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const NotesIdRoute = NotesIdImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => NotesRoute,
+} as any)
+
 const EntertainmentMangaRoute = EntertainmentMangaImport.update({
   id: '/manga',
   path: '/manga',
@@ -262,6 +269,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/entertainment/manga'
       preLoaderRoute: typeof EntertainmentMangaImport
       parentRoute: typeof EntertainmentImport
+    }
+    '/notes/$id': {
+      id: '/notes/$id'
+      path: '/$id'
+      fullPath: '/notes/$id'
+      preLoaderRoute: typeof NotesIdImport
+      parentRoute: typeof NotesImport
     }
     '/policies/faq': {
       id: '/policies/faq'
@@ -385,10 +399,12 @@ const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(
 )
 
 interface NotesRouteChildren {
+  NotesIdRoute: typeof NotesIdRoute
   NotesIndexRoute: typeof NotesIndexRoute
 }
 
 const NotesRouteChildren: NotesRouteChildren = {
+  NotesIdRoute: NotesIdRoute,
   NotesIndexRoute: NotesIndexRoute,
 }
 
@@ -439,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
+  '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -463,6 +480,7 @@ export interface FileRoutesByTo {
   '/status': typeof StatusRoute
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
+  '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -491,6 +509,7 @@ export interface FileRoutesById {
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
+  '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -520,6 +539,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/developer/icons'
     | '/entertainment/manga'
+    | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -543,6 +563,7 @@ export interface FileRouteTypes {
     | '/status'
     | '/verify-email'
     | '/developer/icons'
+    | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -569,6 +590,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/developer/icons'
     | '/entertainment/manga'
+    | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -657,6 +679,7 @@ export const routeTree = rootRoute
     "/notes": {
       "filePath": "notes.tsx",
       "children": [
+        "/notes/$id",
         "/notes/"
       ]
     },
@@ -696,6 +719,10 @@ export const routeTree = rootRoute
         "/entertainment/manga/$id",
         "/entertainment/manga/"
       ]
+    },
+    "/notes/$id": {
+      "filePath": "notes/$id.tsx",
+      "parent": "/notes"
     },
     "/policies/faq": {
       "filePath": "policies/faq.tsx"

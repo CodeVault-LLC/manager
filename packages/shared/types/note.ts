@@ -1,7 +1,7 @@
 export interface INote {
   id: number;
   title: string;
-  content: string;
+  content: any[];
   createdAt: string;
   updatedAt: string;
 }

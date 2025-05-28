@@ -27,7 +27,8 @@
     "home": "Hjem",
     "settings": "Innstillinger",
     "entertainment": "Underholdning",
-    "verifyEmail": "Bekreft e-post"
+    "verifyEmail": "Bekreft e-post",
+    "notes": "Notater"
   },
   "user": {
     "logout": "Logg ut",

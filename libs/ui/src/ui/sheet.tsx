@@ -1,5 +1,3 @@
-"use client";
-
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { cn } from "../utils/helpers";
 import { cva, type VariantProps } from "class-variance-authority";

@@ -23,9 +23,7 @@ export const registerNotesIPC = async () => {
         data: notes.data
       }
     } catch (error) {
-      logger.error('Error fetching notes', {
-        error
-      })
+      logger.error('Error fetching notes', error)
 
       return {
         error: 'Failed to fetch notes'
@@ -45,7 +43,7 @@ export const registerNotesIPC = async () => {
       }
 
       return {
-        data: note
+        data: note.data
       }
     } catch (error) {
       logger.error('Error fetching note', {
@@ -58,33 +56,28 @@ export const registerNotesIPC = async () => {
     }
   })
 
-  ipcMain.handle(
-    'notes:createNote',
-    async (_, { title, content }: { title: string; content: string }) => {
-      try {
-        const newNote = await notesServices.createNote(title, content)
+  ipcMain.handle('notes:createNote', async () => {
+    try {
+      const newNote = await notesServices.createNote()
 
-        if (!newNote) {
-          logger.info('Failed to create note')
-          return {
-            error: 'Failed to create note'
-          }
-        }
-
-        return {
-          data: newNote
-        }
-      } catch (error) {
-        logger.error('Error creating note', {
-          error
-        })
-
+      if (!newNote) {
+        logger.info('Failed to create note')
         return {
           error: 'Failed to create note'
         }
       }
+
+      return {
+        data: newNote
+      }
+    } catch (error) {
+      logger.error('Error creating note', error)
+
+      return {
+        error: 'Failed to create note'
+      }
     }
-  )
+  })
 
   ipcMain.handle(
     'notes:updateNote',
@@ -93,22 +86,31 @@ export const registerNotesIPC = async () => {
       { id, title, content }: { id: number; title: string; content: string }
     ) => {
       try {
+        console.log(id, title, content)
+
         const updatedNote = await notesServices.writeNote(id, title, content)
 
-        if (!updatedNote) {
+        console.log(content)
+
+        logger.info(
+          `Updating note with ID ${id} - Title: ${title} Content: ${content}`
+        )
+
+        console.log('Updated note:', updatedNote)
+
+        if (!updatedNote?.data) {
           logger.info(`Failed to update note with ID ${id}`)
+
           return {
             error: 'Failed to update note'
           }
         }
 
         return {
-          data: updatedNote
+          data: updatedNote.data
         }
       } catch (error) {
-        logger.error('Error updating note', {
-          error
-        })
+        logger.error('Error updating note', error)
 
         return {
           error: 'Failed to update note'

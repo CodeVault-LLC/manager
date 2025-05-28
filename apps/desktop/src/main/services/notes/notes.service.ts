@@ -3,6 +3,8 @@ import { db } from '../../database/data-source'
 import logger from '../../logger'
 import { notes } from '../../database/models/schema'
 
+import { faker } from '@faker-js/faker'
+
 export const notesServices = {
   getAllNotes: async () => {
     try {
@@ -12,9 +14,7 @@ export const notesServices = {
         data: notes
       }
     } catch (error) {
-      logger.error('Error fetching notes', {
-        error
-      })
+      logger.error('Error fetching notes', error)
       return {
         error: 'Failed to fetch notes'
       }
@@ -37,21 +37,27 @@ export const notesServices = {
         data: note
       }
     } catch (error) {
-      logger.error('Error fetching note by ID', {
-        error
-      })
+      logger.error('Error fetching note by ID', error)
       return {
         error: 'Failed to fetch note by ID'
       }
     }
   },
 
-  createNote: async (title: string, content: string) => {
+  createNote: async () => {
     try {
+      const randomTitle = faker.lorem.sentence(3)
+      const content = [
+        {
+          type: 'p',
+          children: [{ text: faker.lorem.paragraph(2) }]
+        }
+      ]
+
       const newNote = await db
         .insert(notes)
         .values({
-          title,
+          title: randomTitle,
           content
         })
         .returning()
@@ -60,9 +66,8 @@ export const notesServices = {
         data: newNote[0]
       }
     } catch (error) {
-      logger.error('Error creating note', {
-        error
-      })
+      logger.error('Error creating note', error)
+
       return {
         error: 'Failed to create note'
       }
@@ -71,11 +76,21 @@ export const notesServices = {
 
   writeNote: async (id: number, title: string, content: string) => {
     try {
+      if (!id || !title || !content) {
+        return {
+          error: 'Invalid input data'
+        }
+      }
+
       const updatedNote = await db
         .update(notes)
         .set({ title, content })
         .where(eq(notes.id, id))
         .returning()
+
+      logger.debug('Note updated successfully', {
+        updatedNote
+      })
 
       if (updatedNote.length === 0) {
         return {
@@ -87,9 +102,7 @@ export const notesServices = {
         data: updatedNote[0]
       }
     } catch (error) {
-      logger.error('Error updating note', {
-        error
-      })
+      logger.error('Error updating note', error)
       return {
         error: 'Failed to update note'
       }

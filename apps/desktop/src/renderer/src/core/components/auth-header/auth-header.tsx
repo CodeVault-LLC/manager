@@ -1,12 +1,11 @@
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { useRouterState } from '@tanstack/react-router'
+import { Link, useRouterState } from '@tanstack/react-router'
 import { FC } from 'react'
 
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -21,42 +20,49 @@ export const InstanceHeader: FC = () => {
 
   if (!isUserLoggedIn) return null
 
-  const pathName = location.pathname.split('/')[1]
+  const pathname = location.pathname.replace(/\/+$/, '') // remove trailing slashes
 
-  const getHeaderTitle = (pathName: string) => {
-    switch (pathName) {
+  const getDisplayTitle = (segment: string) => {
+    switch (segment) {
       case '':
-        return t('navigation.home')
+        return t('navigation.home') || 'Home'
+      case 'settings':
+        return t('navigation.settings') || 'Settings'
       case 'general':
         return 'General'
-      case 'settings':
-        return t('navigation.settings')
       case 'entertainment':
-        return t('navigation.entertainment')
+        return t('navigation.entertainment') || 'Entertainment'
       case 'verify-email':
-        return t('navigation.verifyEmail')
+        return t('navigation.verifyEmail') || 'Verify Email'
+      case 'notes':
+        return t('navigation.notes') || 'Notes'
       default:
-        return pathName.toUpperCase()
+        return decodeURIComponent(segment)
+          .replace(/[-_]/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase())
     }
   }
 
-  // Function to dynamically generate breadcrumb items based on pathname
-  const generateBreadcrumbItems = (pathname: string) => {
-    const pathSegments = pathname.split('/').slice(1) // removing the first empty string.
-    pathSegments.pop()
+  const generateBreadcrumbs = () => {
+    const segments = pathname.split('/').filter(Boolean) // remove empty strings
+    const allSegments = ['', ...segments] // include root
 
-    let currentUrl = ''
-    const breadcrumbItems = pathSegments.map((segment) => {
-      currentUrl += '/' + segment
+    const breadcrumbs = allSegments.map((_, index) => {
+      const href = '/' + allSegments.slice(1, index + 1).join('/')
+      const segment = allSegments[index]
+      const isLast = index === allSegments.length - 1
+
       return {
-        title: getHeaderTitle(segment),
-        href: currentUrl
+        title: getDisplayTitle(segment),
+        href: href || '/', // Ensure root is always "/"
+        isLast
       }
     })
-    return breadcrumbItems
+
+    return breadcrumbs
   }
 
-  const breadcrumbItems = generateBreadcrumbItems(pathName)
+  const breadcrumbs = generateBreadcrumbs()
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -65,26 +71,23 @@ export const InstanceHeader: FC = () => {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            {breadcrumbItems.length === 0 ? (
-              <BreadcrumbItem>
-                <BreadcrumbPage>{getHeaderTitle(pathName)}</BreadcrumbPage>
+            {breadcrumbs.map((crumb, index) => (
+              <BreadcrumbItem key={index}>
+                {crumb.isLast ? (
+                  <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                ) : (
+                  <>
+                    <Link
+                      to={crumb.href}
+                      className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                    >
+                      {crumb.title}
+                    </Link>
+                    <BreadcrumbSeparator />
+                  </>
+                )}
               </BreadcrumbItem>
-            ) : (
-              <>
-                {breadcrumbItems.map((item, index) => (
-                  <BreadcrumbItem key={index}>
-                    <BreadcrumbLink href={item.href}>
-                      {item.title}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                ))}
-
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{getHeaderTitle(pathName)}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </>
-            )}
+            ))}
           </BreadcrumbList>
         </Breadcrumb>
       </div>

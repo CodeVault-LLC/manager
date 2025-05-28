@@ -69,9 +69,7 @@ export interface IpcHandlers {
 
   "notes:getAll": () => Promise<TCommunicationResponse<INote[]>>;
   "notes:getNote": (id: number) => Promise<TCommunicationResponse<INote>>;
-  "notes:createNote": (
-    note: Partial<INote>
-  ) => Promise<TCommunicationResponse<INote>>;
+  "notes:createNote": () => Promise<TCommunicationResponse<INote>>;
   "notes:updateNote": (
     note: Partial<INote>
   ) => Promise<TCommunicationResponse<INote>>;

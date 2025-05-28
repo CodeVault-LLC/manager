@@ -7,18 +7,22 @@ import { INote } from '@shared/types/note'
 
 export interface INoteStore {
   notes: INote[]
+  currentNote?: INote
 
   getAll: () => void
   getNote: (id: number) => void
-  createNote: (note: Partial<INote>) => void
+  createNote: () => void
   updateNote: (note: Partial<INote>) => void
 }
 
 export const useNoteStore = create<INoteStore>((set) => ({
   notes: [],
+  currentNote: undefined,
 
   getAll: async (): Promise<void> => {
     const response = await ipcClient.invoke('notes:getAll')
+
+    console.log('Fetched notes:', response.data)
 
     if (response.error) {
       toast.error(getValue('error.fetchingNotes'))
@@ -28,8 +32,10 @@ export const useNoteStore = create<INoteStore>((set) => ({
     set({ notes: response.data || [] })
   },
 
-  createNote: async (note: Partial<INote>): Promise<void> => {
-    const response = await ipcClient.invoke('notes:createNote', note)
+  createNote: async (): Promise<void> => {
+    const response = await ipcClient.invoke('notes:createNote')
+
+    console.log('Note created successfully:', response.data)
 
     if (response.error) {
       toast.error(getValue('error.creatingNote'))
@@ -44,19 +50,28 @@ export const useNoteStore = create<INoteStore>((set) => ({
   getNote: async (id: number): Promise<void> => {
     const response = await ipcClient.invoke('notes:getNote', id)
 
+    console.log('Fetched note:', response.data)
+
     if (response.error) {
       toast.error(getValue('error.fetchingNotes'))
       return
     }
 
     const note = response.data
-    set((state) => ({
-      notes: state.notes.map((n) => (n.id === note.id ? note : n))
-    }))
+    set({
+      currentNote: note
+    })
   },
 
   updateNote: async (note: Partial<INote>): Promise<void> => {
+    if (!note.id || !note.content || !note.title) {
+      toast.error(getValue('error.invalidNoteData'))
+      return
+    }
+
     const response = await ipcClient.invoke('notes:updateNote', note)
+
+    console.log('Note updated successfully:', response.data)
 
     if (response.error) {
       toast.error(getValue('error.updatingNote'))

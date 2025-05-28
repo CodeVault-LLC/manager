@@ -1285,7 +1285,7 @@ const FileUploadItemProgress = React.forwardRef<
           {...progressProps}
           ref={forwardedRef}
           className={cn(
-            "absolute inset-0 bg-primary/50 transition-[clip-path] duration-300 ease-linear",
+            "absolute inset-0 bg-primary/50 transition-[clipPath] duration-300 ease-linear",
             className
           )}
           style={{

@@ -1,7 +1,11 @@
-import { createHashHistory, createRouter as TanstackCreateRouter } from '@tanstack/react-router'
+import {
+  createHashHistory,
+  createRouter as TanstackCreateRouter
+} from '@tanstack/react-router'
 
 import { NotFound } from './components/NotFound'
 import { routeTree } from './routeTree.gen'
+import { ErrorComponent } from './core/pages/error/error-component'
 
 const hashHistory = createHashHistory()
 
@@ -16,6 +20,10 @@ export const createRouter = () => {
 
     defaultNotFoundComponent: () => {
       return <NotFound />
+    },
+
+    defaultErrorComponent: () => {
+      return <ErrorComponent />
     },
 
     history: hashHistory

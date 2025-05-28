@@ -22,6 +22,34 @@
       "when": 1747767675804,
       "tag": "0002_wild_harry_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1748441629408,
+      "tag": "0003_unknown_mandroid",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1748453765301,
+      "tag": "0004_gray_maelstrom",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1748453991954,
+      "tag": "0005_many_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1748455933754,
+      "tag": "0006_blushing_madrox",
+      "breakpoints": true
     }
   ]
 }

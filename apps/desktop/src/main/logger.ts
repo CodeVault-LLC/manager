@@ -10,10 +10,9 @@ const consoleFormat = combine(
   timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   align(),
   printf(({ timestamp, level, message, stack }) => {
-    return `${timestamp} ${level}: ${message} ${stack}`
+    return `${timestamp} ${level}: ${message}${stack ? `\n${stack}` : ''}`
   })
 )
-
 const fileFormat = combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), json())
 
 const logger = createLogger({

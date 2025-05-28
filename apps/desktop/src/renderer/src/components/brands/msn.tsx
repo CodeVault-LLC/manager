@@ -12,7 +12,7 @@ export const Msn: FC<BrandIconProps> = (props) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_916_90333)">
+      <g clipPath="url(#clip0_916_90333)">
         <path
           d="M59.9924 21.8436H57.7158V16.2807C57.7158 15.4236 57.554 14.7756 57.2302 14.3374C56.9127 13.8992 56.4331 13.6803 55.7918 13.6803C55.1312 13.6803 54.5884 13.928 54.1629 14.4234C53.7373 14.9121 53.5247 15.5313 53.5247 16.2807V21.8436H51.2383V12.0896H53.5247V13.5754H53.5626C53.9183 13.0102 54.3628 12.5846 54.8964 12.299C55.4361 12.0068 56.0395 11.8608 56.7061 11.8608C57.7856 11.8608 58.6017 12.2036 59.1542 12.8895C59.7131 13.5691 59.9924 14.5598 59.9924 15.8618V21.8436Z"
           fill="#212121"
@@ -72,7 +72,7 @@ export const Msn: FC<BrandIconProps> = (props) => {
         <path
           d="M11.0663 18.9466C11.0663 18.9466 11.6167 17.0263 6.4196 14.3634C1.22151 11.6994 0.61416 8.46523 0.531481 6.60055C0.448771 4.73587 1.00958 3.13473 1.95288 2.23092C3.28902 0.950356 4.50282 0.722254 6.27658 0.874312C8.63443 1.07651 11.1042 3.49075 12.337 7.26675C14.129 12.7553 11.0663 18.9466 11.0663 18.9466Z"
           fill="url(#paint10_radial_916_90333)"
-          fill-opacity="0.2"
+          fillOpacity="0.2"
         />
         <path
           d="M11.0663 18.9466C11.0663 18.9466 11.6167 17.0263 6.4196 14.3634C1.22151 11.6994 0.61416 8.46523 0.531481 6.60055C0.448771 4.73587 1.00958 3.13473 1.95288 2.23092C3.28902 0.950356 4.50282 0.722254 6.27658 0.874312C8.63443 1.07651 11.1042 3.49075 12.337 7.26675C14.129 12.7553 11.0663 18.9466 11.0663 18.9466Z"
@@ -93,7 +93,7 @@ export const Msn: FC<BrandIconProps> = (props) => {
         <path
           d="M11.0663 18.9466C11.0663 18.9466 11.6167 17.0263 6.4196 14.3634C1.22151 11.6994 0.61416 8.46523 0.531481 6.60055C0.448771 4.73587 1.00958 3.13473 1.95288 2.23092C3.28902 0.950356 4.50282 0.722254 6.27658 0.874312C8.63443 1.07651 11.1042 3.49075 12.337 7.26675C14.129 12.7553 11.0663 18.9466 11.0663 18.9466Z"
           fill="url(#paint15_radial_916_90333)"
-          fill-opacity="0.2"
+          fillOpacity="0.2"
         />
         <path
           d="M11.0663 18.9466C11.0663 18.9466 11.6167 17.0263 6.4196 14.3634C1.22151 11.6994 0.61416 8.46523 0.531481 6.60055C0.448771 4.73587 1.00958 3.13473 1.95288 2.23092C3.28902 0.950356 4.50282 0.722254 6.27658 0.874312C8.63443 1.07651 11.1042 3.49075 12.337 7.26675C14.129 12.7553 11.0663 18.9466 11.0663 18.9466Z"
@@ -117,11 +117,11 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(5.00545 26.8489) rotate(-71.1595) scale(13.4715 8.82005)"
         >
-          <stop offset="0.045" stop-color="#FFC800" stop-opacity="0.784314" />
-          <stop offset="0.368273" stop-color="#98BD42" />
-          <stop offset="0.587269" stop-color="#52B471" />
-          <stop offset="0.767047" stop-color="#018D32" />
-          <stop offset="0.878437" stop-color="#006523" />
+          <stop offset="0.045" stopColor="#FFC800" stopOpacity="0.784314" />
+          <stop offset="0.368273" stopColor="#98BD42" />
+          <stop offset="0.587269" stopColor="#52B471" />
+          <stop offset="0.767047" stopColor="#018D32" />
+          <stop offset="0.878437" stopColor="#006523" />
         </radialGradient>
         <radialGradient
           id="paint1_radial_916_90333"
@@ -131,12 +131,12 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(5.00545 26.8489) rotate(-71.1595) scale(13.4715 8.82005)"
         >
-          <stop offset="0.045" stop-color="#FFC800" />
-          <stop offset="0.257166" stop-color="#B5BA1E" />
-          <stop offset="0.368273" stop-color="#98BD42" />
-          <stop offset="0.587269" stop-color="#52B471" />
-          <stop offset="0.767047" stop-color="#018D32" />
-          <stop offset="0.878437" stop-color="#006523" />
+          <stop offset="0.045" stopColor="#FFC800" />
+          <stop offset="0.257166" stopColor="#B5BA1E" />
+          <stop offset="0.368273" stopColor="#98BD42" />
+          <stop offset="0.587269" stopColor="#52B471" />
+          <stop offset="0.767047" stopColor="#018D32" />
+          <stop offset="0.878437" stopColor="#006523" />
         </radialGradient>
         <radialGradient
           id="paint2_radial_916_90333"
@@ -146,10 +146,10 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(14.9114 24.0499) rotate(-106.858) scale(7.42626 6.96563)"
         >
-          <stop stop-color="#FFC800" />
-          <stop offset="0.286785" stop-color="#FFB657" />
-          <stop offset="0.64175" stop-color="#FF5F3D" />
-          <stop offset="1" stop-color="#B43014" />
+          <stop stopColor="#FFC800" />
+          <stop offset="0.286785" stopColor="#FFB657" />
+          <stop offset="0.64175" stopColor="#FF5F3D" />
+          <stop offset="1" stopColor="#B43014" />
         </radialGradient>
         <radialGradient
           id="paint3_radial_916_90333"
@@ -159,9 +159,9 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(14.9417 23.576) rotate(-107.718) scale(7.2719 13.2547)"
         >
-          <stop stop-color="#FFB657" />
-          <stop offset="0.642929" stop-color="#FF835C" />
-          <stop offset="0.960593" stop-color="#CA2134" />
+          <stop stopColor="#FFB657" />
+          <stop offset="0.642929" stopColor="#FF835C" />
+          <stop offset="0.960593" stopColor="#CA2134" />
         </radialGradient>
         <radialGradient
           id="paint4_radial_916_90333"
@@ -171,8 +171,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(15.1862 15.957) rotate(94.5479) scale(8.4046 7.14811)"
         >
-          <stop offset="0.706643" stop-color="#FFCD0F" stop-opacity="0" />
-          <stop offset="1" stop-color="#FFCD0F" />
+          <stop offset="0.706643" stopColor="#FFCD0F" stopOpacity="0" />
+          <stop offset="1" stopColor="#FFCD0F" />
         </radialGradient>
         <radialGradient
           id="paint5_radial_916_90333"
@@ -182,8 +182,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(21.501 4.49357) rotate(111.144) scale(13.2544 10.5124)"
         >
-          <stop offset="0.0661714" stop-color="#BD00FF" />
-          <stop offset="1" stop-color="#FF5F3D" />
+          <stop offset="0.0661714" stopColor="#BD00FF" />
+          <stop offset="1" stopColor="#FF5F3D" />
         </radialGradient>
         <radialGradient
           id="paint6_radial_916_90333"
@@ -193,8 +193,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(13.2309 19.2678) rotate(-72.3499) scale(8.94983 19.2249)"
         >
-          <stop stop-color="#FF9E3D" />
-          <stop offset="1" stop-color="#E23694" stop-opacity="0" />
+          <stop stopColor="#FF9E3D" />
+          <stop offset="1" stopColor="#E23694" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint7_radial_916_90333"
@@ -204,8 +204,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(14.6955 19.3537) rotate(-91.116) scale(13.2691 15.8636)"
         >
-          <stop offset="0.0661714" stop-color="#BD00FF" />
-          <stop offset="1" stop-color="#FF5F3D" />
+          <stop offset="0.0661714" stopColor="#BD00FF" />
+          <stop offset="1" stopColor="#FF5F3D" />
         </radialGradient>
         <linearGradient
           id="paint8_linear_916_90333"
@@ -215,8 +215,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           y2="-0.0562295"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.38" stop-color="#0D91E1" />
-          <stop offset="0.75" stop-color="#2FA2AA" />
+          <stop offset="0.38" stopColor="#0D91E1" />
+          <stop offset="0.75" stopColor="#2FA2AA" />
         </linearGradient>
         <radialGradient
           id="paint9_radial_916_90333"
@@ -226,8 +226,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(9.00887 15.9086) rotate(-90.4465) scale(16.5837 29.3628)"
         >
-          <stop stop-color="#3DCBFF" />
-          <stop offset="1" stop-color="#0D91E1" stop-opacity="0" />
+          <stop stopColor="#3DCBFF" />
+          <stop offset="1" stopColor="#0D91E1" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint10_radial_916_90333"
@@ -237,8 +237,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(9.52586 17.5025) rotate(-87.9282) scale(16.6803 28.9341)"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#0D91E1" stop-opacity="0" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#0D91E1" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint11_radial_916_90333"
@@ -248,9 +248,9 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(8.75044 -2.65593) rotate(89.3969) scale(20.461 32.46)"
         >
-          <stop offset="0.015" stop-color="#0A308F" />
-          <stop offset="0.205" stop-color="#2253CE" />
-          <stop offset="1" stop-color="#2253CE" stop-opacity="0" />
+          <stop offset="0.015" stopColor="#0A308F" />
+          <stop offset="0.205" stopColor="#2253CE" />
+          <stop offset="1" stopColor="#2253CE" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint12_radial_916_90333"
@@ -260,8 +260,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(11.8088 20.4744) rotate(-92.872) scale(12.8951 22.8318)"
         >
-          <stop stop-color="#3DEE7B" />
-          <stop offset="1" stop-color="#0D91E1" stop-opacity="0" />
+          <stop stopColor="#3DEE7B" />
+          <stop offset="1" stopColor="#0D91E1" stopOpacity="0" />
         </radialGradient>
         <linearGradient
           id="paint13_linear_916_90333"
@@ -271,8 +271,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           y2="-0.0562295"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.38" stop-color="#0D91E1" />
-          <stop offset="0.75" stop-color="#2FA2AA" />
+          <stop offset="0.38" stopColor="#0D91E1" />
+          <stop offset="0.75" stopColor="#2FA2AA" />
         </linearGradient>
         <radialGradient
           id="paint14_radial_916_90333"
@@ -282,8 +282,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(5.82145 1.30682) rotate(88.1795) scale(17.6259 31.208)"
         >
-          <stop stop-color="#3DCBFF" />
-          <stop offset="1" stop-color="#0D91E1" stop-opacity="0" />
+          <stop stopColor="#3DCBFF" />
+          <stop offset="1" stopColor="#0D91E1" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint15_radial_916_90333"
@@ -293,8 +293,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(5.51993 -0.28689) rotate(91.9349) scale(12.757 22.1286)"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#0D91E1" stop-opacity="0" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#0D91E1" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint16_radial_916_90333"
@@ -304,9 +304,9 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(6.25219 19.6991) rotate(-88.6872) scale(20.6806 32.8084)"
         >
-          <stop offset="0.015" stop-color="#0A308F" />
-          <stop offset="0.205" stop-color="#2253CE" />
-          <stop offset="1" stop-color="#2253CE" stop-opacity="0" />
+          <stop offset="0.015" stopColor="#0A308F" />
+          <stop offset="0.205" stopColor="#2253CE" />
+          <stop offset="1" stopColor="#2253CE" stopOpacity="0" />
         </radialGradient>
         <radialGradient
           id="paint17_radial_916_90333"
@@ -316,10 +316,10 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(8.20056 -0.873006) rotate(94.9679) scale(17.196 27.7394)"
         >
-          <stop stop-color="#3BD5FF" />
-          <stop offset="0.417149" stop-color="#0D91E1" />
-          <stop offset="0.743961" stop-color="#2764E7" />
-          <stop offset="1" stop-color="#2052CB" />
+          <stop stopColor="#3BD5FF" />
+          <stop offset="0.417149" stopColor="#0D91E1" />
+          <stop offset="0.743961" stopColor="#2764E7" />
+          <stop offset="1" stopColor="#2052CB" />
         </radialGradient>
         <radialGradient
           id="paint18_radial_916_90333"
@@ -329,8 +329,8 @@ export const Msn: FC<BrandIconProps> = (props) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(9.22424 -3.38819) rotate(91.8001) scale(15.0831 26.7058)"
         >
-          <stop stop-color="#3DEEDF" stop-opacity="0.7" />
-          <stop offset="1" stop-color="#0D91E1" stop-opacity="0" />
+          <stop stopColor="#3DEEDF" stopOpacity="0.7" />
+          <stop offset="1" stopColor="#0D91E1" stopOpacity="0" />
         </radialGradient>
         <clipPath id="clip0_916_90333">
           <rect width="61" height="24" fill="white" />

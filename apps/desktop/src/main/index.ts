@@ -16,11 +16,11 @@ import { registerDeveloperIPC } from './services/developer/developer.ipc'
 import { registerExtensionIPC } from './services/extensions'
 import { registerIntegrations } from './services/integrations'
 import { registerMsnIPC } from './services/news/msn.ipc'
-import { loadNoteServices } from './services/note.service'
 import { registerSystemIPC } from './services/system'
 import { registerAuthIPC, registerUserIPC } from './services/user'
 import { loadSystemSockets } from './sockets/system.socket'
 import { ConfStorage } from './store'
+import { registerNotesIPC } from './services/notes/notes.ipc'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -155,7 +155,7 @@ function registerIpc() {
   void registerExtensionIPC()
 
   registerIntegrations()
-  loadNoteServices()
+  void registerNotesIPC()
   loadDashboardServices()
 
   registerDeveloperIPC()

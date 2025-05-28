@@ -27,7 +27,8 @@
     "home": "Home",
     "settings": "Settings",
     "entertainment": "Entertainment",
-    "verifyEmail": "Verify Email"
+    "verifyEmail": "Verify Email",
+    "notes": "Notes"
   },
   "user": {
     "logout": "Logout",
