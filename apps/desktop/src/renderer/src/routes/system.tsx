@@ -1,6 +1,6 @@
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 import {
   createFileRoute,
   Link,

@@ -1,10 +1,8 @@
-import { IOutput } from '@shared/types/image/image'
 import { Plus, Trash2Icon } from 'lucide-react'
 import { FC } from 'react'
-
 import { Button } from '@manager/ui'
-
 import { OutputItem } from './OutputItem'
+import { IOutput } from '@manager/common/src'
 
 interface Props {
   outputs: IOutput[]

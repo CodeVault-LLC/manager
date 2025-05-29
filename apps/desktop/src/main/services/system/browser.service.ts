@@ -1,9 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
-
-import { IBrowser } from '@shared/types/system'
-
 import logger from '../../logger'
+import { IBrowser } from '@manager/common/src'
 
 const username = os.userInfo().username
 

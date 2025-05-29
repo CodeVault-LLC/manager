@@ -1,5 +1,4 @@
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { EPageTypes } from '@shared/helpers'
 import { CopyrightIcon } from 'lucide-react'
 import { FC, ReactNode, useEffect } from 'react'
 
@@ -11,6 +10,7 @@ import { AuthenticationWrapper } from '../lib/wrappers/authentication-wrapper'
 import { useApplicationStore } from '../store/application.store'
 import { useDashboardStore } from '../store/dashboard.store'
 import { useSystemStore } from '../store/system.store'
+import { EPageTypes } from '@manager/common/src'
 
 type TAdminLayout = {
   children: ReactNode

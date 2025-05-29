@@ -1,8 +1,7 @@
-import { TCommunicationResponse } from '@shared/types/ipc'
-import { IDashboardWidget } from '@shared/types/widget'
 import { ipcMain } from 'electron'
 
 import { api } from './api.service'
+import { IDashboardWidget, TCommunicationResponse } from '@manager/common/src'
 
 const widgets: IDashboardWidget[] = [
   {

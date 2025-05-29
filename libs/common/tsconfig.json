@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@manager/common/*": ["src/*"]
+    },
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
+}

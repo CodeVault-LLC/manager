@@ -1,12 +1,7 @@
-import { ISystemHardware } from '@shared/types/system'
 import si from 'systeminformation'
-
-import { ISystem } from '@manager/common/src'
-
+import { ISystem, ISystemHardware } from '@manager/common/src'
 import { runPowerShellScript } from '../../utils/powershell'
-
 import { systemInformationScript } from './scripts/system-information'
-
 import logger from '@main/logger'
 
 export const systemServices = {

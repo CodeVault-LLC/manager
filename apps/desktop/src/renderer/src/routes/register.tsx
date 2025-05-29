@@ -2,7 +2,7 @@ import { UserEditFields } from '@renderer/components/UserEditFields'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect } from 'react'
 

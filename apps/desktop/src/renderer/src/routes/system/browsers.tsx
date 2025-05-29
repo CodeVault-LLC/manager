@@ -3,7 +3,7 @@ import { Chrome } from '@renderer/components/brands/chrome'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useSystemStore } from '@renderer/core/store/system.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 import { createFileRoute } from '@tanstack/react-router'
 import { Settings } from 'lucide-react'
 

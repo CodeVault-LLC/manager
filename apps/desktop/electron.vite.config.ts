@@ -23,7 +23,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
-        '@shared': path.resolve(__dirname, '../../packages/shared')
+        '@manager': path.resolve(__dirname, '../../libs/')
       }
     }
   },

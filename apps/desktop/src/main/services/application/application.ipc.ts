@@ -1,11 +1,14 @@
-import { EErrorCodes } from '@shared/helpers'
-import { ETheme, IApplication } from '@shared/types/application'
-import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain, shell } from 'electron'
 
 import logger from '@main/logger'
 import { ConfStorage } from '@main/store'
 import { manager } from '../../grpc/service-manager'
+import {
+  EErrorCodes,
+  ETheme,
+  IApplication,
+  TCommunicationResponse
+} from '@manager/common/src'
 
 /**
  * Register all IPC handlers related to application settings

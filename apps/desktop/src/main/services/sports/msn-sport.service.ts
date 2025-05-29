@@ -1,7 +1,5 @@
-import { MsnSportResponse } from '@shared/types/msn/msn-sport'
 import axios from 'axios'
 import { eq, desc } from 'drizzle-orm'
-
 import { db } from '@main/database/data-source'
 import {
   sportsLeagues,
@@ -10,6 +8,7 @@ import {
   sportGameParticipants
 } from '@main/database/models/schema'
 import logger from '@main/logger'
+import { MsnSportResponse } from '@manager/common/src'
 
 const msnApi = axios.create({
   baseURL: 'https://api.msn.com/sports/',

@@ -1,14 +1,14 @@
 import { ipcClient } from '@renderer/utils/ipcClient'
-import { IExtension } from '@shared/types/extension'
-import {
-  IBrowser,
-  ISystemHardware,
-  ISystemStatistics
-} from '@shared/types/system'
 import { toast } from 'sonner'
 import { create } from 'zustand'
 
-import { ISystem } from '@manager/common/src'
+import {
+  IBrowser,
+  IExtension,
+  ISystem,
+  ISystemHardware,
+  ISystemStatistics
+} from '@manager/common/src'
 
 import { getValue } from '../../hooks/use-i18n'
 

@@ -1,10 +1,7 @@
-import { EErrorCodes } from '@shared/helpers'
-import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain, shell } from 'electron'
-
 import logger from '../../../logger'
-
 import { api } from '@main/services/api.service'
+import { EErrorCodes, TCommunicationResponse } from '@manager/common/src'
 
 export const registerGoogleIPC = () => {
   ipcMain.handle(

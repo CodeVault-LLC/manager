@@ -1,12 +1,9 @@
 import { API_BASE_URL } from '@shared/constants'
-import { EErrorCodes } from '@shared/helpers'
-import { TCommunicationResponse } from '@shared/types/ipc'
 import axios from 'axios'
 import { app } from 'electron'
-
 import { getSystemVersion } from '../utils/system.helper'
-
 import logger from '@main/logger'
+import { EErrorCodes, TCommunicationResponse } from '@manager/common/src'
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

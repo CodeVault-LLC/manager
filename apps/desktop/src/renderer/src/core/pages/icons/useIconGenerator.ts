@@ -1,13 +1,12 @@
 import { Buffer } from 'buffer'
-
 import { ipcClient } from '@renderer/utils/ipcClient'
-import {
-  IFileAsBuffer,
-  IOutput,
-  IConvertedImageData
-} from '@shared/types/image/image'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
+import {
+  IConvertedImageData,
+  IFileAsBuffer,
+  IOutput
+} from '@manager/common/src'
 
 export const useIconGenerator = () => {
   const [loading, setLoading] = useState<boolean>(false)

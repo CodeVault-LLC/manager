@@ -7,18 +7,18 @@ export interface MsnNewsResponse {
   authContext: AuthContext;
 }
 
-export interface AuthContext {
+interface AuthContext {
   muid: string;
   anid: string;
   at: string;
 }
 
-export interface Section {
+interface Section {
   template: string;
   cards: Card[];
 }
 
-export interface Card {
+interface Card {
   id: string;
   type: CardType;
   title: string;
@@ -46,15 +46,15 @@ export interface Card {
   readTimeMin?: number;
 }
 
-export enum Status {
+enum Status {
   On = "on",
 }
 
-export interface CommentSummary {
+interface CommentSummary {
   totalCount: number;
 }
 
-export interface ExternalVideoFile {
+interface ExternalVideoFile {
   url: string;
   width?: number;
   height?: number;
@@ -62,17 +62,17 @@ export interface ExternalVideoFile {
   fileSize?: number;
 }
 
-export enum ContentType {
+enum ContentType {
   VideoMp4 = "video/mp4",
 }
 
-export interface Feed {
+interface Feed {
   id?: string;
   feedName: string;
   lastFreActionTimestamp: number;
 }
 
-export interface Image {
+interface Image {
   width: number;
   height: number;
   url: string;
@@ -81,15 +81,15 @@ export interface Image {
   caption?: string;
 }
 
-export enum Source {
+enum Source {
   MSN = "msn",
 }
 
-export enum Locale {
+enum Locale {
   EnUs = "en-us",
 }
 
-export interface Provider {
+interface Provider {
   id: string;
   name: string;
   logoUrl: string;
@@ -99,42 +99,42 @@ export interface Provider {
   darkThemeSVGLogo?: ThemeSVGLogo;
 }
 
-export interface ThemeSVGLogo {
+interface ThemeSVGLogo {
   width: number;
   height: number;
   url: string;
 }
 
-export interface ReactionSummary {
+interface ReactionSummary {
   totalCount: number;
   subReactionSummaries?: SubReactionSummary[];
 }
 
-export interface SubReactionSummary {
+interface SubReactionSummary {
   totalCount: number;
   type: SubReactionSummaryType;
 }
 
-export enum SubReactionSummaryType {
+enum SubReactionSummaryType {
   Downvote = "downvote",
   Upvote = "upvote",
 }
 
-export enum RecoID {
+enum RecoID {
   GrJFaVuh9BmZUymPzci2ZVlPAa = "grJFaVuh9bmZUymPzci2zVlPAa",
 }
 
-export enum CardType {
+enum CardType {
   Article = "article",
   Video = "video",
 }
 
-export interface VideoMetadata {
+interface VideoMetadata {
   playTime: number;
   closedCaptions: ClosedCaption[];
 }
 
-export interface ClosedCaption {
+interface ClosedCaption {
   locale: Locale;
   href: string;
 }

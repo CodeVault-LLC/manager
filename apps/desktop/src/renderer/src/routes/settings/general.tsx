@@ -2,9 +2,7 @@ import { UserEditFields } from '@renderer/components/UserEditFields'
 import { useApplicationStore } from '@renderer/core/store/application.store'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { ETheme } from '@shared/types/application'
 import { createFileRoute } from '@tanstack/react-router'
-
 import {
   Select,
   SelectContent,
@@ -15,6 +13,7 @@ import {
   Separator,
   Label
 } from '@manager/ui'
+import { ETheme } from '@manager/common/src'
 
 const RouteComponent = () => {
   const { t } = useI18n()

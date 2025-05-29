@@ -1,16 +1,14 @@
 import { Buffer } from 'buffer'
-
-import { EErrorCodes } from '@shared/helpers'
-import {
-  IConvertedImageData,
-  IConvertedImageResponse
-} from '@shared/types/image/image'
-import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain } from 'electron'
-
 import { ConvertImageRequest } from '../../../grpc/__generated/system'
 import { manager } from '../../../grpc/service-manager'
 import logger from '../../../logger'
+import {
+  EErrorCodes,
+  IConvertedImageData,
+  IConvertedImageResponse,
+  TCommunicationResponse
+} from '@manager/common/src'
 
 export const registerImageIPC = async () => {
   ipcMain.handle(

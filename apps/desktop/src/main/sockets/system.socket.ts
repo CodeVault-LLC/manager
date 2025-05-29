@@ -1,12 +1,9 @@
 import os from 'node:os'
-
-import { ISystemStatistics } from '@shared/types/system'
 import { BrowserWindow, powerMonitor } from 'electron'
 import si from 'systeminformation'
-
 import { getNetworkUsage } from '../utils/system.helper'
-
 import { getAppState, setAppState } from '@main/states/app-state'
+import { ISystemStatistics } from '@manager/common/src'
 
 export const loadSystemSockets = (mainWindow: BrowserWindow) => {
   const interval = setInterval(async () => {

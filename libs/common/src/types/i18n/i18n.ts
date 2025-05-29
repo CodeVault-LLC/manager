@@ -1,4 +1,4 @@
-import * as en from "../locales/en.json";
+import * as en from "@manager/common/locales/en.json";
 
 export type Locale = "en" | "no";
 

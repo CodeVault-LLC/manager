@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { create } from 'zustand'
 
 import { getValue } from '../../hooks/use-i18n'
-import { INote } from '@shared/types/note'
+import { INote } from '@manager/common/src'
 
 export interface INoteStore {
   notes: INote[]

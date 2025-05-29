@@ -1,6 +1,5 @@
+import { IDashboardWidget, INews } from '@manager/common/src'
 import { ipcClient } from '@renderer/utils/ipcClient'
-import { INews } from '@shared/types/news'
-import { IDashboardWidget } from '@shared/types/widget'
 import { toast } from 'sonner'
 import { create } from 'zustand'
 

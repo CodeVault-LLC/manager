@@ -2,7 +2,6 @@ import { OutputList } from '@renderer/core/components/icons/OutputList'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { PRESETS } from '@renderer/core/pages/icons/presets'
 import { useIconGenerator } from '@renderer/core/pages/icons/useIconGenerator'
-import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 import { Upload, X } from 'lucide-react'
 
@@ -26,6 +25,7 @@ import {
 } from '@manager/ui'
 
 import { Loader } from '../../core/components/loader/loading-spinner'
+import { EPageTypes } from '@manager/common/src'
 
 const IconGenerator = () => {
   const {

@@ -1,8 +1,6 @@
-import { IExtension } from '@shared/types/extension'
-
+import { IExtension } from '@manager/common/src'
 import logger from '../../logger'
 import { api } from '../api.service'
-
 import { db } from '@main/database/data-source'
 
 export const extensionService = {

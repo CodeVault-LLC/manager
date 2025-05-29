@@ -1,7 +1,5 @@
-import { IOutput } from '@shared/types/image/image'
 import { X } from 'lucide-react'
 import { FC } from 'react'
-
 import {
   Select,
   SelectContent,
@@ -11,6 +9,7 @@ import {
   Button,
   Input
 } from '@manager/ui'
+import { IOutput } from '@manager/common/src'
 
 interface Props {
   output: IOutput

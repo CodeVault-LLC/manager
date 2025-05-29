@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { AuthenticationWrapper } from '../core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 
 export const Route = createFileRoute('/notes')({
   component: RouteComponent

@@ -1,7 +1,6 @@
 import { IpcRendererListener } from '@electron-toolkit/preload'
+import { EErrorCodes, IpcEmittedEvents, IpcHandlers } from '@manager/common/src'
 import { useErrorStore } from '@renderer/core/store/error.store'
-import { EErrorCodes } from '@shared/helpers'
-import { IpcHandlers, IpcEmittedEvents } from '@shared/types/ipc'
 
 export const ipcClient = {
   // Wrapper for invoking IPC methods

@@ -1,16 +1,16 @@
 import { ipcClient } from '@renderer/utils/ipcClient'
 import { EUserStatus, TUserStatus } from '@shared/constants'
-import { EErrorCodes } from '@shared/helpers'
-import {
-  IAvatarWithBuffer,
-  IRegistrationData,
-  ISession,
-  IUser
-} from '@shared/types'
 import { toast } from 'sonner'
 import { create } from 'zustand'
 
 import { useErrorStore } from './error.store'
+import {
+  EErrorCodes,
+  IAvatarWithBuffer,
+  IRegistrationData,
+  ISession,
+  IUser
+} from '@manager/common/src'
 
 export interface IUserStore {
   isLoading: boolean

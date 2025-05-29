@@ -1,8 +1,7 @@
 import { ipcClient } from '@renderer/utils/ipcClient'
-import { ETheme } from '@shared/types/application'
 import { create } from 'zustand'
 
-import { IServiceStatus } from '@manager/common/src'
+import { ETheme, IServiceStatus } from '@manager/common/src'
 
 interface ITheme {
   id: ETheme

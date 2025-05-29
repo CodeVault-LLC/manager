@@ -1,5 +1,5 @@
+import { EPageTypes } from '@manager/common/src'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '@shared/helpers'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/entertainment')({

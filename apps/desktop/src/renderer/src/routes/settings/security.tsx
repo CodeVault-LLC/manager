@@ -3,7 +3,6 @@ import { SessionModal } from '@renderer/core/components/session/session-modal'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { prettifyToHumanReadableDate } from '@shared/helpers/date.helper'
-import { ISession } from '@shared/types'
 import { createFileRoute } from '@tanstack/react-router'
 import { Clock, Globe } from 'lucide-react'
 import { useEffect } from 'react'
@@ -16,6 +15,7 @@ import {
   Badge,
   Button
 } from '@manager/ui'
+import { ISession } from '@manager/common/src'
 
 const RouteComponent = () => {
   const { t } = useI18n()

@@ -1,5 +1,5 @@
+import { TranslationKeys, Translations } from '@manager/common/src'
 import { useApplicationStore } from '@renderer/core/store/application.store'
-import { TranslationKeys, Translations } from '@shared/types/i18n'
 import { useEffect, useState } from 'react'
 
 declare global {

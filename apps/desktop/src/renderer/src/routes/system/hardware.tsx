@@ -1,6 +1,6 @@
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useSystemStore } from '@renderer/core/store/system.store'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 import { createFileRoute, useLocation } from '@tanstack/react-router'
 import { useEffect } from 'react'
 

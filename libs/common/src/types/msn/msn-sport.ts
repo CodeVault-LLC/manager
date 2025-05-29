@@ -3,7 +3,7 @@ export interface MsnSportResponse {
   value: MsnSport[];
 }
 
-export interface MsnSport {
+interface MsnSport {
   schedules: Schedule[];
   specifiedLeague: string;
   recommendedLeagues: RecommendedLeague[];
@@ -11,12 +11,12 @@ export interface MsnSport {
   version: string;
 }
 
-export interface Schedule {
+interface Schedule {
   games: Game[];
   league: League;
 }
 
-export interface Game {
+interface Game {
   startDateTime: string;
   gameState: GameState;
   currentPlayingPeriod?: CurrentPlayingPeriod;
@@ -34,24 +34,24 @@ export interface Game {
   navUrls: NavUrls2;
 }
 
-export interface GameState {
+interface GameState {
   gameStatus: string;
   gameClock: GameClock;
   detailedGameStatus: string;
 }
 
-export interface GameClock {}
+interface GameClock {}
 
-export interface CurrentPlayingPeriod {
+interface CurrentPlayingPeriod {
   playingPeriodType: string;
 }
 
-export interface GameType {
+interface GameType {
   simpleSeasonPhase: string;
   detailSeasonPhase: string;
 }
 
-export interface Participant {
+interface Participant {
   gameOutcome?: string;
   detailedGameOutcome?: string;
   result?: Result;
@@ -61,21 +61,21 @@ export interface Participant {
   homeAwayStatus: string;
 }
 
-export interface Result {
+interface Result {
   score: string;
 }
 
-export interface PlayingPeriodScore {
+interface PlayingPeriodScore {
   playingPeriod: PlayingPeriod;
   score: string;
 }
 
-export interface PlayingPeriod {
+interface PlayingPeriod {
   playingPeriodType?: string;
   number: string;
 }
 
-export interface Team {
+interface Team {
   shortName: ShortName;
   alias: string;
   schoolName: string;
@@ -90,52 +90,52 @@ export interface Team {
   navUrls: NavUrls;
 }
 
-export interface ShortName {
+interface ShortName {
   rawName: string;
 }
 
-export interface Name {
+interface Name {
   rawName: string;
 }
 
-export interface Image {
+interface Image {
   id: string;
 }
 
-export interface Colors {
+interface Colors {
   primaryColorHex: string;
   secondaryColorHex?: string;
 }
 
-export interface SecondaryId {
+interface SecondaryId {
   idType: string;
   id: string;
 }
 
-export interface NavUrls {
+interface NavUrls {
   teamSchedule: string;
 }
 
-export interface Probability {
+interface Probability {
   dataProvider: string;
   winProbability: number;
   tieProbability: number;
 }
 
-export interface LeagueName {
+interface LeagueName {
   rawName: string;
 }
 
-export interface SecondaryId2 {
+interface SecondaryId2 {
   idType: string;
   id: string;
 }
 
-export interface NavUrls2 {
+interface NavUrls2 {
   gameCenter: string;
 }
 
-export interface League {
+interface League {
   seasonYear: number;
   currentSeasonPhase: string;
   currentDetailedSeasonPhase: string;
@@ -156,30 +156,30 @@ export interface League {
   navUrls: NavUrls3;
 }
 
-export interface Name2 {
+interface Name2 {
   rawName: string;
 }
 
-export interface Image2 {
+interface Image2 {
   id: string;
   secondaryImages: SecondaryImage[];
 }
 
-export interface SecondaryImage {
+interface SecondaryImage {
   type: string;
   id: string;
 }
 
-export interface Colors2 {
+interface Colors2 {
   primaryColorHex: string;
 }
 
-export interface SecondaryId3 {
+interface SecondaryId3 {
   idType: string;
   id: string;
 }
 
-export interface NavUrls3 {
+interface NavUrls3 {
   schedule: string;
 }
 

@@ -1,9 +1,7 @@
-import { EErrorCodes } from '@shared/helpers'
 import { ipcMain } from 'electron'
-
 import logger from '../../logger'
-
 import { extensionService } from './extension.service'
+import { EErrorCodes } from '@manager/common/src'
 
 /**
  * Register all IPC handlers related to extensions

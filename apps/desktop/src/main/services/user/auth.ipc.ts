@@ -1,14 +1,13 @@
-import { EErrorCodes } from '@shared/helpers'
-import { IRegistrationData } from '@shared/types'
-import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain } from 'electron'
-
 import logger from '../../logger'
 import { api } from '../api.service'
-
 import { authServices } from './auth.service'
-
 import { ConfStorage } from '@main/store'
+import {
+  EErrorCodes,
+  IRegistrationData,
+  TCommunicationResponse
+} from '@manager/common/src'
 
 /**
  * Register all IPC handlers related to authentication

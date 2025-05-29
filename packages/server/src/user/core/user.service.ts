@@ -4,8 +4,9 @@ import { GoogleAccount, tokens } from '@/models/schema';
 import { User, users } from '@/models/user/user.model.js';
 import { and, eq } from 'drizzle-orm';
 import { GoogleService } from '../google/google.service';
-import { IGoogleUserLite } from '@shared/types/google';
 import { randomInt } from 'node:crypto';
+
+import { IGoogleUserLite } from '@manager/common/src';
 
 export const UserService = {
   sanitizeUser(user: User, google: GoogleAccount | null) {

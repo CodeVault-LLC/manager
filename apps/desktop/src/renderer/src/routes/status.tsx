@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AuthenticationWrapper } from '../core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 import { useEffect } from 'react'
 import { useApplicationStore } from '../core/store/application.store'
 

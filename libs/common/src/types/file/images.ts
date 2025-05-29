@@ -1,10 +1,4 @@
-export interface IFileAsBuffer {
-  name: string;
-  type: string;
-  size: number;
-  lastModified: number;
-  buffer: number[];
-}
+import { IFileAsBuffer } from "./file";
 
 export interface IOutput {
   width: number;

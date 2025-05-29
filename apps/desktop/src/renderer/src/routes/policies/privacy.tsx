@@ -1,5 +1,5 @@
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '@shared/helpers'
+import { EPageTypes } from '@manager/common/src'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { Button } from '@manager/ui'

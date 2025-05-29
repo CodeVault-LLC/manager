@@ -1,4 +1,4 @@
-import { IOutput } from '@shared/types/image/image'
+import { IOutput } from '@manager/common/src'
 
 export type Preset = {
   name: string

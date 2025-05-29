@@ -1,8 +1,8 @@
+import { EPageTypes } from '@manager/common/src'
 import { News } from '@renderer/core/components/news'
 import { FeaturedMatches } from '@renderer/core/components/sports/featured-matches'
 import { SystemWidget } from '@renderer/core/components/system/system-widget'
 import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '@shared/helpers'
 import { createFileRoute } from '@tanstack/react-router'
 
 const WorkspaceManagementPage = () => {

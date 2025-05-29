@@ -1,9 +1,9 @@
+import { EErrorCodes, EPageTypes } from '@manager/common/src'
 import { NetworkError } from '@renderer/core/components/errors/network-error'
 import { Loader } from '@renderer/core/components/loader/loading-spinner'
 import { useDashboardStore } from '@renderer/core/store/dashboard.store'
 import { useErrorStore } from '@renderer/core/store/error.store'
 import { useUserStore } from '@renderer/core/store/user.store'
-import { EErrorCodes, EPageTypes } from '@shared/helpers'
 import { useNavigate } from '@tanstack/react-router'
 import { FC, ReactNode, useEffect } from 'react'
 

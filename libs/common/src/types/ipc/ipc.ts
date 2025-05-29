@@ -1,14 +1,23 @@
-import { IRegistrationData, ISession, IUser } from "./users";
-import { INote, TNotePage } from "./note";
-import { IBrowser, ISystemHardware, ISystemStatistics } from "./system";
-import { IDashboardWidget } from "./widget";
-import { INews } from "./news";
-import { IExtension } from "./extension";
-import { ETheme, IApplication } from "./application/application";
-import { TErrorInfo } from "../helpers";
-import { IConvertedImageData, IConvertedImageResponse } from "./image/image";
-
-import { ISystem, IServiceStatus } from "@manager/common/src";
+import {
+  ISystem,
+  ISystemStatistics,
+  IBrowser,
+  TNotePage,
+  INote,
+  TErrorInfo,
+  IUser,
+  IRegistrationData,
+  ETheme,
+  IApplication,
+  IServiceStatus,
+  ISystemHardware,
+  INews,
+  IExtension,
+  ISession,
+  IConvertedImageData,
+  IConvertedImageResponse,
+  IDashboardWidget,
+} from "@manager/common/index";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }

@@ -1,10 +1,12 @@
-import { EErrorCodes } from '@shared/helpers'
-import { ISession, IUser } from '@shared/types'
-import { TCommunicationResponse } from '@shared/types/ipc'
 import { ipcMain } from 'electron'
-
 import logger from '../../logger'
 import { api } from '../api.service'
+import {
+  EErrorCodes,
+  ISession,
+  IUser,
+  TCommunicationResponse
+} from '@manager/common/src'
 
 /**
  * Register all IPC handlers related to user management

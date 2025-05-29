@@ -1,4 +1,4 @@
-import { EErrorCodes } from '@shared/helpers'
+import { EErrorCodes } from '@manager/common/src'
 import { ipcMain } from 'electron'
 
 export const googleServices = {
