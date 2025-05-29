@@ -235,7 +235,7 @@ class ServiceManager {
             description += ' (no .test() method)'
           } else {
             await new Promise<void>((resolve, reject) => {
-              ;(client as any).test({}, (err: any, res: any) => {
+              ;(client as any).test({}, (err: any, _: any) => {
                 if (err) return reject(err)
                 resolve()
               })

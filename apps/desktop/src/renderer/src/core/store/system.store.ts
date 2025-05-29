@@ -80,6 +80,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   getSystem: (): void => {
     ipcClient.invoke('system:getSystemInfo').then((response) => {
       if (response.data) {
+        console.log('System data', response.data)
         set({ system: response.data })
       } else {
         // eslint-disable-next-line no-console

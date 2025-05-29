@@ -147,6 +147,7 @@
 
     "fetchingNotes": "Could not fetch notes, please try again later.",
     "creatingNote": "Could not create note, please try again later.",
-    "updatingNote": "Could not update note, please try again later."
+    "updatingNote": "Could not update note, please try again later.",
+    "invalidNoteData": "Invalid note data provided."
   }
 }

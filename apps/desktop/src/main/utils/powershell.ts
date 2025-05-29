@@ -1,10 +1,13 @@
 import { exec } from 'child_process'
 
-export const runPowerShellScript = <T>(script: string): Promise<T> => {
+export const runPowerShellScript = <T>(file: string): Promise<T> => {
   return new Promise((resolve, reject) => {
     exec(
-      `powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "${script}"`,
-      { maxBuffer: 1024 * 1024 * 10 },
+      `powershell -ExecutionPolicy Bypass -File "${file}"`,
+      {
+        windowsHide: true,
+        encoding: 'utf8'
+      },
       (error, stdout, stderr) => {
         if (error) return reject(stderr || error.message)
         try {

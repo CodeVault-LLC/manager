@@ -1,8 +1,8 @@
 import si from 'systeminformation'
 import { ISystem, ISystemHardware } from '@manager/common/src'
 import { runPowerShellScript } from '../../utils/powershell'
-import { systemInformationScript } from './scripts/system-information'
 import logger from '@main/logger'
+import path from 'node:path'
 
 export const systemServices = {
   getSystemHardware: async (): Promise<ISystemHardware> => {
@@ -77,7 +77,11 @@ export const systemServices = {
     const isWindows = process.platform === 'win32'
 
     if (isWindows) {
-      const data = await runPowerShellScript<ISystem>(systemInformationScript)
+      const scriptPath = path
+        .resolve(__dirname, '../../resources/scripts/system-information.ps1')
+        .replace('app.asar', 'app.asar.unpacked')
+
+      const data = await runPowerShellScript<ISystem>(scriptPath)
 
       return data
     }

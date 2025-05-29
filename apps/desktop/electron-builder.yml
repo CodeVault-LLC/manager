@@ -15,6 +15,7 @@ directories:
 extraResources:
   - 'resources/proto/**'
   - 'resources/builds/**'
+  - 'resources/scripts/**'
 
 files:
   - out/**

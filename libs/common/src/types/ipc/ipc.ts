@@ -17,7 +17,7 @@ import {
   IConvertedImageData,
   IConvertedImageResponse,
   IDashboardWidget,
-} from "@manager/common/index";
+} from "../index";
 
 export type TCommunicationResponse<TData> =
   | { data: TData; error?: never }

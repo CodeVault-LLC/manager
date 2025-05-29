@@ -1,4 +1,3 @@
-export const systemInformationScript = String.raw`
 $report = @{}
 $ErrorActionPreference = "Stop"
 
@@ -93,23 +92,36 @@ $report.antivirus = Safe-Invoke {
 $netAdapters = Safe-Invoke {
     Get-NetAdapter | Where-Object { $_.Status -eq "Up" }
 } @()
+
 $report.network = @{}
 
 foreach ($adapter in $netAdapters) {
     try {
-        $ip = (Get-NetIPAddress -InterfaceIndex $adapter.ifIndex -AddressFamily IPv4).IPAddress
-        $speedMbps = [math]::Round($adapter.LinkSpeed / 1MB, 2)
-        $dns = (Get-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -AddressFamily IPv4).ServerAddresses
-        $gw = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -InterfaceIndex $adapter.InterfaceIndex).NextHop
+        $ipInfo = Get-NetIPAddress -InterfaceIndex $adapter.ifIndex -AddressFamily IPv4 -ErrorAction Stop | Select-Object -First 1
+        $dnsInfo = Get-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -AddressFamily IPv4 -ErrorAction Stop
+
+        $gwInfo = Get-NetRoute -DestinationPrefix "0.0.0.0/0" -InterfaceIndex $adapter.InterfaceIndex -ErrorAction SilentlyContinue | Select-Object -First 1
+        $gateway = if ($gwInfo) { $gwInfo.NextHop } else { "none" }
+
+        # Parse LinkSpeed safely
+        $linkSpeedRaw = $adapter.LinkSpeed
+        $linkSpeedMbps = if ($linkSpeedRaw -is [string]) {
+            [double]($linkSpeedRaw -replace '[^\d.]', '')
+        } else {
+            [math]::Round($linkSpeedRaw / 1MB, 2)
+        }
 
         $report.network[$adapter.Name] = @{
-            ip_address = $ip
-            link_speed_mbps = $speedMbps
-            gateway = $gw
-            dns_servers = $dns
+            ip_address       = $ipInfo.IPAddress
+            link_speed_mbps  = $linkSpeedMbps
+            gateway          = $gateway
+            dns_servers      = $dnsInfo.ServerAddresses
         }
     } catch {
-        $report.network[$adapter.Name] = @{ error = "Failed to gather network info" }
+        $report.network[$adapter.Name] = @{
+            error  = "Failed to gather network info"
+            reason = $_.Exception.Message
+        }
     }
 }
 
@@ -133,4 +145,3 @@ $output = try {
 
 # Write only the JSON without extra whitespace.
 $output.Trim() | Write-Output
-`

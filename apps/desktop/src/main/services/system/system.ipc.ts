@@ -22,16 +22,14 @@ export const registerSystemIPC = () => {
       try {
         const systemInfo = await systemServices.getSystemInfo()
 
-        logger.debug('System info data', {
-          systemInfo
-        })
+        logger.debug('System info data', systemInfo)
 
         return { data: systemInfo }
       } catch (error: any) {
-        logger.error(
-          `Error while getting system info data: ${error.message}`,
-          error
-        )
+        // eslint-disable-next-line no-console
+        console.error('Error while getting system info data:', error)
+
+        logger.error('Errror while getting system info data: ', error)
 
         return {
           error: {

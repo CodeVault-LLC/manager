@@ -1,16 +1,17 @@
-import { FC, useEffect } from "react";
-import { EditorProvider, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-
+import { FC } from "react";
+import { EditorProvider, Extensions } from "@tiptap/react";
 import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import Typography from "@tiptap/extension-typography";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 import "./editor.css";
 import { Topbar } from "./ui/topbar";
 import { FooterBar } from "./ui/footer";
+import { all, createLowlight } from "lowlight";
+import StarterKit from "@tiptap/starter-kit";
 
 interface EditorProps {
   value: object | null;
@@ -18,14 +19,19 @@ interface EditorProps {
   onSave: () => void;
 }
 
-export const Editor: FC<EditorProps> = ({ value, onValueChange, onSave }) => {
-  const extensions = [
-    StarterKit,
+export const Editor: FC<EditorProps> = ({ value, onValueChange }) => {
+  const lowlight = createLowlight(all);
+
+  const extensions: Extensions = [
     TextStyle,
     FontFamily,
     Typography,
     TextAlign,
     Underline,
+    CodeBlockLowlight.configure({
+      lowlight,
+    }),
+    StarterKit,
   ];
 
   if (!value) {

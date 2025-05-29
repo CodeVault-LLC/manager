@@ -12,8 +12,8 @@ import {
   AlignRight,
   Undo2,
   Redo2,
-  Heading1,
   Pilcrow,
+  Code,
 } from "lucide-react";
 import {
   Select,
@@ -62,7 +62,7 @@ export const Topbar: FC = () => {
                 editor
                   .chain()
                   .focus()
-                  .setHeading({ level: parseInt(value[1]) })
+                  .setHeading({ level: parseInt(value[1]) as 1 | 2 | 3 })
                   .run();
               } else if (value === "p") {
                 editor.chain().focus().setParagraph().run();
@@ -115,6 +115,14 @@ export const Topbar: FC = () => {
             icon={<Pilcrow />}
             onClick={() => editor.chain().focus().setParagraph().run()}
             active={editor.isActive("paragraph")}
+          />
+        </div>
+
+        <div className="flex items-center gap-1">
+          <IconButton
+            icon={<Code />}
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            active={editor.isActive("codeBlock")}
           />
         </div>
 

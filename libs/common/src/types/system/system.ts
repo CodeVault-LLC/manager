@@ -3,12 +3,13 @@ export interface ISystem {
   uptime: string;
   boot_time: string;
   disk_usage: ISystemDisk[];
+  software_updates: string[];
   last_crash: string | null;
   recent_warnings: string[];
   startup_programs: string[];
   focus_assist: string; // todo: into boolean
   bluetooth: string; // todo: into boolean
-  exterrnal_displays: number;
+  external_displays: number;
   vpn: string; // todo: into boolean
   antivirus: string[];
   network: Record<string, ISystemNetwork>;
@@ -81,4 +82,3 @@ export interface ISystemHardware {
     model: string;
   };
 }
-
