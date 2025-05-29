@@ -13,9 +13,7 @@ function RouteComponent() {
   const { id }: { id: number } = useParams({ strict: true, from: '/notes/$id' })
   const { currentNote, getNote, updateNote } = useNoteStore()
 
-  const [value, setValue] = useState<object | null>(
-    currentNote?.content || null
-  )
+  const [value, setValue] = useState<object | null>(null)
   const debouncedValue = useDebounce(value, 500)
 
   // Track currently loaded note ID to compare with debounced saves
@@ -25,23 +23,20 @@ function RouteComponent() {
   useEffect(() => {
     if (!id) return
 
-    getNote(id)
+    const getData = async () => {
+      const note = await getNote(id)
+
+      loadedNoteId.current = id
+      if (note) {
+        setValue(note.content || null)
+      } else {
+        setValue(null)
+      }
+    }
+
+    void getData()
   }, [id])
 
-  // Set initial value when note is loaded
-  useEffect(() => {
-    if (currentNote) {
-      loadedNoteId.current = currentNote.id
-      setValue(currentNote.content)
-
-      // Initialize editor
-    }
-  }, [currentNote])
-
-  // Save only if:
-  // - A note is loaded
-  // - The debounced value changed
-  // - The currentNote hasn't changed in between (using loadedNoteId)
   useEffect(() => {
     if (
       currentNote &&
