@@ -31,7 +31,7 @@ export const Topbar: FC = () => {
 
   return (
     <Card className="border-b rounded-none shadow-none w-full">
-      <CardContent className="flex flex-wrap items-center justify-between py-3 px-4">
+      <CardContent className="flex flex-wrap items-center justify-between py-3 px-4 gap-3">
         {/* Font Controls */}
         <div className="flex items-center gap-2">
           <Select
@@ -40,7 +40,7 @@ export const Topbar: FC = () => {
               editor.chain().focus().setFontFamily(value).run()
             }
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="Font Family" />
             </SelectTrigger>
 
@@ -53,20 +53,34 @@ export const Topbar: FC = () => {
           </Select>
 
           <Select
-            value={editor.getAttributes("textStyle").fontSize}
-            onValueChange={(value) =>
-              editor.chain().focus().setFontSize(value).run()
+            value={
+              editor.getAttributes("textStyle").fontSize?.toString() || "p"
             }
+            onValueChange={(value) => {
+              const headings = ["h1", "h2", "h3"];
+              if (headings.includes(value)) {
+                editor
+                  .chain()
+                  .focus()
+                  .setHeading({ level: parseInt(value[1]) })
+                  .run();
+              } else if (value === "p") {
+                editor.chain().focus().setParagraph().run();
+              }
+            }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="Font Size" />
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="12px">Small</SelectItem>
-              <SelectItem value="16px">Normal</SelectItem>
-              <SelectItem value="20px">Large</SelectItem>
-              <SelectItem value="28px">Huge</SelectItem>
+              <SelectItem value="h1">H1</SelectItem>
+              <SelectItem value="h2">H2</SelectItem>
+              <SelectItem value="h3">H3</SelectItem>
+              <SelectItem value="p">Paragraph</SelectItem>
+              <SelectItem value="small">Small</SelectItem>
+              <SelectItem value="tiny">Tiny</SelectItem>
+              <SelectItem value="large">Large</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -76,18 +90,22 @@ export const Topbar: FC = () => {
           <IconButton
             icon={<Bold />}
             onClick={() => editor.chain().focus().toggleBold().run()}
+            active={editor.isActive("bold")}
           />
           <IconButton
             icon={<Italic />}
             onClick={() => editor.chain().focus().toggleItalic().run()}
+            active={editor.isActive("italic")}
           />
           <IconButton
             icon={<Underline />}
             onClick={() => editor.chain().focus().toggleUnderline().run()}
+            active={editor.isActive("underline")}
           />
           <IconButton
             icon={<Strikethrough />}
             onClick={() => editor.chain().focus().toggleStrike().run()}
+            active={editor.isActive("strike")}
           />
         </div>
 
@@ -96,12 +114,7 @@ export const Topbar: FC = () => {
           <IconButton
             icon={<Pilcrow />}
             onClick={() => editor.chain().focus().setParagraph().run()}
-          />
-          <IconButton
-            icon={<Heading1 />}
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 1 }).run()
-            }
+            active={editor.isActive("paragraph")}
           />
         </div>
 
@@ -110,10 +123,12 @@ export const Topbar: FC = () => {
           <IconButton
             icon={<List />}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
+            active={editor.isActive("bulletList")}
           />
           <IconButton
             icon={<ListOrdered />}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            active={editor.isActive("orderedList")}
           />
         </div>
 
@@ -122,14 +137,17 @@ export const Topbar: FC = () => {
           <IconButton
             icon={<AlignLeft />}
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
+            active={editor.isActive({ textAlign: "left" })}
           />
           <IconButton
             icon={<AlignCenter />}
             onClick={() => editor.chain().focus().setTextAlign("center").run()}
+            active={editor.isActive({ textAlign: "center" })}
           />
           <IconButton
             icon={<AlignRight />}
             onClick={() => editor.chain().focus().setTextAlign("right").run()}
+            active={editor.isActive({ textAlign: "right" })}
           />
         </div>
 
@@ -151,15 +169,18 @@ export const Topbar: FC = () => {
   );
 };
 
+// Reusable IconButton component
 const IconButton: FC<{
   icon: JSX.Element;
   onClick: () => void;
+  active?: boolean;
   disabled?: boolean;
-}> = ({ icon, onClick, disabled }) => (
+}> = ({ icon, onClick, active, disabled }) => (
   <Button
     onClick={onClick}
     disabled={disabled}
-    className={`p-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed`}
+    variant={active ? "secondary" : "ghost"}
+    className={`p-2 rounded-md ${active ? "bg-muted text-foreground" : ""}`}
   >
     {icon}
   </Button>

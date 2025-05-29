@@ -88,10 +88,6 @@ export const notesServices = {
         .where(eq(notes.id, id))
         .returning()
 
-      logger.debug('Note updated successfully', {
-        updatedNote
-      })
-
       if (updatedNote.length === 0) {
         return {
           error: 'Note not found or no changes made'

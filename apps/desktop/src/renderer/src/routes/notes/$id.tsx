@@ -49,7 +49,7 @@ function RouteComponent() {
       debouncedValue &&
       loadedNoteId.current !== null &&
       loadedNoteId.current === currentNote.id &&
-      JSON.stringify(debouncedValue) !== JSON.stringify(currentNote.content)
+      debouncedValue !== currentNote.content
     ) {
       updateNote({
         id: currentNote.id,

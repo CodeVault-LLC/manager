@@ -5,6 +5,8 @@ import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import Typography from "@tiptap/extension-typography";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
 
 import "./editor.css";
 import { Topbar } from "./ui/topbar";
@@ -17,7 +19,14 @@ interface EditorProps {
 }
 
 export const Editor: FC<EditorProps> = ({ value, onValueChange, onSave }) => {
-  const extensions = [StarterKit, TextStyle, FontFamily, Typography];
+  const extensions = [
+    StarterKit,
+    TextStyle,
+    FontFamily,
+    Typography,
+    TextAlign,
+    Underline,
+  ];
 
   if (!value) {
     return <div className="editor-container">No content available</div>;
@@ -32,7 +41,7 @@ export const Editor: FC<EditorProps> = ({ value, onValueChange, onSave }) => {
         editorProps={{
           attributes: {
             class:
-              "border shadow-sm p-4 focus:outline-none focus:ring-1 focus:ring-blue-500",
+              "border shadow-sm p-4 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[300px] max-h-[80vh] overflow-y-auto prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl dark:prose-invert",
           },
         }}
         content={value}

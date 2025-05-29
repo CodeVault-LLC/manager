@@ -22,8 +22,6 @@ export const useNoteStore = create<INoteStore>((set) => ({
   getAll: async (): Promise<void> => {
     const response = await ipcClient.invoke('notes:getAll')
 
-    console.log('Fetched notes:', response.data)
-
     if (response.error) {
       toast.error(getValue('error.fetchingNotes'))
       return
@@ -34,8 +32,6 @@ export const useNoteStore = create<INoteStore>((set) => ({
 
   createNote: async (): Promise<void> => {
     const response = await ipcClient.invoke('notes:createNote')
-
-    console.log('Note created successfully:', response.data)
 
     if (response.error) {
       toast.error(getValue('error.creatingNote'))
@@ -49,8 +45,6 @@ export const useNoteStore = create<INoteStore>((set) => ({
 
   getNote: async (id: number): Promise<void> => {
     const response = await ipcClient.invoke('notes:getNote', id)
-
-    console.log('Fetched note:', response.data)
 
     if (response.error) {
       toast.error(getValue('error.fetchingNotes'))
@@ -70,8 +64,6 @@ export const useNoteStore = create<INoteStore>((set) => ({
     }
 
     const response = await ipcClient.invoke('notes:updateNote', note)
-
-    console.log('Note updated successfully:', response.data)
 
     if (response.error) {
       toast.error(getValue('error.updatingNote'))

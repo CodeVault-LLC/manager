@@ -62,10 +62,16 @@ importers:
       '@tiptap/extension-font-family':
         specifier: ^2.12.0
         version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))(@tiptap/extension-text-style@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5)))
+      '@tiptap/extension-text-align':
+        specifier: ^2.12.0
+        version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))
       '@tiptap/extension-text-style':
         specifier: ^2.12.0
         version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))
       '@tiptap/extension-typography':
+        specifier: ^2.12.0
+        version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))
+      '@tiptap/extension-underline':
         specifier: ^2.12.0
         version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))
       '@tiptap/pm':
@@ -759,6 +765,11 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
+  '@tiptap/extension-text-align@2.12.0':
+    resolution: {integrity: sha512-ntGjHFPrb9iQ+QGVUr6U53/wcWI/qaAwDyApW7F7GcTpQbmimwUqvUHti1RsSh9nTrQmZD6g8SdRbIR/Y31gOw==}
+    peerDependencies:
+      '@tiptap/core': ^2.7.0
+
   '@tiptap/extension-text-style@2.12.0':
     resolution: {integrity: sha512-Pxwt23ZlvbQUahV0PvHy8Ej6IAuKR1FvHobUvwP3T8AiY7hob66fWRe7tQbESzSAzm5Vv2xkvyHeU8vekMTezA==}
     peerDependencies:
@@ -771,6 +782,11 @@ packages:
 
   '@tiptap/extension-typography@2.12.0':
     resolution: {integrity: sha512-Sh95D8ON3KcGR/6wQ1B2PwVQNQXSHItQFodDAEgT9c6CCPzrz0omLWJvG7lx7NzMoZ7cvPE/BBoEujsDIT1XRA==}
+    peerDependencies:
+      '@tiptap/core': ^2.7.0
+
+  '@tiptap/extension-underline@2.12.0':
+    resolution: {integrity: sha512-u95lrUCesw1SN3BXY4xrgfSuxtoCYmJ9uaU7IVVOu0zVsDFtLlOa82kd63KVF+URL0kMdO+FBmvdS6d8Era70Q==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
@@ -1889,6 +1905,10 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.12.0(@tiptap/pm@3.0.0-beta.5)
 
+  '@tiptap/extension-text-align@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))':
+    dependencies:
+      '@tiptap/core': 2.12.0(@tiptap/pm@3.0.0-beta.5)
+
   '@tiptap/extension-text-style@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))':
     dependencies:
       '@tiptap/core': 2.12.0(@tiptap/pm@3.0.0-beta.5)
@@ -1898,6 +1918,10 @@ snapshots:
       '@tiptap/core': 2.12.0(@tiptap/pm@3.0.0-beta.5)
 
   '@tiptap/extension-typography@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))':
+    dependencies:
+      '@tiptap/core': 2.12.0(@tiptap/pm@3.0.0-beta.5)
+
+  '@tiptap/extension-underline@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@3.0.0-beta.5))':
     dependencies:
       '@tiptap/core': 2.12.0(@tiptap/pm@3.0.0-beta.5)
 

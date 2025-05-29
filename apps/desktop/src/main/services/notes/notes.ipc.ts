@@ -68,7 +68,7 @@ export const registerNotesIPC = async () => {
       }
 
       return {
-        data: newNote
+        data: newNote.data
       }
     } catch (error) {
       logger.error('Error creating note', error)
@@ -86,17 +86,7 @@ export const registerNotesIPC = async () => {
       { id, title, content }: { id: number; title: string; content: string }
     ) => {
       try {
-        console.log(id, title, content)
-
         const updatedNote = await notesServices.writeNote(id, title, content)
-
-        console.log(content)
-
-        logger.info(
-          `Updating note with ID ${id} - Title: ${title} Content: ${content}`
-        )
-
-        console.log('Updated note:', updatedNote)
 
         if (!updatedNote?.data) {
           logger.info(`Failed to update note with ID ${id}`)
