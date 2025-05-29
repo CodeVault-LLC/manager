@@ -51,7 +51,6 @@
     "@radix-ui/react-popover": "^1.1.14",
     "@tanstack/react-form": "^1.11.3",
     "@tanstack/router-plugin": "^1.120.7",
-    "@udecode/plate": "^48.0.5",
     "archiver": "^7.0.1",
     "axios": "^1.9.0",
     "better-sqlite3": "^11.10.0",

@@ -1,11 +1,9 @@
 import { createFileRoute, useParams, Link } from '@tanstack/react-router'
 import { useEffect, useState, useRef } from 'react'
 import { useNoteStore } from '../../core/store/note.store'
-import { Editor, EditorContainer } from '@manager/ui/src/ui/editor'
-import { Plate } from '@udecode/plate/react'
 import { ArrowLeft, MoreVertical } from 'lucide-react'
 import { useDebounce } from '@manager/ui/src/hooks/use-debounce'
-import { useCreateEditor } from '@manager/ui/src/core/editor/use-create-editor'
+import { Editor } from '@manager/ui/src/core/editor/editor'
 
 export const Route = createFileRoute('/notes/$id')({
   component: RouteComponent
@@ -15,13 +13,10 @@ function RouteComponent() {
   const { id }: { id: number } = useParams({ strict: true, from: '/notes/$id' })
   const { currentNote, getNote, updateNote } = useNoteStore()
 
-  const [value, setValue] = useState<any[] | null>(null)
+  const [value, setValue] = useState<object | null>(
+    currentNote?.content || null
+  )
   const debouncedValue = useDebounce(value, 500)
-
-  //const editor = usePlateEditor({ skipInitialization: true })
-  const editor = useCreateEditor({
-    skipInitialization: true
-  })
 
   // Track currently loaded note ID to compare with debounced saves
   const loadedNoteId = useRef<number | null>(null)
@@ -35,15 +30,11 @@ function RouteComponent() {
 
   // Set initial value when note is loaded
   useEffect(() => {
-    if (currentNote && Array.isArray(currentNote.content)) {
+    if (currentNote) {
       loadedNoteId.current = currentNote.id
       setValue(currentNote.content)
 
       // Initialize editor
-      editor.tf.init({
-        value: currentNote.content,
-        autoSelect: 'end'
-      })
     }
   }, [currentNote])
 
@@ -56,14 +47,10 @@ function RouteComponent() {
       currentNote &&
       currentNote?.id &&
       debouncedValue &&
-      loadedNoteId.current === currentNote.id && // safeguard against race condition
-      Array.isArray(currentNote.content) &&
+      loadedNoteId.current !== null &&
+      loadedNoteId.current === currentNote.id &&
       JSON.stringify(debouncedValue) !== JSON.stringify(currentNote.content)
     ) {
-      console.log('Auto-saving note:', currentNote.id)
-      console.log('Debounced value:', debouncedValue)
-      console.log('Current note content:', currentNote.content)
-
       updateNote({
         id: currentNote.id,
         title: currentNote.title || '',
@@ -110,19 +97,8 @@ function RouteComponent() {
       </div>
 
       {/* Editor Content */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-10 py-8">
-        <div className="max-w-4xl mx-auto">
-          <Plate
-            editor={editor}
-            onValueChange={(newValue) => {
-              setValue(newValue.value)
-            }}
-          >
-            <EditorContainer>
-              <Editor placeholder="Start writing your note here..." />
-            </EditorContainer>
-          </Plate>
-        </div>
+      <div className="flex-1 px-4 sm:px-10 py-8">
+        <Editor value={value} onValueChange={setValue} onSave={() => {}} />
       </div>
     </div>
   )

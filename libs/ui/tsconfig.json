@@ -2,8 +2,6 @@
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
-    "module": "NodeNext",
-    "moduleResolution": "nodenext"
+    "baseUrl": "."
   }
 }
