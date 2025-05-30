@@ -1,6 +1,7 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'node:child_process'
 import crypto from 'node:crypto'
 import { existsSync } from 'node:fs'
+import { performance } from 'node:perf_hooks'
 
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
@@ -9,6 +10,7 @@ import logger from '../logger'
 import {
   EServiceStatus,
   EServiceType,
+  IpcServiceLog,
   IServiceStatus
 } from '@manager/common/src'
 
@@ -23,10 +25,22 @@ type ServiceRecord<T = any> = {
   startedAt: number
   binaryPath?: string
   crashed?: boolean
+  crashCount: number
+  responseTimes: number[]
+  lastCheck: number
+  lastHeartbeat?: number
+  status: keyof typeof EServiceStatus
 }
 
 class ServiceManager {
   private services = new Map<string, ServiceRecord>()
+  private crashRetries = new Map<string, number>()
+  private logs: IpcServiceLog[] = []
+
+  constructor() {
+    setInterval(() => this.monitorHealth(), 5000)
+    setInterval(() => this.monitorCrashes(), 10000)
+  }
 
   async startService<TClient extends TypedServiceClient>({
     protoPath,
@@ -68,14 +82,13 @@ class ServiceManager {
     const port = customPort ?? (await getAvailablePort())
     const address = `127.0.0.1:${port}`
     const startedAt = Date.now()
-
     let server: grpc.Server | undefined
     let child: ChildProcessWithoutNullStreams | undefined
 
     if (implementation && !bin) {
       server = new grpc.Server()
-
       const wrappedImpl: grpc.UntypedServiceImplementation = {}
+
       for (const method in implementation) {
         wrappedImpl[method] = (call: any, callback: any) => {
           const auth = call.metadata.get('authorization')[0]
@@ -87,8 +100,20 @@ class ServiceManager {
             })
           }
 
+          const start = performance.now()
           logger.info(`[gRPC CALL] ${packageName}.${serviceName}.${method}`)
-          return implementation[method](call, callback)
+
+          const done = (err: any, res: any) => {
+            const time = performance.now() - start
+            const svc = this.services.get(key)
+            if (svc) {
+              svc.responseTimes.push(time)
+              if (svc.responseTimes.length > 100) svc.responseTimes.shift()
+            }
+            callback(err, res)
+          }
+
+          implementation[method](call, done)
         }
       }
 
@@ -113,10 +138,14 @@ class ServiceManager {
         this.services.set(key, {
           address,
           token,
-          client: {} as TClient,
+          client: {} as TClient, // Placeholder, will be replaced later
           startedAt,
           binaryPath: bin,
-          crashed: true
+          crashed: true,
+          crashCount: 0,
+          responseTimes: [],
+          lastCheck: Date.now(),
+          status: 'OUTAGE'
         })
 
         return Promise.reject(new Error(`Binary not found: ${bin}`))
@@ -129,6 +158,30 @@ class ServiceManager {
           GRPC_PORT: port.toString(),
           GRPC_TOKEN: token
         }
+      })
+
+      child.stdout?.on('data', (data) => {
+        const message = data.toString().trim()
+        this.logs.push({
+          timestamp: new Date().toISOString(),
+          service: key,
+          level: 'info',
+          message
+        })
+        if (this.logs.length > 1000) this.logs.shift()
+        logger.info(`[${key}] ${message}`)
+      })
+
+      child.stderr?.on('data', (data) => {
+        const message = data.toString().trim()
+        this.logs.push({
+          timestamp: new Date().toISOString(),
+          service: key,
+          level: 'error',
+          message
+        })
+        if (this.logs.length > 1000) this.logs.shift()
+        logger.error(`[${key}] ${message}`)
       })
 
       child.on('error', (err) => {
@@ -160,10 +213,19 @@ class ServiceManager {
       client,
       child,
       startedAt,
-      binaryPath: bin
+      binaryPath: bin,
+      crashed: false,
+      crashCount: 0,
+      responseTimes: [],
+      lastCheck: Date.now(),
+      status: 'OPERATIONAL'
     })
 
     return { address, token }
+  }
+
+  async getServiceLogs(): Promise<IpcServiceLog[]> {
+    return this.logs.slice(-100)
   }
 
   getClient<TClient = any>(packageName: string, serviceName: string): TClient {
@@ -175,10 +237,20 @@ class ServiceManager {
     metadata.set('authorization', service.token)
 
     const proxy = new Proxy(service.client, {
-      get(target, prop) {
+      get: (target, prop) => {
         const method = (target as any)[prop]
         if (typeof method !== 'function') return method
-        return (req: any, cb: any) => method.call(target, req, metadata, cb)
+
+        return (req: any, cb: any) => {
+          const start = performance.now()
+          method.call(target, req, metadata, (err: any, res: any) => {
+            const time = performance.now() - start
+            service.responseTimes.push(time)
+            if (service.responseTimes.length > 100)
+              service.responseTimes.shift()
+            cb(err, res)
+          })
+        }
       }
     })
 
@@ -217,67 +289,118 @@ class ServiceManager {
 
     for (const [key, svc] of this.services.entries()) {
       const [packageName, serviceName] = key.split('.')
+      const now = Date.now()
+      const uptime = now - svc.startedAt
+      const port = parseInt(svc.address.split(':')[1], 10)
+      const isBinary = !!svc.binaryPath
+      const heartbeatAge = svc.lastHeartbeat ? now - svc.lastHeartbeat : null
 
-      const serviceType = this.detectServiceType(packageName, serviceName)
-
-      const start = Date.now()
-      let status = EServiceStatus.UNKNOWN
-      let responseTime = 0
-      let description = svc.server ? 'In-process service' : 'Binary service'
-
-      if (svc.crashed) {
-        status = EServiceStatus.OUTAGE
-      } else {
-        try {
-          const client = this.getClient(packageName, serviceName)
-          if (typeof (client as any).test !== 'function') {
-            status = EServiceStatus.DEGRADED
-            description += ' (no .test() method)'
-          } else {
-            await new Promise<void>((resolve, reject) => {
-              ;(client as any).test({}, (err: any, _: any) => {
-                if (err) return reject(err)
-                resolve()
-              })
-            })
-            responseTime = Date.now() - start
-            status = EServiceStatus.OPERATIONAL
-          }
-        } catch (error) {
-          logger.error(`Service ${key} test failed:`, error)
-          status = EServiceStatus.OUTAGE
-          responseTime = Date.now() - start
-        }
-      }
+      const responseTimes = svc.responseTimes
+      const avg =
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length || 0
+      const min = responseTimes.length ? Math.min(...responseTimes) : 0
+      const max = responseTimes.length ? Math.max(...responseTimes) : 0
 
       statuses.push({
         name: key,
-        status,
-        type: serviceType,
-        responseTime,
-        lastUpdated: new Date(),
-        description
+        type: this.detectServiceType(packageName, serviceName),
+        status: svc.crashed ? 'OUTAGE' : svc.status,
+        lastUpdated: new Date(svc.lastCheck || svc.startedAt).toISOString(),
+        uptime,
+        crashCount: svc.crashCount ?? 0,
+        responseTime: { avg, min, max },
+        heartbeatAge,
+        isBinary,
+        description: isBinary ? 'Binary service' : 'In-process service',
+        port,
+        pid: svc.child?.pid
       })
     }
 
     return statuses
   }
 
+  getServiceDiagnostics() {
+    return [...this.services.entries()].map(([key, svc]) => ({
+      name: key,
+      startedAt: svc.startedAt,
+      lastCheck: svc.lastCheck,
+      averageResponseTime:
+        svc.responseTimes.reduce((a, b) => a + b, 0) /
+          svc.responseTimes.length || 0,
+      crashStatus: svc.crashed,
+      currentStatus: svc.status
+    }))
+  }
+
+  private async monitorHealth() {
+    for (const [key, svc] of this.services.entries()) {
+      try {
+        const client = svc.client as any
+        const start = performance.now()
+
+        if (typeof client.healthCheck === 'function') {
+          await new Promise<void>((res, rej) =>
+            client.healthCheck({}, (err: any) => (err ? rej(err) : res()))
+          )
+        }
+
+        if (typeof client.heartbeat === 'function') {
+          await new Promise<void>((res, rej) =>
+            client.heartbeat({}, (err: any) => (err ? rej(err) : res()))
+          )
+          svc.lastHeartbeat = Date.now()
+        }
+
+        const time = performance.now() - start
+        svc.responseTimes.push(time)
+        if (svc.responseTimes.length > 100) svc.responseTimes.shift()
+
+        svc.status = 'OPERATIONAL'
+        svc.lastCheck = Date.now()
+      } catch (err) {
+        svc.status = 'DEGRADED'
+        logger.warn(`⚠️ Health check failed for ${key}:`, err)
+      }
+    }
+  }
+
+  private async monitorCrashes() {
+    for (const [key, svc] of this.services.entries()) {
+      if (svc.crashed) {
+        const retryCount = this.crashRetries.get(key) ?? 0
+        if (retryCount >= 5) continue
+
+        logger.warn(
+          `🌀 Attempting restart of ${key} (attempt ${retryCount + 1})`
+        )
+        const [pkg, name] = key.split('.')
+
+        try {
+          this.stopService(pkg, name)
+          // You must call startService again from higher context with full args!
+          this.crashRetries.set(key, retryCount + 1)
+        } catch {
+          logger.error(`❌ Restart failed for ${key}`)
+        }
+      }
+    }
+  }
+
   private detectServiceType(
     packageName: string,
     serviceName: string
-  ): EServiceType {
+  ): keyof typeof EServiceType {
     const name = `${packageName}.${serviceName}`.toLowerCase()
 
-    if (name.includes('db') || name.includes('store'))
-      return EServiceType.DATABASE
-    if (name.includes('ext') || name.includes('plugin'))
-      return EServiceType.EXTENSION
-    return EServiceType.API
+    if (name.includes('db') || name.includes('store')) return 'DATABASE'
+    if (name.includes('ext') || name.includes('plugin')) return 'EXTENSION'
+
+    return 'API'
   }
 }
 
-// Utility: Wait for a gRPC server to be ready
+// Wait for gRPC readiness
 async function waitForGrpcStartup(
   address: string,
   timeoutMs = 4000
@@ -288,16 +411,13 @@ async function waitForGrpcStartup(
   return new Promise((resolve, reject) => {
     const client = new Client(address, credentials.createInsecure())
     client.waitForReady(deadline, (err) => {
-      if (err) {
-        reject(new Error(`gRPC server at ${address} not ready in time.`))
-      } else {
-        resolve()
-      }
+      if (err) reject(new Error(`gRPC server at ${address} not ready in time.`))
+      else resolve()
     })
   })
 }
 
-// Dynamic free port allocation
+// Get dynamic port
 async function getAvailablePort(): Promise<number> {
   const net = await import('node:net')
   return await new Promise((resolve, reject) => {

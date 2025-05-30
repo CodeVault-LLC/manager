@@ -3,6 +3,7 @@ import { ISystem, ISystemHardware } from '@manager/common/src'
 import { runPowerShellScript } from '../../utils/powershell'
 import logger from '@main/logger'
 import path from 'node:path'
+import { runAppleScript } from '../../utils/applescript'
 
 export const systemServices = {
   getSystemHardware: async (): Promise<ISystemHardware> => {
@@ -75,6 +76,7 @@ export const systemServices = {
 
   getSystemInfo: async (): Promise<ISystem> => {
     const isWindows = process.platform === 'win32'
+    const isMac = process.platform === 'darwin'
 
     if (isWindows) {
       const scriptPath = path
@@ -82,6 +84,14 @@ export const systemServices = {
         .replace('app.asar', 'app.asar.unpacked')
 
       const data = await runPowerShellScript<ISystem>(scriptPath)
+
+      return data
+    } else if (isMac) {
+      const scriptPath = path
+        .resolve(__dirname, '../../resources/scripts/system-information.scpt')
+        .replace('app.asar', 'app.asar.unpacked')
+
+      const data = await runAppleScript<ISystem>(scriptPath)
 
       return data
     }

@@ -1,7 +1,7 @@
 import { ipcClient } from '@renderer/utils/ipcClient'
 import { create } from 'zustand'
 
-import { ETheme, IServiceStatus } from '@manager/common/src'
+import { ETheme, IpcServiceLog, IServiceStatus } from '@manager/common/src'
 
 interface ITheme {
   id: ETheme
@@ -20,11 +20,16 @@ interface IApplicationStore {
   language: string
 
   status: IServiceStatus[]
+  logs: IpcServiceLog[]
+
   themes: ITheme[]
   languages: ILanguage[]
 
   fetchInitialSettings: () => Promise<void>
+
   fetchServiceStatus: () => Promise<void>
+  fetchServiceLogs: () => Promise<void>
+
   setHtmlTheme: (theme: ETheme) => void
 
   setTheme: (theme: ETheme) => Promise<void>
@@ -37,6 +42,7 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   theme: ETheme.SYSTEM,
   language: 'en',
   status: [],
+  logs: [],
 
   themes: [
     { id: ETheme.SYSTEM, name: 'System', previewColor: '#ffffff' },
@@ -108,6 +114,24 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('getting service status error', error)
+    }
+  },
+
+  fetchServiceLogs: async () => {
+    try {
+      const logs = await ipcClient.invoke('application:serviceLogs')
+
+      if (logs.data) {
+        set({ logs: logs.data })
+      }
+
+      if (logs.error) {
+        // eslint-disable-next-line no-console
+        console.error('getting service logs error', logs.error)
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('getting service logs error', error)
     }
   },
 

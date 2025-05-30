@@ -7,6 +7,7 @@ import {
   EErrorCodes,
   ETheme,
   IApplication,
+  IpcServiceLog,
   TCommunicationResponse
 } from '@manager/common/src'
 
@@ -96,8 +97,13 @@ export const registerApplicationIPC = () => {
   )
 
   ipcMain.handle('application:serviceStatus', async () => {
-    const services = manager.getServiceStatus()
+    const services = await manager.getServiceStatus()
 
     return { data: services }
+  })
+
+  ipcMain.handle('application:serviceLogs', async () => {
+    const logs: IpcServiceLog[] = await manager.getServiceLogs()
+    return { data: logs }
   })
 }

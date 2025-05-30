@@ -3,6 +3,7 @@ import { AuthenticationWrapper } from '../core/lib/wrappers/authentication-wrapp
 import { EPageTypes } from '@manager/common/src'
 import { useEffect } from 'react'
 import { useApplicationStore } from '../core/store/application.store'
+import { formatDate } from 'date-fns'
 
 import {
   Badge,
@@ -11,10 +12,6 @@ import {
   CardHeader,
   CardTitle,
   Button,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Progress
 } from '@manager/ui'
 
@@ -32,53 +29,23 @@ import {
   Download
 } from 'lucide-react'
 import { EServiceStatus, EServiceType } from '@manager/common/src'
+import { cn } from '@manager/ui/src/utils/helpers'
 
 export const Route = createFileRoute('/status')({
   component: RouteComponent
 })
 
 function RouteComponent() {
-  const { fetchServiceStatus, status } = useApplicationStore()
+  const { fetchServiceStatus, status, logs, fetchServiceLogs } =
+    useApplicationStore()
 
   useEffect(() => {
     // Fetch service status on mount
     void fetchServiceStatus()
+    void fetchServiceLogs()
   }, [])
 
-  const overallStatus = EServiceStatus.OPERATIONAL // Default to operational, can be updated based on fetched status
-
-  const logs = [
-    {
-      timestamp: '2024-01-15 14:32:15',
-      service: 'Database',
-      level: 'warning',
-      message: 'High connection pool usage detected (85%)'
-    },
-    {
-      timestamp: '2024-01-15 14:28:42',
-      service: 'API',
-      level: 'info',
-      message: 'Deployment v2.1.4 completed successfully'
-    },
-    {
-      timestamp: '2024-01-15 14:15:33',
-      service: 'Website',
-      level: 'info',
-      message: 'CDN cache refreshed for static assets'
-    },
-    {
-      timestamp: '2024-01-15 13:45:12',
-      service: 'Database',
-      level: 'error',
-      message: 'Connection timeout to replica server (resolved)'
-    },
-    {
-      timestamp: '2024-01-15 13:22:08',
-      service: 'API',
-      level: 'info',
-      message: 'Rate limiting activated for endpoint /api/v1/users'
-    }
-  ]
+  const overallStatus = 'OPERATIONAL' // Default to operational, can be updated based on fetched status
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -93,13 +60,13 @@ function RouteComponent() {
     }
   }
 
-  const getStatusIcon = (status: EServiceStatus) => {
+  const getStatusIcon = (status: keyof typeof EServiceStatus) => {
     switch (status) {
-      case EServiceStatus.OPERATIONAL:
+      case 'OPERATIONAL':
         return <CheckCircle className="h-4 w-4 text-green-600" />
-      case EServiceStatus.DEGRADED:
+      case 'DEGRADED':
         return <AlertTriangle className="h-4 w-4 text-yellow-600" />
-      case EServiceStatus.OUTAGE:
+      case 'OUTAGE':
         return <XCircle className="h-4 w-4 text-red-600" />
       default:
         return <Clock className="h-4 w-4 text-gray-600" />
@@ -119,13 +86,13 @@ function RouteComponent() {
     }
   }
 
-  const getApplicationIcon = (type: EServiceType) => {
+  const getApplicationIcon = (type: keyof typeof EServiceType) => {
     switch (type) {
-      case EServiceType.API:
+      case 'API':
         return Server
-      case EServiceType.DATABASE:
+      case 'DATABASE':
         return Database
-      case EServiceType.EXTENSION:
+      case 'EXTENSION':
         return Globe
       default:
         return Server // Fallback icon
@@ -151,7 +118,7 @@ function RouteComponent() {
             <div className="flex items-center justify-center space-x-3">
               {getStatusIcon(overallStatus)}
               <span className="text-xl font-semibold">
-                {overallStatus === 'operational'
+                {overallStatus === 'OPERATIONAL'
                   ? 'All Systems Operational'
                   : 'System Issues Detected'}
               </span>
@@ -160,19 +127,27 @@ function RouteComponent() {
         </Card>
 
         {/* Services Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
           {status.map((service) => {
             const IconComponent = getApplicationIcon(service.type)
 
             return (
-              <Card key={service.name} className="relative">
+              <Card
+                key={service.name}
+                className="relative transition-transform duration-200 hover:shadow-md hover:-translate-y-1"
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <IconComponent className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                       <CardTitle className="text-lg">{service.name}</CardTitle>
                     </div>
-                    <Badge className={getStatusColor(service.status)}>
+                    <Badge
+                      className={cn(
+                        'px-2 py-0.5 rounded-full text-xs font-medium border',
+                        getStatusColor(service.status)
+                      )}
+                    >
                       {getStatusIcon(service.status)}
                       <span className="ml-1 capitalize">{service.status}</span>
                     </Badge>
@@ -197,7 +172,7 @@ function RouteComponent() {
                         <span>Response</span>
                       </div>
                       <div className="font-semibold">
-                        {service.responseTime}ms
+                        {Number(service.responseTime.avg).toFixed(2)} ms
                       </div>
                     </div>
                   </div>
@@ -215,128 +190,49 @@ function RouteComponent() {
         </div>
 
         {/* Detailed Information Tabs */}
-        <Card>
-          <CardHeader>
-            <CardTitle>System Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="logs" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="logs">Recent Logs</TabsTrigger>
-                <TabsTrigger value="metrics">Metrics</TabsTrigger>
-                <TabsTrigger value="incidents">Incidents</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="logs" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">System Logs</h3>
-                  <Button variant="outline" size="sm">
-                    <Download className="h-3 w-3 mr-1" />
-                    Export Logs
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {logs.map((log, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start space-x-3 p-3 bg-white rounded-lg border"
-                    >
-                      <Badge
-                        className={`${getLogLevelColor(log.level)} text-xs`}
-                      >
-                        {log.level.toUpperCase()}
-                      </Badge>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 text-sm">
-                          <span className="font-medium">{log.service}</span>
-                          <span className="text-gray-500">{log.timestamp}</span>
-                        </div>
-                        <p className="text-sm text-gray-700 mt-1">
-                          {log.message}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="metrics" className="space-y-4">
-                <h3 className="text-lg font-semibold">Performance Metrics</h3>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="text-2xl font-bold">99.2%</div>
-                      <p className="text-xs text-gray-600">
-                        Overall Uptime (30d)
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="text-2xl font-bold">184ms</div>
-                      <p className="text-xs text-gray-600">Avg Response Time</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="text-2xl font-bold">2.1M</div>
-                      <p className="text-xs text-gray-600">Requests (24h)</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="text-2xl font-bold">0.02%</div>
-                      <p className="text-xs text-gray-600">Error Rate</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="incidents" className="space-y-4">
-                <h3 className="text-lg font-semibold">Recent Incidents</h3>
-                <div className="space-y-3">
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                      <span className="font-medium">
-                        Database Performance Degradation
-                      </span>
-                      <Badge variant="outline" className="text-yellow-600">
-                        Investigating
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-2">
-                      We are investigating reports of slower database response
-                      times affecting some users.
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Started 4 hours ago
-                    </p>
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">System Logs</h3>
+          <Button variant="outline" size="sm">
+            <Download className="h-3 w-3 mr-1" />
+            Export Logs
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {logs
+            .sort(
+              (a, b) =>
+                new Date(b.timestamp).getTime() -
+                new Date(a.timestamp).getTime()
+            )
+            .map((log, index) => (
+              <div
+                key={index}
+                className="flex items-start space-x-3 p-3 rounded-lg border"
+              >
+                <Badge
+                  className={cn(
+                    'text-xs font-medium',
+                    getLogLevelColor(log.level)
+                  )}
+                >
+                  {log.level.toUpperCase()}
+                </Badge>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 text-sm">
+                    <span className="font-medium">{log.service}</span>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      {formatDate(new Date(log.timestamp), 'PPpp')}
+                    </span>
                   </div>
-
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="font-medium">
-                        API Deployment Completed
-                      </span>
-                      <Badge variant="outline" className="text-green-600">
-                        Resolved
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-2">
-                      Scheduled maintenance and API updates have been completed
-                      successfully.
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Resolved 2 days ago
-                    </p>
-                  </div>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                    {log.message.length > 100
+                      ? `${log.message.substring(0, 100)}...`
+                      : log.message}
+                  </p>
                 </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+              </div>
+            ))}
+        </div>
       </div>
     </AuthenticationWrapper>
   )

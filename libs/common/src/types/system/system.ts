@@ -88,11 +88,12 @@ interface Motherboard {
 }
 
 interface Network {
-  "vEthernet (WSL (Hyper-V firewall))": WiFi;
-  "Wi-Fi": WiFi;
+  interfaces: WiFi[];
+  public_ip: string;
 }
 
 interface WiFi {
+  name: string;
   dns_servers: string[];
   link_speed_mbps: number;
   ip_address: string;

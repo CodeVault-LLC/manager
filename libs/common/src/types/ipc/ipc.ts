@@ -17,6 +17,7 @@ import {
   IDashboardWidget,
   ISystemHardware,
   ISystemStatistics,
+  IpcServiceLog,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -65,6 +66,10 @@ export interface IpcHandlers {
   "application:serviceStatus": () => Promise<
     TCommunicationResponse<IServiceStatus[]>
   >;
+  "application:serviceLogs": () => Promise<
+    TCommunicationResponse<IpcServiceLog[]>
+  >;
+
   "application:setAppSettings": (
     application: IApplication
   ) => Promise<TCommunicationResponse<boolean>>;

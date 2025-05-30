@@ -144,16 +144,19 @@ function RouteComponent() {
             <LabelValue label="OS" value={system.os_caption} />
             <LabelValue label="Version" value={system.os_version} />
             <LabelValue label="Build" value={system.os_build} />
-            <LabelValue label="BIOS Version" value={system.bios.version} />
-            <LabelValue label="BIOS Release" value={system.bios.release_date} />
+            <LabelValue label="BIOS Version" value={system.bios?.version} />
+            <LabelValue
+              label="BIOS Release"
+              value={system.bios?.release_date}
+            />
           </InfoCard>
 
           <InfoCard title="Motherboard" icon={<Monitor className="w-5 h-5" />}>
             <LabelValue
               label="Manufacturer"
-              value={system.motherboard.manufacturer}
+              value={system.motherboard?.manufacturer}
             />
-            <LabelValue label="Product" value={system.motherboard.product} />
+            <LabelValue label="Product" value={system.motherboard?.product} />
             <LabelValue label="System UUID" value={system.system_uuid} />
           </InfoCard>
 
@@ -180,29 +183,29 @@ function RouteComponent() {
           >
             <LabelValue
               label="System Drive"
-              value={system.environment.system_drive}
+              value={system.environment?.system_drive}
             />
             <LabelValue
               label="OS Locale"
-              value={system.environment.os_locale}
+              value={system.environment?.os_locale}
             />
             <LabelValue
               label="User SID"
-              value={system.environment.user_sid}
+              value={system.environment?.user_sid}
               tooltip="A Security Identifier used by Windows to uniquely identify users."
             />
             <LabelValue
               label="Current UI"
-              value={system.environment.current_ui}
+              value={system.environment?.current_ui}
             />
             <LabelValue label="Time Zone" value={system.time_zone} />
           </InfoCard>
 
           <InfoCard title="Network" icon={<Wifi className="w-5 h-5" />}>
-            {Object.entries(system.network || {}).map(([name, data]: any) => (
-              <div key={name} className="mb-3">
+            {system.network.interfaces.map((data) => (
+              <div key={data.name} className="mb-3">
                 <Badge variant="outline" className="mb-1">
-                  {name}
+                  {data.name}
                 </Badge>
                 <LabelValue label="IP" value={data.ip_address} />
                 <LabelValue
@@ -218,7 +221,7 @@ function RouteComponent() {
                 />
               </div>
             ))}
-            <LabelValue label="Public IP" value={system.public_ip} />
+            <LabelValue label="Public IP" value={system.network.public_ip} />
           </InfoCard>
 
           <InfoCard title="Disks" icon={<HardDrive className="w-5 h-5" />}>
@@ -252,7 +255,7 @@ function RouteComponent() {
             />
             <LabelValue
               label="BitLocker Status"
-              value={system.bitlocker.protection_status}
+              value={system.bitlocker?.protection_status}
               tooltip="Indicates whether BitLocker encryption is enabled."
             />
           </InfoCard>
