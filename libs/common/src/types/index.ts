@@ -7,4 +7,3 @@ export * from "./news";
 export * from "./file";
 export * from "./dashboard";
 export * from "./msn";
-export * from "./i18n";

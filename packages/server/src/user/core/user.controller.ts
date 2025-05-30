@@ -99,7 +99,7 @@ router.post(
       const token = generateJWT(
         newUser.id,
         configuration.required.JWT_SECRET ?? '',
-        configuration.required.JWT_EXPIRES_IN ?? '',
+        parseInt(configuration.required.JWT_EXPIRES_IN ?? ''),
       );
 
       // Create a new session
@@ -149,7 +149,7 @@ router.post(
       const token = generateJWT(
         user.id,
         configuration.required.JWT_SECRET ?? '',
-        configuration.required.JWT_EXPIRES_IN ?? '',
+        parseInt(configuration.required.JWT_EXPIRES_IN ?? ''),
       );
 
       // Create a new session

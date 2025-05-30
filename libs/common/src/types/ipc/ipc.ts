@@ -1,6 +1,5 @@
 import {
   ISystem,
-  ISystemStatistics,
   IBrowser,
   TNotePage,
   INote,
@@ -10,13 +9,14 @@ import {
   ETheme,
   IApplication,
   IServiceStatus,
-  ISystemHardware,
   INews,
   IExtension,
   ISession,
   IConvertedImageData,
   IConvertedImageResponse,
   IDashboardWidget,
+  ISystemHardware,
+  ISystemStatistics,
 } from "../index";
 
 export type TCommunicationResponse<TData> =

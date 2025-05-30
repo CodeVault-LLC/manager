@@ -47,11 +47,13 @@ router.delete(
       const sessionId = +req.params.sessionId;
 
       if (!sessionId) {
-        return res.status(400).json({ error: 'Session ID is required' });
+        res.status(400).json({ error: 'Session ID is required' });
+        return;
       }
 
       if (sessionId === currentSessionId) {
-        return res.status(400).json({ error: 'Cannot delete current session' });
+        res.status(400).json({ error: 'Cannot delete current session' });
+        return;
       }
 
       await SessionService.removeSession(sessionId);

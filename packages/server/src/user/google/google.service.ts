@@ -1,6 +1,5 @@
 import { configuration } from '@/config';
 import { chat_v1, google } from 'googleapis';
-import { IUserInfoResponse, IGoogleUserLite } from '@shared/types/google';
 import { db } from '@/data-source';
 import {
   GoogleAccount,
@@ -15,6 +14,7 @@ import { and, eq } from 'drizzle-orm';
 import https from 'node:https';
 import { z } from 'zod';
 import { Response } from 'express';
+import { IGoogleUserLite, IUserInfoResponse } from '@manager/common/src';
 
 export let googleOauth2Client: OAuth2Client = {} as OAuth2Client;
 
@@ -62,7 +62,7 @@ export const getGoogleAuthURL = (userId: number) => {
   const jwt = generateJWT(
     userId + configuration.dynamic.GOOGLE_STATE,
     configuration.required.JWT_SECRET,
-    '5m',
+    60 * 5,
   );
   const state = configuration.dynamic.GOOGLE_STATE + jwt;
 
@@ -308,7 +308,7 @@ export const GoogleService = {
 
     for (const space of spaces) {
       const messagesResponse = await chat.spaces.messages.list({
-        parent: space.name,
+        parent: space.name ?? '',
         pageSize: 10,
       });
 

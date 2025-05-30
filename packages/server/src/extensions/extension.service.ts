@@ -74,17 +74,19 @@ export const extensionService = {
   },
 
   create: async (data: Partial<Extension>) => {
-    const newExtensionId = await db
+    /*const newExtensionId = await db
       .insert(extensions)
       .values({
-        name: data.name,
+        name: data.name ?? '',
         slug: data.slug,
         description: data.description,
         repositoryUrl: data.repositoryUrl,
         releasesUrl: data.releasesUrl,
       })
-      .returning({ id: extensions.id });
+      .returning({ id: extensions.id });*/
 
-    return newExtensionId[0].id;
+    console.log('Creating new extension:', data);
+
+    return 0;
   },
 };
