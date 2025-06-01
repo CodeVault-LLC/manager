@@ -99,6 +99,20 @@ function RouteComponent() {
     }
   }
 
+  const handleExportLogs = () => {
+    const logsJson = JSON.stringify(logs, null, 2)
+    const blob = new Blob([logsJson], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `system_logs_${new Date().toISOString()}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
       <div className="w-full mx-auto space-y-6">
@@ -127,7 +141,7 @@ function RouteComponent() {
         </Card>
 
         {/* Services Grid */}
-        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {status.map((service) => {
             const IconComponent = getApplicationIcon(service.type)
 
@@ -137,7 +151,7 @@ function RouteComponent() {
                 className="relative transition-transform duration-200 hover:shadow-md hover:-translate-y-1"
               >
                 <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center space-x-2">
                       <IconComponent className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                       <CardTitle className="text-lg">{service.name}</CardTitle>
@@ -192,7 +206,7 @@ function RouteComponent() {
         {/* Detailed Information Tabs */}
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">System Logs</h3>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExportLogs}>
             <Download className="h-3 w-3 mr-1" />
             Export Logs
           </Button>
