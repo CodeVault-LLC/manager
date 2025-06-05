@@ -47,21 +47,21 @@ export const msnNewsServices = {
         throw new Error('Error fetching news from MSN API')
       }
 
-      response.data.sections[0].cards.map(async (card) => {
+      for (const card of response.data.sections[0].cards) {
+        const existingNews = await db.query.news.findFirst({
+          where: eq(news.newsId, card.id)
+        })
+
+        if (existingNews) {
+          logger.debug('News already exists in the database', {
+            newsId: card.id
+          })
+
+          continue
+        }
+
         await db
           .transaction(async (tx) => {
-            const existingNews = await tx.query.news.findFirst({
-              where: eq(news.newsId, card.id)
-            })
-
-            if (existingNews) {
-              logger.debug('News already exists in the database', {
-                newsId: card.id
-              })
-
-              return
-            }
-
             const newsResult = await tx
               .insert(news)
               .values({
@@ -89,12 +89,9 @@ export const msnNewsServices = {
             })
           })
           .catch((error) => {
-            logger.error('Error inserting news into database', {
-              error,
-              card
-            })
+            logger.error('Error inserting news into database', error)
           })
-      })
+      }
 
       const newsResult = await msnNewsServices.getLatestNews(15)
 

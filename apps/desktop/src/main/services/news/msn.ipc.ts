@@ -12,13 +12,14 @@ export const registerMsnIPC = async () => {
         const news = await msnNewsServices.getLatestNews()
 
         if (
+          news === undefined ||
+          news === null ||
+          !Array.isArray(news) ||
           news.length === 0 ||
           news[0]?.publishedDate < new Date(Date.now() - 60 * 60 * 1000)
         ) {
-          //const news = await msnNewsServices.requestLatestNews()
-          const news: Awaited<
-            ReturnType<(typeof msnNewsServices)['getLatestNews']>
-          > = []
+          const news = await msnNewsServices.requestLatestNews()
+          
 
           return {
             data: news.map((item) => {
@@ -73,9 +74,7 @@ export const registerMsnIPC = async () => {
           })
         }
       } catch (error) {
-        logger.error('Failed to fetch news', {
-          error
-        })
+        logger.error('Failed to fetch news', error)
 
         return {
           error: {
@@ -112,9 +111,7 @@ export const registerMsnIPC = async () => {
           data: latestGames
         }
       } catch (error) {
-        logger.error('Failed to fetch news', {
-          error
-        })
+        logger.error('Failed to fetch news', error)
 
         return {
           error: {

@@ -44,7 +44,7 @@ export const News: FC = () => {
                     alt={item.provider.brandName}
                     className="w-6 h-6 rounded-full object-cover"
                   />
-                  <span className="ml-2 text-xs text-gray-600 font-medium truncate">
+                  <span className="ml-2 text-xs text-gray-600 dark:text-gray-300 font-medium truncate">
                     {item.provider.brandName}
                   </span>
                 </div>
@@ -67,7 +67,7 @@ export const News: FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500 font-medium">
+                  <span className="text-xs text-gray-500  dark:text-gray-400 font-medium">
                     {new Date(item.publishedDate).toLocaleDateString() +
                       ' ' +
                       new Date(item.publishedDate).toLocaleTimeString()}

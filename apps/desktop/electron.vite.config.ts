@@ -15,7 +15,7 @@ export default defineConfig({
     },
     build: {
       rollupOptions: {
-        external: ['drizzle-orm', 'better-sqlite3', 'drizzle-orm/sqlite-core']
+        external: ['drizzle-orm', 'libsql', 'drizzle-orm/sqlite-core']
       }
     }
   },
