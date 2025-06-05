@@ -1,15 +1,16 @@
-use image::{DynamicImage, ImageFormat};
+use image::{DynamicImage, ImageFormat, imageops::FilterType};
 use tonic::{Request, Response, Status};
 use std::io::{Cursor, Write};
 use ico::{IconDir, IconImage};
 use zip::{write::FileOptions, ZipWriter};
+use rayon::prelude::*;
 
 pub mod images {
     tonic::include_proto!("system");
 }
 
 use images::image_converter_server::{ImageConverter, ImageConverterServer};
-use images::{ConvertImageRequest, ConvertImageResponse};
+use images::{ConvertImageRequest, ConvertImageResponse, OutputFormat};
 
 #[derive(Default)]
 pub struct ImageService;
@@ -24,51 +25,90 @@ impl ImageConverter for ImageService {
         let image_data = input.buffer;
         let outputs = input.outputs;
 
-        let image = image::load_from_memory(&image_data)
+        let base_image = image::load_from_memory(&image_data)
             .map_err(|e| Status::invalid_argument(format!("Invalid image: {}", e)))?;
 
-        let zip_buf = tokio::task::spawn_blocking(move || {
-            let mut zip_buf = Vec::with_capacity(64 * 1024);
-            let mut zip = ZipWriter::new(Cursor::new(&mut zip_buf));
-            let options = FileOptions::<()>::default().compression_method(zip::CompressionMethod::Deflated);
+        let results: Vec<_> = outputs
+            .into_par_iter()
+            .map(|output| process_image_output(&base_image, &output))
+            .collect();
 
-            for output in outputs {
-                let resized = image.resize_to_fill(
-                    output.width as u32,
-                    output.height as u32,
-                    image::imageops::FilterType::Lanczos3,
-                );
+        let mut zip_buf = Vec::with_capacity(64 * 1024);
+        let mut zip = ZipWriter::new(Cursor::new(&mut zip_buf));
+        let options = FileOptions::<()>::default().compression_method(zip::CompressionMethod::Deflated);
 
-                let file_data = match output.format.as_str() {
-                    "png" => encode_image(&resized, ImageFormat::Png)?,
-                    "jpeg" | "jpg" => encode_image(&resized, ImageFormat::Jpeg)?,
-                    "bmp" => encode_image(&resized, ImageFormat::Bmp)?,
-                    "ico" => encode_ico(&resized)?,
-                    "icns" => encode_image(&resized, ImageFormat::Png)?, // Placeholder
-                    f => return Err(format!("Unsupported format: {}", f)),
-                };
+        let mut metadata = String::from("Image Conversion Metadata:\n\n");
 
-                let filename = format!("{}.{}", output.name, output.format);
-                zip.start_file(filename, options)
-                    .map_err(|e| format!("Zip error: {}", e))?;
-                zip.write_all(&file_data)
-                    .map_err(|e| format!("Zip write error: {}", e))?;
+        for result in results {
+            match result {
+                Ok((filename, buffer, meta)) => {
+                    zip.start_file(&filename, options)
+                        .map_err(|e| Status::internal(format!("Zip error: {}", e)))?;
+                    zip.write_all(&buffer)
+                        .map_err(|e| Status::internal(format!("Zip write error: {}", e)))?;
+                    metadata.push_str(&meta);
+                    metadata.push('\n');
+                }
+                Err(e) => {
+                    metadata.push_str(&format!("ERROR: {}\n", e));
+                }
             }
+        }
 
-            let cursor = zip.finish().map_err(|e| format!("Zip finalize error: {}", e))?;
+        // Add metadata.txt
+        zip.start_file("metadata.txt", options)
+            .map_err(|e| Status::internal(format!("Metadata zip error: {}", e)))?;
+        zip.write_all(metadata.as_bytes())
+            .map_err(|e| Status::internal(format!("Metadata write error: {}", e)))?;
 
-            Ok(cursor.into_inner().to_vec())
-        })
-        .await
-        .map_err(|e| Status::internal(format!("Task failed: {}", e)))?
-        .map_err(|e| Status::invalid_argument(e))?;
+        let cursor = zip.finish()
+            .map_err(|e| Status::internal(format!("Zip finalize error: {}", e)))?;
 
         Ok(Response::new(ConvertImageResponse {
-            buffer: zip_buf,
-            filename: "icons.zip".into(),
+            buffer: cursor.into_inner().to_vec(),
+            filename: "converted_images.zip".into(),
             mime: "application/zip".into(),
         }))
     }
+}
+
+fn process_image_output(image: &DynamicImage, output: &OutputFormat) -> Result<(String, Vec<u8>, String), String> {
+    let mut img = image.clone();
+
+    // Resize
+    let (w, h) = (output.width as u32, output.height as u32);
+    img = if output.preserve_aspect {
+        img.resize(w, h, FilterType::Lanczos3)
+    } else {
+        img.resize_to_fill(w, h, FilterType::Lanczos3)
+    };
+
+    // Grayscale
+    if output.grayscale {
+        img = DynamicImage::ImageLuma8(img.to_luma8());
+    }
+
+    let filename = format!("{}.{}", output.name, output.format);
+    let buffer = match output.format.as_str() {
+        "png" => encode_image(&img, ImageFormat::Png)?,
+        "jpeg" | "jpg" => encode_image(&img, ImageFormat::Jpeg)?,
+        "bmp" => encode_image(&img, ImageFormat::Bmp)?,
+        "ico" => encode_ico(&img)?,
+        "icns" => encode_image(&img, ImageFormat::Png)?, // Placeholder
+        "tiff" => encode_image(&img, ImageFormat::Tiff)?,
+        "webp" => encode_image(&img, ImageFormat::WebP)?,
+        "avif" => encode_image(&img, ImageFormat::Avif)?,
+        "tga" => encode_image(&img, ImageFormat::Tga)?,
+        "ppm" => encode_image(&img, ImageFormat::Pnm)?,
+        other => return Err(format!("Unsupported format: {}", other)),
+    };
+
+    let meta = format!(
+        "- {}: {}x{}, format={}, grayscale={}, aspect={}",
+        filename, img.width(), img.height(), output.format, output.grayscale, output.preserve_aspect
+    );
+
+    Ok((filename, buffer, meta))
 }
 
 fn encode_image(image: &DynamicImage, format: ImageFormat) -> Result<Vec<u8>, String> {

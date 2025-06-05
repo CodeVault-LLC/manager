@@ -9,8 +9,11 @@ service ImageConverter {
 message OutputFormat {
   int32 width = 1;
   int32 height = 2;
-  string format = 3; // "png", "ico", "icns"
+  string format = 3;
   string name = 4;
+
+  bool grayscale = 5;
+  bool preserve_aspect = 6;
 }
 
 message ConvertImageRequest {
@@ -22,4 +25,46 @@ message ConvertImageResponse {
   bytes buffer = 1;
   string filename = 2;
   string mime = 3;
+}
+
+// New service for analyzing file storage
+service FileSpaceAnalyzer {
+  rpc GetFileSpaceOverview (FileSpaceRequest) returns (FileSpaceResponse);
+}
+
+// Request message
+message FileSpaceRequest {
+  string path = 1; // Path to analyze, e.g., "/home/user"
+  bool use_cache = 2; // Whether to use cached data if available
+}
+
+// Extension usage
+message ExtensionUsage {
+  string extension = 1;
+  uint64 size_bytes = 2;
+  float percentage = 3;
+}
+
+// Heavy files/folders
+message HeavyItem {
+  string path = 1;
+  uint64 size_bytes = 2;
+}
+
+// Optimization tip
+message OptimizationTip {
+  string message = 1;
+}
+
+message SpecialFolder {
+  string path = 1;
+  uint64 size_bytes = 2;
+}
+
+message FileSpaceResponse {
+  repeated ExtensionUsage extensions = 1;
+  repeated HeavyItem heavy_items = 2;
+  repeated OptimizationTip tips = 3;
+  repeated SpecialFolder special_folders = 4; // NEW
+  uint64 total_size = 5;
 }

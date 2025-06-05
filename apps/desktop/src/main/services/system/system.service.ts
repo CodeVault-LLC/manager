@@ -4,6 +4,7 @@ import { runPowerShellScript } from '../../utils/powershell'
 import logger from '@main/logger'
 import path from 'node:path'
 import { runAppleScript } from '../../utils/applescript'
+import { manager } from '../../grpc/service-manager'
 
 export const systemServices = {
   getSystemHardware: async (): Promise<ISystemHardware> => {
@@ -98,5 +99,28 @@ export const systemServices = {
 
     logger.warn('getSystemInfo is not implemented for this platform.')
     return Promise.reject('getSystemInfo is not implemented for this platform.')
+  },
+
+  getStorageOverview: async (): Promise<any> => {
+    const client = manager.getClient('system', 'FileSpaceAnalyzer')
+
+    const preparedRequest = {
+      path: process.platform === 'win32' ? 'C:\\' : '/',
+      use_cache: true
+    }
+
+    const response = await new Promise<any>((resolve, reject) => {
+      client.GetFileSpaceOverview(preparedRequest, (err, res) => {
+        if (err || !res) {
+          logger.error('gRPC call failed:', err)
+          return reject(new Error(err?.message || 'gRPC response missing'))
+        }
+        resolve(res)
+      })
+    })
+
+    logger.info('gRPC call successful:', response)
+
+    return response
   }
 }

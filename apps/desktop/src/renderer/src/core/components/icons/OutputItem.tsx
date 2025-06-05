@@ -7,7 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
   Button,
-  Input
+  Input,
+  Switch,
+  Label
 } from '@manager/ui'
 import { IOutput } from '@manager/common/src'
 
@@ -25,7 +27,8 @@ export const OutputItem: FC<Props> = ({
   onRemove
 }) => {
   return (
-    <div className="flex items-center gap-2 border p-3 rounded-lg w-full">
+    <div className="flex flex-wrap md:flex-nowrap items-center gap-4 border p-4 rounded-xl w-full shadow-sm">
+      {/* Width x Height */}
       <div className="flex gap-2 items-center">
         <Input
           type="number"
@@ -50,6 +53,7 @@ export const OutputItem: FC<Props> = ({
         />
       </div>
 
+      {/* Format Dropdown */}
       <Select
         value={output.format}
         onValueChange={(value) =>
@@ -66,9 +70,43 @@ export const OutputItem: FC<Props> = ({
           <SelectItem value="jpg">JPG</SelectItem>
           <SelectItem value="jpeg">JPEG</SelectItem>
           <SelectItem value="bmp">BMP</SelectItem>
+          <SelectItem value="webp">WEBP</SelectItem>
+          <SelectItem value="avif">AVIF</SelectItem>
+          <SelectItem value="tiff">TIFF</SelectItem>
+          <SelectItem value="tga">TGA</SelectItem>
+          <SelectItem value="ppm">PPM</SelectItem>
         </SelectContent>
       </Select>
 
+      {/* Grayscale Toggle */}
+      <div className="flex items-center space-x-2">
+        <Switch
+          id={`grayscale-${index}`}
+          checked={output.grayscale ?? false}
+          onCheckedChange={(val) =>
+            onUpdate(index, { ...output, grayscale: val })
+          }
+        />
+        <Label htmlFor={`grayscale-${index}`} className="text-sm">
+          Grayscale
+        </Label>
+      </div>
+
+      {/* Preserve Aspect Toggle */}
+      <div className="flex items-center space-x-2">
+        <Switch
+          id={`aspect-${index}`}
+          checked={output.preserve_aspect ?? false}
+          onCheckedChange={(val) =>
+            onUpdate(index, { ...output, preserve_aspect: val })
+          }
+        />
+        <Label htmlFor={`aspect-${index}`} className="text-sm">
+          Preserve Aspect
+        </Label>
+      </div>
+
+      {/* Remove Button */}
       <Button
         className="ml-auto"
         variant="ghost"

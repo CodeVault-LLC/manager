@@ -22,6 +22,7 @@ import { Route as EntertainmentImport } from './routes/entertainment'
 import { Route as IndexImport } from './routes/index'
 import { Route as SystemIndexImport } from './routes/system/index'
 import { Route as NotesIndexImport } from './routes/notes/index'
+import { Route as SystemStorageImport } from './routes/system/storage'
 import { Route as SystemHardwareImport } from './routes/system/hardware'
 import { Route as SystemBrowsersImport } from './routes/system/browsers'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
@@ -103,6 +104,12 @@ const NotesIndexRoute = NotesIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => NotesRoute,
+} as any)
+
+const SystemStorageRoute = SystemStorageImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => SystemRoute,
 } as any)
 
 const SystemHardwareRoute = SystemHardwareImport.update({
@@ -340,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemHardwareImport
       parentRoute: typeof SystemImport
     }
+    '/system/storage': {
+      id: '/system/storage'
+      path: '/storage'
+      fullPath: '/system/storage'
+      preLoaderRoute: typeof SystemStorageImport
+      parentRoute: typeof SystemImport
+    }
     '/notes/': {
       id: '/notes/'
       path: '/'
@@ -431,12 +445,14 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 interface SystemRouteChildren {
   SystemBrowsersRoute: typeof SystemBrowsersRoute
   SystemHardwareRoute: typeof SystemHardwareRoute
+  SystemStorageRoute: typeof SystemStorageRoute
   SystemIndexRoute: typeof SystemIndexRoute
 }
 
 const SystemRouteChildren: SystemRouteChildren = {
   SystemBrowsersRoute: SystemBrowsersRoute,
   SystemHardwareRoute: SystemHardwareRoute,
+  SystemStorageRoute: SystemStorageRoute,
   SystemIndexRoute: SystemIndexRoute,
 }
 
@@ -465,6 +481,7 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/system/storage': typeof SystemStorageRoute
   '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
@@ -490,6 +507,7 @@ export interface FileRoutesByTo {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/system/storage': typeof SystemStorageRoute
   '/notes': typeof NotesIndexRoute
   '/system': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
@@ -519,6 +537,7 @@ export interface FileRoutesById {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/system/storage': typeof SystemStorageRoute
   '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
@@ -549,6 +568,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/system/storage'
     | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
@@ -573,6 +593,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/system/storage'
     | '/notes'
     | '/system'
     | '/entertainment/manga/$id'
@@ -600,6 +621,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/system/storage'
     | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
@@ -703,6 +725,7 @@ export const routeTree = rootRoute
       "children": [
         "/system/browsers",
         "/system/hardware",
+        "/system/storage",
         "/system/"
       ]
     },
@@ -755,6 +778,10 @@ export const routeTree = rootRoute
     },
     "/system/hardware": {
       "filePath": "system/hardware.tsx",
+      "parent": "/system"
+    },
+    "/system/storage": {
+      "filePath": "system/storage.tsx",
       "parent": "/system"
     },
     "/notes/": {

@@ -46,7 +46,7 @@ function RouteComponent() {
     {
       value: 'storage',
       label: t('common.storage'),
-      link: '/'
+      link: '/system/storage'
     },
     {
       value: 'security',

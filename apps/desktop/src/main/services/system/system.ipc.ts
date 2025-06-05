@@ -68,5 +68,32 @@ export const registerSystemIPC = () => {
     }
   )
 
+  ipcMain.handle(
+    'system:storageOverview',
+    async (): Promise<TCommunicationResponse<any>> => {
+      try {
+        const storageOverview = await systemServices.getStorageOverview()
+
+        logger.debug('Storage overview data', {
+          storageOverview
+        })
+
+        return { data: storageOverview }
+      } catch (error: any) {
+        logger.error(
+          `Error while getting storage overview data: ${error.message}`,
+          error
+        )
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
   void registerBrowserIPC()
 }

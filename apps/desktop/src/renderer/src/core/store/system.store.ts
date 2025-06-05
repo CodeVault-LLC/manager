@@ -18,6 +18,8 @@ export interface ISystemStore {
   system: ISystem | null
   extensions: IExtension[]
   browsers: IBrowser[]
+  storage: any
+  loading: boolean
 
   systemStatistics: ISystemStatistics
 
@@ -37,6 +39,7 @@ export interface ISystemStore {
 
   getSystemHardware(): void
   getSystem(): void
+  getStorageOverview(): void
 }
 
 export const useSystemStore = create<ISystemStore>((set, get) => ({
@@ -45,6 +48,8 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   hardware: null,
   browsers: [],
   system: null,
+  storage: null,
+  loading: false,
 
   systemStatistics: {
     cpu: { current: 0, average: 0 },
@@ -80,7 +85,6 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   getSystem: (): void => {
     ipcClient.invoke('system:getSystemInfo').then((response) => {
       if (response.data) {
-        console.log('System data', response.data)
         set({ system: response.data })
       } else {
         // eslint-disable-next-line no-console
@@ -114,6 +118,23 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
 
   setBrowsers: (browsers: IBrowser[]) => {
     set({ browsers })
+  },
+
+  getStorageOverview: (): void => {
+    set({ loading: true })
+    ipcClient
+      .invoke('system:storageOverview')
+      .then((response) => {
+        if (response.data) {
+          set({ storage: response.data })
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('getting initial storage data error', response.error)
+        }
+      })
+      .finally(() => {
+        set({ loading: false })
+      })
   },
 
   setSystemStatistics: (data: ISystemStatistics) => {

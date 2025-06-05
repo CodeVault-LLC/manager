@@ -76,6 +76,7 @@ export interface IpcHandlers {
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
   "system:getSystemInfo": () => Promise<TCommunicationResponse<ISystem>>;
+  "system:storageOverview": () => Promise<TCommunicationResponse<any>>;
 
   "application:openExternal": (
     url: string
