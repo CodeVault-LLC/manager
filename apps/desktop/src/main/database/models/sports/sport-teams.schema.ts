@@ -1,15 +1,15 @@
 import { relations } from 'drizzle-orm'
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { sportGameParticipants } from './sport-game-participants.schema'
 import { sportsLeagues } from './sport-leagues.schema'
 
 export const sportsTeams = sqliteTable('sports_teams', {
-  id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
+  id: text('id').primaryKey().notNull(),
   shortName: text('short_name').notNull(),
   fullName: text('full_name').notNull(),
   schoolName: text('school_name').notNull(),
-  leagueId: integer('league_id')
+  leagueId: text('league_id')
     .notNull()
     .references(() => sportsLeagues.id, {
       onDelete: 'cascade',

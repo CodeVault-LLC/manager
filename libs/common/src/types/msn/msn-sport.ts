@@ -240,7 +240,7 @@ export interface NavUrls4 {
   schedule: string;
 }
 
-export interface ISport {
+export interface IMsnSport {
   id: string;
   name: string;
   shortName: string;

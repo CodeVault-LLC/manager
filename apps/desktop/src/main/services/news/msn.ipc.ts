@@ -19,7 +19,6 @@ export const registerMsnIPC = async () => {
           news[0]?.publishedDate < new Date(Date.now() - 60 * 60 * 1000)
         ) {
           const news = await msnNewsServices.requestLatestNews()
-          
 
           return {
             data: news.map((item) => {
@@ -88,21 +87,41 @@ export const registerMsnIPC = async () => {
 
   ipcMain.handle(
     'msn:sport',
-    async (): Promise<TCommunicationResponse<any>> => {
+    async (
+      _,
+      {
+        limit = 15,
+        offset = 0,
+        sport = 'Soccer',
+        league = 'SportRadar_Soccer_SpainLaLiga_2024'
+      }
+    ): Promise<TCommunicationResponse<any>> => {
       try {
-        const latestGames = await msnSportServices.getLatestGames()
+        const latestGames = await msnSportServices.getLatestGames({
+          limit,
+          offset,
+          sport,
+          league
+        })
 
-        const updateDateThreshold = 60 * 60 * 1000 // 1 hour in milliseconds|
+        const updateDateThreshold = 60 * 60 * 1000 // 1 hour in milliseconds
 
         if (
           latestGames.length === 0 ||
-          new Date(latestGames[0].league.lastUpdated ?? '').getTime() +
-            updateDateThreshold <
-            Date.now()
+          new Date(latestGames[0].startDateTime) <
+            new Date(Date.now() - updateDateThreshold)
         ) {
-          await msnSportServices.requestLatestGames()
+          await msnSportServices.requestLatestGames({
+            sport,
+            league
+          })
 
-          const latestGames = await msnSportServices.getLatestGames()
+          const latestGames = await msnSportServices.getLatestGames({
+            limit,
+            offset,
+            sport,
+            league
+          })
 
           return { data: latestGames }
         }

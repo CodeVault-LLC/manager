@@ -1,4 +1,4 @@
-import { IDashboardWidget, INews } from '@manager/common/src'
+import { IDashboardWidget, INews, ISport } from '@manager/common/src'
 import { ipcClient } from '@renderer/utils/ipcClient'
 import { toast } from 'sonner'
 import { create } from 'zustand'
@@ -6,6 +6,7 @@ import { create } from 'zustand'
 export interface IDashboardStore {
   widgets: IDashboardWidget[]
   news: INews[]
+  sports: ISport[]
   isLoading: boolean
 
   fetchWidgets: () => Promise<void>
@@ -14,12 +15,14 @@ export interface IDashboardStore {
   ) => Promise<IDashboardWidget<any> | undefined>
 
   fetchNews: () => Promise<void>
+  fetchSports: () => Promise<void>
 }
 
 export const useDashboardStore = create<IDashboardStore>((set, get) => ({
   widgets: [],
   isLoading: false,
   news: [],
+  sports: [],
 
   fetchWidgets: async () => {
     set({ isLoading: true })
@@ -82,6 +85,24 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
       }
     } catch (error) {
       toast.error(`Failed to fetch news: ${error}`)
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  fetchSports: async () => {
+    try {
+      set({ isLoading: true })
+
+      const response = await ipcClient.invoke('msn:sport')
+
+      if (response.data) {
+        set({ sports: response.data })
+      } else {
+        toast.error('Failed to fetch sports data')
+      }
+    } catch (error) {
+      toast.error(`Failed to fetch sports data: ${error}`)
     } finally {
       set({ isLoading: false })
     }

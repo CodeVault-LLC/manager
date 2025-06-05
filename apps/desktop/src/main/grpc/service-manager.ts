@@ -151,6 +151,10 @@ class ServiceManager {
         return Promise.reject(new Error(`Binary not found: ${bin}`))
       }
 
+      if (process.platform === 'win32' && !bin.endsWith('.exe')) {
+        bin += '.exe'
+      }
+
       child = spawn(bin, ['--port', port.toString()], {
         stdio: 'pipe',
         env: {

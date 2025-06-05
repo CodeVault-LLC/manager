@@ -63,6 +63,9 @@ export const OutputItem: FC<Props> = ({
           <SelectItem value="ico">ICO</SelectItem>
           <SelectItem value="icns">ICNS</SelectItem>
           <SelectItem value="png">PNG</SelectItem>
+          <SelectItem value="jpg">JPG</SelectItem>
+          <SelectItem value="jpeg">JPEG</SelectItem>
+          <SelectItem value="bmp">BMP</SelectItem>
         </SelectContent>
       </Select>
 

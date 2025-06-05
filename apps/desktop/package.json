@@ -38,7 +38,8 @@
     "build:win": "pnpm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "grpc:generate": "grpc_tools_node_protoc_ts --ts_out=src/grpc --grpc_out=src/grpc --proto_path=src/grpc src/grpc/*.proto"
+    "grpc:generate": "grpc_tools_node_protoc_ts --ts_out=src/grpc --grpc_out=src/grpc --proto_path=src/grpc src/grpc/*.proto",
+    "database:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
