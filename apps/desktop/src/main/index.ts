@@ -102,6 +102,8 @@ if (!gotTheLock) {
 let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
+  
+
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -109,8 +111,9 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
-      sandbox: false
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: true,
+      contextIsolation: true,
     }
   })
 

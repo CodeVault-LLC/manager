@@ -29,16 +29,16 @@ if (process.contextIsolated) {
       }
     }
 
-    const electronAPIC = {
-      ...electronAPI,
-      ipcRenderer: {
-        ...electronAPI.ipcRenderer,
-        listeners
-      }
-    }
+    contextBridge.exposeInMainWorld('electron', {
+      invoke: ipcRenderer.invoke.bind(ipcRenderer),
+      send: ipcRenderer.send.bind(ipcRenderer),
+      on: ipcRenderer.on.bind(ipcRenderer),
+      once: ipcRenderer.once.bind(ipcRenderer),
+      removeAllListeners: ipcRenderer.removeAllListeners.bind(ipcRenderer),
+      removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
 
-    contextBridge.exposeInMainWorld('electron', electronAPIC)
-    contextBridge.exposeInMainWorld('api', api)
+      listeners
+    })
 
     exposeToMainWorld()
   } catch (error) {

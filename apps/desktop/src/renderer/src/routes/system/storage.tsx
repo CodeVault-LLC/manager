@@ -142,7 +142,7 @@ function RouteComponent() {
                     cx="50%"
                     cy="50%"
                     outerRadius={90}
-                    labelLine={false}
+                    labelLine={true}
                     label={({ extension, percentage }) =>
                       `${extension} (${percentage.toFixed(0)}%)`
                     }

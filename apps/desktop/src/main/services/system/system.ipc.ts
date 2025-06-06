@@ -74,10 +74,6 @@ export const registerSystemIPC = () => {
       try {
         const storageOverview = await systemServices.getStorageOverview()
 
-        logger.debug('Storage overview data', {
-          storageOverview
-        })
-
         return { data: storageOverview }
       } catch (error: any) {
         logger.error(

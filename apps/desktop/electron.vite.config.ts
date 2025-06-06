@@ -1,4 +1,4 @@
-import path from 'path'
+import path, { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
@@ -20,10 +20,20 @@ export default defineConfig({
     }
   },
   preload: {
-    plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
         '@manager': path.resolve(__dirname, '../../libs/')
+      }
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/preload/index.ts')
+        },
+        output: {
+          entryFileNames: '[name].js',
+          format: 'cjs',
+        },
       }
     }
   },

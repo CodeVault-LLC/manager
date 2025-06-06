@@ -1,4 +1,4 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
+import { IpcRenderer } from '@electron-toolkit/preload'
 import { RouterProvider } from '@tanstack/react-router'
 import { createRoot } from 'react-dom/client'
 
@@ -8,7 +8,7 @@ import { Translations } from '@manager/common/src'
 
 declare global {
   interface Window {
-    electron: ElectronAPI
+    electron: IpcRenderer
     api: unknown
 
     i18n: {

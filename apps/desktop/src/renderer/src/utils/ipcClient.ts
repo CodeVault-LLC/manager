@@ -15,7 +15,7 @@ export const ipcClient = {
     }
 
     try {
-      return await window.electron.ipcRenderer.invoke(channel, ...args)
+      return await window.electron.invoke(channel, ...args)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(`IPC Invoke Error [${channel}]:`, error)
@@ -28,7 +28,7 @@ export const ipcClient = {
     channel: T,
     listener: IpcRendererListener
   ): void => {
-    window.electron.ipcRenderer.on(channel, listener)
+    window.electron.on(channel, listener)
   },
 
   // Remove a specific listener
@@ -36,12 +36,12 @@ export const ipcClient = {
     channel: T,
     listener: IpcRendererListener
   ): void => {
-    window.electron.ipcRenderer.removeListener(channel, listener)
+    window.electron.removeListener(channel, listener)
   },
 
   // Remove all listeners for a given event
   removeAll: <T extends keyof IpcEmittedEvents>(channel: T): void => {
-    window.electron.ipcRenderer.removeAllListeners(channel)
+    window.electron.removeAllListeners(channel)
   },
 
   // Get all listeners for a given event
