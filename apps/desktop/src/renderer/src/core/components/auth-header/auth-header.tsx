@@ -1,4 +1,3 @@
-import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { FC } from 'react'
@@ -15,10 +14,7 @@ import {
 
 export const InstanceHeader: FC = () => {
   const { location } = useRouterState()
-  const { isUserLoggedIn } = useUserStore()
   const { t } = useI18n()
-
-  if (!isUserLoggedIn) return null
 
   const pathname = location.pathname.replace(/\/+$/, '') // remove trailing slashes
 

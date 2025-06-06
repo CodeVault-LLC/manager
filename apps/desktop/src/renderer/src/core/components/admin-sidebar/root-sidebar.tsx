@@ -1,5 +1,3 @@
-import { useErrorStore } from '@renderer/core/store/error.store'
-import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import {
   CheckCircleIcon,
@@ -26,14 +24,9 @@ import { NavMain, NavMainProps } from './sidebar-main'
 import { NavSecondary, NavSecondaryProps } from './sidebar-secondary'
 import { NavUser } from './sidebar-user'
 import { TeamSwitcher } from './sidebar-workspace'
-import { EErrorCodes } from '@manager/common/src'
 
 export const AppSidebar = (props: { className?: string }) => {
-  const { isUserLoggedIn } = useUserStore()
-  const { getError } = useErrorStore()
   const { t } = useI18n()
-
-  if (!isUserLoggedIn && !getError(EErrorCodes.NETWORK_ERROR)) return null
 
   const data: {
     teams: {
@@ -124,7 +117,7 @@ export const AppSidebar = (props: { className?: string }) => {
       },
       {
         title: 'Settings',
-        url: '/',
+        url: '/settings',
         icon: SettingsIcon
       },
       {

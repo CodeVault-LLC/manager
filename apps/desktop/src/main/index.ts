@@ -1,7 +1,7 @@
 import path, { join } from 'path'
 
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, session } from 'electron'
 
 import icon from '../../resources/icons/icon.ico?asset'
 
@@ -21,6 +21,7 @@ import { registerAuthIPC, registerUserIPC } from './services/user'
 import { loadSystemSockets } from './sockets/system.socket'
 import { ConfStorage } from './store'
 import { registerNotesIPC } from './services/notes/notes.ipc'
+import { homedir } from 'os'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -39,6 +40,28 @@ if (!gotTheLock) {
     }
   })
 
+  const extensionsOnLoad: string[] = []
+
+  if (is.dev) {
+    if (process.platform === 'darwin') {
+      // macOS specific extensions
+      extensionsOnLoad.push(
+        path.join(
+          homedir(),
+          '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/6.1.2_0'
+        )
+      )
+    }
+    if (process.platform === 'linux') {
+      // Linux specific extensions
+      extensionsOnLoad.push(join(__dirname, '../extensions/react-devtools'))
+    }
+    if (process.platform === 'win32') {
+      // Windows specific extensions
+      extensionsOnLoad.push(join(__dirname, '../extensions/react-devtools'))
+    }
+  }
+
   void app.whenReady().then(async () => {
     try {
       electronApp.setAppUserModelId('com.electron')
@@ -52,6 +75,27 @@ if (!gotTheLock) {
         }
       } else {
         app.setAsDefaultProtocolClient('managerapp')
+      }
+
+      // Register extensions listed
+      for (const extensionPath of extensionsOnLoad) {
+        try {
+          await session.defaultSession
+            .loadExtension(extensionPath, {
+              allowFileAccess: true
+            })
+            .then(() => {
+              logger.info(`Extension loaded successfully from ${extensionPath}`)
+            })
+            .catch((error) => {
+              logger.error(
+                `Failed to load extension from ${extensionPath}:`,
+                error
+              )
+            })
+        } catch (error) {
+          logger.error(`Failed to load extension at ${extensionPath}:`, error)
+        }
       }
 
       app.on('browser-window-created', (_, window) => {
@@ -102,8 +146,6 @@ if (!gotTheLock) {
 let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
-  
-
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -113,7 +155,7 @@ function createWindow(): void {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: true,
-      contextIsolation: true,
+      contextIsolation: true
     }
   })
 

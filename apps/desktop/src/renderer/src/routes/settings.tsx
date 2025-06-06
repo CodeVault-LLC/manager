@@ -1,6 +1,4 @@
-import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { EPageTypes } from '@manager/common/src'
 import {
   createFileRoute,
   Link,
@@ -78,27 +76,25 @@ function RouteComponent() {
   }, [pathname])
 
   return (
-    <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
-      <div className="flex flex-row items-center justify-between">
-        <Tabs defaultValue={tab} className="w-full">
-          <TabsList className="w-full p-0 bg-background justify-start border-b rounded-none">
-            {tabs.map((tab) => (
-              <Link key={tab.value} to={tab.link}>
-                <TabsTrigger
-                  value={tab.value}
-                  className="rounded-none bg-background h-full data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-primary"
-                >
-                  {tab.label}
-                </TabsTrigger>
-              </Link>
-            ))}
-          </TabsList>
+    <div className="flex flex-row items-center justify-between">
+      <Tabs defaultValue={tab} className="w-full">
+        <TabsList className="w-full p-0 bg-background justify-start border-b rounded-none">
+          {tabs.map((tab) => (
+            <Link key={tab.value} to={tab.link}>
+              <TabsTrigger
+                value={tab.value}
+                className="rounded-none bg-background h-full data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                {tab.label}
+              </TabsTrigger>
+            </Link>
+          ))}
+        </TabsList>
 
-          <div className="mt-8 w-full p-4">
-            <Outlet />
-          </div>
-        </Tabs>
-      </div>
-    </AuthenticationWrapper>
+        <div className="mt-8 w-full p-4">
+          <Outlet />
+        </div>
+      </Tabs>
+    </div>
   )
 }

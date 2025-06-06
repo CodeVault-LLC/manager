@@ -29,17 +29,71 @@ import {
 } from '@manager/ui'
 
 import { Loader } from '../loader/loading-spinner'
+import { useErrorStore } from '../../store/error.store'
+import { EErrorCodes } from '@manager/common/src'
 
 export const NavUser = () => {
   const { t } = useI18n()
   const { isMobile } = useSidebar()
   const { currentUser, signOut } = useUserStore()
+  const { getError } = useErrorStore()
+
+  const displayUserLoading = (
+    <SidebarMenuButton
+      size="lg"
+      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+    >
+      <Avatar className="h-8 w-8 rounded-lg">
+        <AvatarImage src="" alt="Loading..." />
+        <AvatarFallback className="rounded-lg bg-gray-300" />
+      </Avatar>
+      <div className="grid flex-1 text-left text-sm leading-tight">
+        <span className="truncate font-semibold">
+          <Loader type="text" className="mr-2" length={100} />
+        </span>
+        <span className="truncate text-xs mt-1">
+          <Loader className="mr-2" type="text" length={150} />
+        </span>
+      </div>
+      <ChevronsUpDown className="ml-auto size-4" />
+    </SidebarMenuButton>
+  )
+
+  const displayUserNotLoggedIn = (
+    <SidebarMenuButton
+      size="lg"
+      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+    >
+      <Avatar className="h-8 w-8 rounded-lg">
+        <AvatarFallback className="rounded-lg bg-gray-300">
+          {t('user.not_logged_in')}
+        </AvatarFallback>
+      </Avatar>
+      <div className="grid flex-1 text-left text-sm leading-tight">
+        <span className="truncate font-semibold">
+          {t('user.not_logged_in')}
+        </span>
+        <span className="truncate text-xs mt-1">
+          {t('user.login_to_continue')}
+        </span>
+      </div>
+      <ChevronsUpDown className="ml-auto size-4" />
+    </SidebarMenuButton>
+  )
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          {currentUser ? (
+          {!currentUser && getError(EErrorCodes.NETWORK_ERROR) ? (
+            <DropdownMenuTrigger asChild disabled>
+              {displayUserLoading}
+            </DropdownMenuTrigger>
+          ) : !currentUser ? (
+            <DropdownMenuTrigger asChild disabled>
+              {displayUserNotLoggedIn}
+            </DropdownMenuTrigger>
+          ) : (
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
@@ -63,28 +117,9 @@ export const NavUser = () => {
                 <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-          ) : (
-            <DropdownMenuTrigger asChild disabled>
-              <SidebarMenuButton
-                size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              >
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src="" alt="Loading..." />
-                  <AvatarFallback className="rounded-lg bg-gray-300" />
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    <Loader type="text" className="mr-2" length={100} />
-                  </span>
-                  <span className="truncate text-xs mt-1">
-                    <Loader className="mr-2" type="text" length={150} />
-                  </span>
-                </div>
-                <ChevronsUpDown className="ml-auto size-4" />
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
           )}
+
+          {/* Dropdown content */}
 
           {currentUser && (
             <DropdownMenuContent

@@ -1,6 +1,4 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { AuthenticationWrapper } from '../core/lib/wrappers/authentication-wrapper'
-import { EPageTypes } from '@manager/common/src'
 
 export const Route = createFileRoute('/notes')({
   component: RouteComponent
@@ -8,10 +6,8 @@ export const Route = createFileRoute('/notes')({
 
 function RouteComponent() {
   return (
-    <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
-      <div className="w-full p-4">
-        <Outlet />
-      </div>
-    </AuthenticationWrapper>
+    <div className="w-full p-4">
+      <Outlet />
+    </div>
   )
 }

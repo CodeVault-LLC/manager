@@ -43,6 +43,9 @@
       "revokeAllSessionsWarning": "Dette vil logge deg ut fra alle enheter bortsett fra den du bruker nå. Denne handlingen kan ikke angres.",
       "revoke": "Tilbakekall"
     },
+    "not_logged_in": "Ikke logget inn",
+    "suggest_account": "For å få tilgang til alle funksjoner, vennligst opprett en konto eller logg inn.",
+    "login_to_continue": "Du må logge inn for å fortsette.",
     "verifyEmail": {
       "emailVerificationTooltip": "E-postadresse bekreftet for kontosikkerhet",
       "notVerifiedEmailTitle": "Mangler e-postbekreftelse",

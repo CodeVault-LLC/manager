@@ -43,6 +43,9 @@
       "revokeAllSessionsWarning": "This will log you out from all devices except your current one. This action cannot be undone.",
       "revoke": "Revoke"
     },
+    "suggest_account": "To access all features, please create an account or log in.",
+    "not_logged_in": "Not logged in",
+    "login_to_continue": "You need to log in to continue.",
     "verifyEmail": {
       "emailVerificationTooltip": "Email address verified for account security",
       "notVerifiedEmailTitle": "Missing Email Verification",

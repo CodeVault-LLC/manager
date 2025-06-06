@@ -11,13 +11,16 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-  Label
+  Label,
+  Alert,
+  AlertTitle,
+  AlertDescription
 } from '@manager/ui'
 import { ETheme } from '@manager/common/src'
 
 const RouteComponent = () => {
   const { t } = useI18n()
-  const { updateUser } = useUserStore()
+  const { updateUser, isUserLoggedIn } = useUserStore()
   const { setTheme, setLanguage, language, theme, themes, languages } =
     useApplicationStore()
 
@@ -27,20 +30,34 @@ const RouteComponent = () => {
 
       <Separator className="my-4" />
 
-      <h2 className="text-lg font-bold">{t('settings.profile.title')}</h2>
-      <p className="text-sm text-muted-foreground">
-        {t('settings.profile.description')}
-      </p>
+      {!isUserLoggedIn ? (
+        <Alert>
+          <AlertTitle className="text-lg font-bold">
+            {t('user.not_logged_in')}
+          </AlertTitle>
 
-      <div className="my-4">
-        <UserEditFields
-          onSubmit={async (data: any) => {
-            updateUser({ ...data })
-          }}
-          avatar={false}
-          password={false}
-        />
-      </div>
+          <AlertDescription className="text-sm text-muted-foreground">
+            {t('user.suggest_account')}
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <>
+          <h2 className="text-lg font-bold">{t('settings.profile.title')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('settings.profile.description')}
+          </p>
+
+          <div className="my-4">
+            <UserEditFields
+              onSubmit={async (data: any) => {
+                updateUser({ ...data })
+              }}
+              avatar={false}
+              password={false}
+            />
+          </div>
+        </>
+      )}
 
       <Separator className="my-4" />
 

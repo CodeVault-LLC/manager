@@ -1,23 +1,36 @@
-import { EPageTypes } from '@manager/common/src'
 import { News } from '@renderer/core/components/news'
 import { FeaturedMatches } from '@renderer/core/components/sports/featured-matches'
 import { SystemWidget } from '@renderer/core/components/system/system-widget'
-import { AuthenticationWrapper } from '@renderer/core/lib/wrappers/authentication-wrapper'
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import { useSystemStore } from '../core/store/system.store'
+import { useDashboardStore } from '../core/store/dashboard.store'
 
 const WorkspaceManagementPage = () => {
+  const { subscribeToSystemStatistics, unsubscribeFromSystemStatistics } =
+    useSystemStore()
+
+  const { fetchNews } = useDashboardStore()
+
+  useEffect(() => {
+    subscribeToSystemStatistics()
+    void fetchNews()
+
+    return () => {
+      unsubscribeFromSystemStatistics() // Uncomment if you have an unsubscribe function
+    }
+  }, [])
+
   return (
-    <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
-      <div className="flex flex-col p-4 gap-4">
-        <SystemWidget />
+    <div className="flex flex-col p-4 gap-4">
+      <SystemWidget />
 
-        <News />
+      <News />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <FeaturedMatches />
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <FeaturedMatches />
       </div>
-    </AuthenticationWrapper>
+    </div>
   )
 }
 

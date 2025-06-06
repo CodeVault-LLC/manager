@@ -6,45 +6,39 @@ import { Toaster, SidebarInset, SidebarProvider } from '@manager/ui'
 
 import { AppSidebar } from '../components/admin-sidebar'
 import { InstanceHeader } from '../components/auth-header/auth-header'
-import { AuthenticationWrapper } from '../lib/wrappers/authentication-wrapper'
 import { useApplicationStore } from '../store/application.store'
-import { useDashboardStore } from '../store/dashboard.store'
 import { useSystemStore } from '../store/system.store'
-import { EPageTypes } from '@manager/common/src'
+import { useUserStore } from '../store/user.store'
 
 type TAdminLayout = {
   children: ReactNode
 }
 
-export const AdminLayout: FC<TAdminLayout> = (props) => {
+export const Layout: FC<TAdminLayout> = (props) => {
   const { children } = props
   const { changeLanguage } = useI18n()
   const {
-    doBrowserRefresh,
-    subscribeToSystemStatistics,
-    unsubscribeFromSystemStatistics,
     subscribeToSystemInactivity,
     unsubscribeFromSystemInactivity,
     systemInactivity
   } = useSystemStore()
 
+  const { fetchCurrentUser } = useUserStore()
+
   const { fetchInitialSettings, language } = useApplicationStore()
 
-  const { fetchNews } = useDashboardStore()
-
   useEffect(() => {
-    void fetchInitialSettings()
-    doBrowserRefresh()
-    subscribeToSystemStatistics()
+    void fetchInitialSettings() // Init application settings
+    void fetchCurrentUser()
+    //doBrowserRefresh() Not needed here, should be handled in page
     subscribeToSystemInactivity()
-    void fetchNews()
+    //void fetchNews()
 
     if (language) {
       changeLanguage(language)
     }
 
     return () => {
-      unsubscribeFromSystemStatistics()
       unsubscribeFromSystemInactivity()
     }
   }, [])
@@ -55,7 +49,7 @@ export const AdminLayout: FC<TAdminLayout> = (props) => {
         <AppSidebar />
         <SidebarInset className="overflow-x-hidden">
           {systemInactivity && (
-            <AuthenticationWrapper pageType={EPageTypes.AUTHENTICATED}>
+            <>
               <div className="absolute top-4 right-4 bg-background rounded-md p-4 shadow-md max-w-lg w-full flex flex-row gap-4 items-center">
                 <div>
                   <h2 className="text-sm leading-tight font-semibold truncate">
@@ -86,7 +80,7 @@ export const AdminLayout: FC<TAdminLayout> = (props) => {
                 alt="Lock Screen"
                 className="w-full h-full object-cover"
               />
-            </AuthenticationWrapper>
+            </>
           )}
 
           {!systemInactivity && (

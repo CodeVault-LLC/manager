@@ -1,4 +1,4 @@
-import { AdminLayout } from '@renderer/core/layouts/admin-layout'
+import { Layout } from '@renderer/core/layouts/layout'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 
 export const Route = createRootRoute({
@@ -7,8 +7,8 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <AdminLayout>
+    <Layout>
       <Outlet />
-    </AdminLayout>
+    </Layout>
   )
 }
