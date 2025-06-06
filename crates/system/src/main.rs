@@ -45,6 +45,7 @@ async fn main() -> io::Result<()> {
     let _ = Server::builder()
         .layer(InterceptorLayer::new(auth_interceptor))
         .add_service(images::get_service())
+        .add_service(file_space::get_service())
         .serve(addr)
         .await;
 
