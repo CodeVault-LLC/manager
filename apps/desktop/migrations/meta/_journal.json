@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1745352767112,
+      "tag": "0000_init",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1745753406538,
+      "tag": "0001_greedy_shriek",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1747767675804,
+      "tag": "0002_wild_harry_osborn",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1748441629408,
+      "tag": "0003_unknown_mandroid",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1748453765301,
+      "tag": "0004_gray_maelstrom",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1748453991954,
+      "tag": "0005_many_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1748455933754,
+      "tag": "0006_blushing_madrox",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1749137196668,
+      "tag": "0007_wide_catseye",
+      "breakpoints": true
+    }
+  ]
+}

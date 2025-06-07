@@ -1,0 +1,157 @@
+{
+  "common": {
+    "cancel": "Avbryt",
+    "save": "Lagre",
+    "language": "Språk",
+    "theme": "Tema",
+    "revoked": "Tilbakekalt",
+    "comingSoon": "Kommer snart",
+    "connected": "Tilkoblet",
+    "reauthorize": "Reautorisere",
+    "revoke": "Tilbakekall",
+    "browsers": "Nettlesere",
+    "installed": "Installert",
+    "sync": "Synkroniser",
+    "settings": "Innstillinger",
+    "forgotPassword": "Glemt passord?",
+    "verificationCode": "Bekreftelseskode",
+    "overview": "Oversikt",
+    "hardware": "Maskinvare",
+    "network": "Nettverk",
+    "storage": "Lagring",
+    "security": "Sikkerhet",
+    "tryAgain": "Prøv igjen",
+    "icons": "Ikoner"
+  },
+  "navigation": {
+    "home": "Hjem",
+    "settings": "Innstillinger",
+    "entertainment": "Underholdning",
+    "verifyEmail": "Bekreft e-post",
+    "notes": "Notater"
+  },
+  "user": {
+    "logout": "Logg ut",
+    "login": "Logg inn",
+    "register": "Registrer",
+    "alreadyAccount": "Har du allerede en konto?",
+    "noAccount": "Har du ingen konto?",
+    "sessions": {
+      "noSessions": "Ingen aktive økter funnet.",
+      "revokeAll": "Tilbakekall alle",
+      "revokeAllSessions": "Tilbakekall alle økter",
+      "revokeAllSessionsWarning": "Dette vil logge deg ut fra alle enheter bortsett fra den du bruker nå. Denne handlingen kan ikke angres.",
+      "revoke": "Tilbakekall"
+    },
+    "not_logged_in": "Ikke logget inn",
+    "suggest_account": "For å få tilgang til alle funksjoner, vennligst opprett en konto eller logg inn.",
+    "login_to_continue": "Du må logge inn for å fortsette.",
+    "verifyEmail": {
+      "emailVerificationTooltip": "E-postadresse bekreftet for kontosikkerhet",
+      "notVerifiedEmailTitle": "Mangler e-postbekreftelse",
+      "notVerifiedEmailInfo": "E-postadressen din er ikke bekreftet. Bekreft e-posten din for å sikre kontoen din og få full tilgang.",
+      "verifyEmail": "Bekreft e-post",
+      "verificationSent": "Vi har sendt en bekreftelseskode til e-postadressen din. Skriv inn koden nedenfor for å bekrefte identiteten din.",
+      "emailVerifiedSuccessTitle": "E-post bekreftet",
+      "emailVerifiedSuccess": "E-postadressen din er bekreftet. Du kan nå bruke alle funksjonene i programmet."
+    }
+  },
+  "settings": {
+    "navigation": {
+      "general": "General",
+      "security": "Sikkerhet & innlogging",
+      "connections": "Tilkoblede apper",
+      "extensions": "Utvidelser"
+    },
+    "profile": {
+      "title": "Profil",
+      "description": "Oppdater din profilinformasjon"
+    },
+    "sessions": {
+      "title": "Økter",
+      "description": "Administrer dine aktive økter",
+      "currentTooltip": "Dette er din nåværende økt"
+    },
+    "integrations": {
+      "title": "Integrasjoner",
+      "description": "Administrer dine integrasjoner",
+      "revokedTooltip": "Denne integrasjonen har blitt tilbakekalt, klikk for å reautorisere"
+    },
+    "appearance": {
+      "title": "Utseende",
+      "description": "Tilpass utseendet til appen",
+      "theme": {
+        "label": "Tema",
+        "light": "Lyst",
+        "dark": "Mørkt",
+        "system": "System"
+      },
+      "language": {
+        "label": "Språk",
+        "english": "Engelsk",
+        "norwegian": "Norsk"
+      }
+    }
+  },
+  "forms": {
+    "firstName": {
+      "label": "Fornavn",
+      "placeholder": "Skriv inn ditt fornavn"
+    },
+    "lastName": {
+      "label": "Etternavn",
+      "placeholder": "Skriv inn ditt etternavn"
+    },
+    "username": {
+      "label": "Brukernavn",
+      "placeholder": "Skriv inn ditt brukernavn"
+    },
+    "email": {
+      "label": "E-post",
+      "placeholder": "Skriv inn din e-post"
+    },
+    "password": {
+      "label": "Passord",
+      "placeholder": "Skriv inn ditt passord"
+    },
+    "confirmPassword": {
+      "label": "Bekreft passord",
+      "placeholder": "Bekreft ditt passord"
+    },
+    "avatar": {
+      "label": "Avatar",
+      "placeholder": "Last opp et bilde"
+    },
+    "rememberMe": "Husk meg"
+  },
+  "entertainment": {
+    "manga": {
+      "title": "Manga",
+      "description": "Finn og les manga fra forskjellige kilder."
+    }
+  },
+  "news": {},
+  "system": {
+    "statistics": {
+      "cpuUsage": "CPU-bruk",
+      "memoryUsage": "Minnebruk",
+      "diskUsage": "Diskbruk",
+      "networkUsage": "Nettverksbruk",
+      "uptime": "Oppetid"
+    }
+  },
+  "error": {
+    "invalidToken": "Ugyldig eller utløpt bekreftelsestoken",
+    "networkError": "Kan ikke koble til serveren",
+    "networkErrorDescription": "Det oppstod et problem med å koble til serveren. Sjekk om du har internettforbindelse og prøv igjen. Hvis problemet vedvarer, kontakt kundestøtte for videre hjelp.",
+    "networkErrorTip": "Tips: Sjekk brannmur, VPN eller nettverksinnstillinger hvis du er tilkoblet, men fortsatt får denne feilen.",
+
+    "systemRetrievalError": "Kunne ikke hente systeminformasjon, prøv igjen senere.",
+
+    "fetchingNotes": "Kunne ikke hente notater, prøv igjen senere.",
+    "creatingNote": "Kunne ikke opprette notat, prøv igjen senere.",
+    "updatingNote": "Kunne ikke oppdatere notat, prøv igjen senere.",
+    "invalidNoteData": "Ugyldige notatdata oppgitt.",
+    "deletingNote": "Kunne ikke slette notat, prøv igjen senere."
+  }
+}

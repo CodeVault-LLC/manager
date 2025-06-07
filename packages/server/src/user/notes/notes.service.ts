@@ -1,7 +1,7 @@
 import { db } from '@/data-source.js';
 import { Note, notes } from '@/models/user/notes.model';
+import { TNotePage } from '@manager/common/src';
 import { eq } from 'drizzle-orm';
-import { TNotePage } from '@shared/types/note';
 
 export const NotesService = {
   sanitizeNote(note: Note) {

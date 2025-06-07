@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "pretty": true,
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "lib": ["es5", "es6", "es7", "dom"],
+    "sourceMap": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist",
+    "baseUrl": ".",
+    "allowJs": true,
+    "paths": {
+      "@manager/ui": ["../../libs/ui/src"],
+      "@manager/common": ["../../libs/common/src"],
+    }
+  },
+  "files": [
+    "tailwind.config.js"
+  ],
+  "include": ["./src/**/*", "../../libs/**/*", "bitwarden_license/**/*", "scripts/**/*"],
+  "exclude": ["**/build", "**/dist", "out/*", "**/assets", "tailwind.config.js"],
+}

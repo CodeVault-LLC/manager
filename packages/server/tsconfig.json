@@ -5,7 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@shared/*": ["../shared/*"]
+      "@manager/common/*": ["../../libs/common/*"]
     },
     "allowJs": false,
     "strictNullChecks": true

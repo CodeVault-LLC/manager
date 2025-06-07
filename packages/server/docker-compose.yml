@@ -13,14 +13,6 @@ services:
     volumes:
       - managerapp-db-data:/var/lib/postgresql/data
 
-  cache:
-    image: redis:7.0.11
-    container_name: managerapp-cache
-    ports:
-      - ${REDIS_PORT}:6379
-    volumes:
-      - cache-data:/data
-
   minio:
     image: minio/minio
     ports:
@@ -31,6 +23,24 @@ services:
       MINIO_ROOT_PASSWORD: admin123
     command: server /data
 
+  manager-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: manager-server
+    environment:
+      - REDIS_URL=redis://cache:${REDIS_PORT}
+      - POSTGRES_HOST=managerapp-db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PORT=5432
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - MINIO_ENDPOINT=minio:9000
+    ports:
+      - ${MANAGER_SERVER_PORT}:3000
+    depends_on:
+      - managerapp-db
+      - minio
+
 volumes:
   managerapp-db-data:
-  cache-data:

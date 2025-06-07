@@ -1,0 +1,28 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": [
+    "electron.vite.config.*",
+    "src/main/**/*",
+    "src/preload/**/*",
+    
+    "../../packages/shared/**/*.d.ts",
+    "../../packages/shared/**/*.ts",
+
+    "../../libs/**/*.d.ts",
+    "../../libs/**/*.ts",
+    "../../libs/**/*.tsx",
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["electron-vite/node"],
+    "baseUrl": ".",
+    "paths": {
+      "@main/*": ["./src/main/*"],
+      "@shared/*": ["../../packages/shared/*"],
+      "@manager/*": ["../../libs/*"]
+  },
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"]
+  }
+}
