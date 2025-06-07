@@ -63,7 +63,7 @@ export const News: FC = () => {
                 <div className="flex rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 w-full h-[140px]">
                   <div className="w-[180px] h-full">
                     <img
-                      src={`${item.thumbnail.url}?h=140&w=180`}
+                      src={`${item.thumbnail.url}?h=300&w=180`}
                       loading={index > 3 ? 'lazy' : 'eager'}
                       alt={item.title}
                       className="object-cover w-full h-full"

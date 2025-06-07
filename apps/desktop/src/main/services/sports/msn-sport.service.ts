@@ -41,9 +41,11 @@ export const msnSportServices = {
       const market = 'nb-no'
       const msnFeedUrl = `livearoundtheleague?apikey=${defaultApiKey}&version=${version}&cm=${market}&tzoffset=2&activityId=0446D2A9-2F4E-4216-9864-8AB8ED33A0C9&it=edgeid&user=m-16C9BD47FDB46E090D40A894FC416F87&scn=APP_ANON&datetime=2025-06-05T16:44:39&id=Soccer_SpainLaLiga&sport=${sport}`
 
-      const response = await msnApi.get<MsnSportResponse>(msnFeedUrl)
+      if (league) {
+        //
+      }
 
-      console.log('Fetched latest games from MSN API', response.data)
+      const response = await msnApi.get<MsnSportResponse>(msnFeedUrl)
 
       if (response.status !== 200) {
         throw new Error('Invalid response from MSN API')

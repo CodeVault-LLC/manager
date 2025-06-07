@@ -151,6 +151,7 @@
     "fetchingNotes": "Kunne ikke hente notater, prøv igjen senere.",
     "creatingNote": "Kunne ikke opprette notat, prøv igjen senere.",
     "updatingNote": "Kunne ikke oppdatere notat, prøv igjen senere.",
-    "invalidNoteData": "Ugyldige notatdata oppgitt."
+    "invalidNoteData": "Ugyldige notatdata oppgitt.",
+    "deletingNote": "Kunne ikke slette notat, prøv igjen senere."
   }
 }

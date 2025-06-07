@@ -71,7 +71,7 @@ export const AppSidebar = (props: { className?: string }) => {
         ]
       },
       {
-        title: 'Notes',
+        title: t('navigation.notes'),
         url: '/notes',
         icon: NotebookIcon,
         isActive: false,
@@ -116,7 +116,7 @@ export const AppSidebar = (props: { className?: string }) => {
         icon: CheckCircleIcon
       },
       {
-        title: 'Settings',
+        title: t('common.settings'),
         url: '/settings',
         icon: SettingsIcon
       },

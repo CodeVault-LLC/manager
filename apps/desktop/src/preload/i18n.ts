@@ -3,7 +3,8 @@ import en from '@manager/common/src/locales/en.json'
 // eslint-disable-next-line no-restricted-imports
 import no from '@manager/common/src/locales/no.json'
 
-import { Locale, Translations } from '@manager/common/src'
+// eslint-disable-next-line no-restricted-imports
+import { Locale, Translations } from '@manager/common/src/types/i18n'
 import { contextBridge } from 'electron'
 
 export const loadLocale = (lang: Locale): Translations => {

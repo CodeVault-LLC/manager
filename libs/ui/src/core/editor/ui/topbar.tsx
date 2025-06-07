@@ -1,5 +1,5 @@
 import { useCurrentEditor } from "@tiptap/react";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Bold,
   Italic,
@@ -12,8 +12,8 @@ import {
   AlignRight,
   Undo2,
   Redo2,
-  Pilcrow,
   Code,
+  Highlighter,
 } from "lucide-react";
 import {
   Select,
@@ -27,66 +27,113 @@ import { Card, CardContent } from "../../../ui/card";
 
 export const Topbar: FC = () => {
   const { editor } = useCurrentEditor();
+  const [fontFamily, setFontFamily] = useState("Inter");
+  const [blockType, setBlockType] = useState("paragraph");
+  const [fontSize, setFontSize] = useState("16");
+
+  useEffect(() => {
+    if (!editor) return undefined;
+
+    const updateState = () => {
+      const attrs = editor.getAttributes("textStyle");
+      const heading = editor.getAttributes("heading");
+      const nodeType = editor.isActive("heading")
+        ? `h${heading.level}`
+        : editor.isActive("paragraph")
+        ? "paragraph"
+        : "paragraph";
+
+      setFontFamily(attrs.fontFamily || "Inter");
+      setFontSize(attrs.fontSize || "16");
+      setBlockType(nodeType);
+    };
+
+    updateState();
+    editor.on("selectionUpdate", updateState);
+
+    return () => {
+      editor.off("selectionUpdate", updateState);
+    };
+  }, [editor]);
+
   if (!editor) return null;
 
   return (
-    <Card className="border-b rounded-none shadow-none w-full">
-      <CardContent className="flex flex-wrap items-center justify-between py-3 px-4 gap-3">
-        {/* Font Controls */}
-        <div className="flex items-center gap-2">
-          <Select
-            value={editor.getAttributes("textStyle").fontFamily}
-            onValueChange={(value) =>
-              editor.chain().focus().setFontFamily(value).run()
+    <Card className="border-b rounded-none shadow-none w-full bg-background">
+      <CardContent className="flex flex-wrap items-center justify-start gap-4 py-3 px-4">
+        {/* Font family */}
+        <Select
+          value={fontFamily}
+          onValueChange={(value) => {
+            editor.chain().focus().setFontFamily(value).run();
+            setFontFamily(value);
+          }}
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="Font Family" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Inter">Inter</SelectItem>
+            <SelectItem value="Georgia">Georgia</SelectItem>
+            <SelectItem value="Courier New">Courier New</SelectItem>
+            <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Block Type */}
+        <Select
+          value={blockType}
+          onValueChange={(value) => {
+            if (value.startsWith("h")) {
+              editor
+                .chain()
+                .focus()
+                .setHeading({ level: parseInt(value[1]) as any })
+                .run();
+            } else {
+              editor.chain().focus().setParagraph().run();
             }
-          >
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Font Family" />
-            </SelectTrigger>
+            setBlockType(value);
+          }}
+        >
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Block Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="h1">Heading 1</SelectItem>
+            <SelectItem value="h2">Heading 2</SelectItem>
+            <SelectItem value="h3">Heading 3</SelectItem>
+            <SelectItem value="paragraph">Paragraph</SelectItem>
+          </SelectContent>
+        </Select>
 
-            <SelectContent>
-              <SelectItem value="Inter">Inter</SelectItem>
-              <SelectItem value="Georgia">Georgia</SelectItem>
-              <SelectItem value="Courier New">Courier New</SelectItem>
-              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Font Size */}
+        <Select
+          value={fontSize}
+          onValueChange={(value) => {
+            editor
+              .chain()
+              .focus()
+              .setMark("textStyle", { fontSize: value })
+              .run();
+            setFontSize(value);
+          }}
+        >
+          <SelectTrigger className="w-[100px]">
+            <SelectValue placeholder="Size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="12">12px</SelectItem>
+            <SelectItem value="14">14px</SelectItem>
+            <SelectItem value="16">16px</SelectItem>
+            <SelectItem value="18">18px</SelectItem>
+            <SelectItem value="24">24px</SelectItem>
+            <SelectItem value="32">32px</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Select
-            value={
-              editor.getAttributes("textStyle").fontSize?.toString() || "p"
-            }
-            onValueChange={(value) => {
-              const headings = ["h1", "h2", "h3"];
-              if (headings.includes(value)) {
-                editor
-                  .chain()
-                  .focus()
-                  .setHeading({ level: parseInt(value[1]) as 1 | 2 | 3 })
-                  .run();
-              } else if (value === "p") {
-                editor.chain().focus().setParagraph().run();
-              }
-            }}
-          >
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Font Size" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem value="h1">H1</SelectItem>
-              <SelectItem value="h2">H2</SelectItem>
-              <SelectItem value="h3">H3</SelectItem>
-              <SelectItem value="p">Paragraph</SelectItem>
-              <SelectItem value="small">Small</SelectItem>
-              <SelectItem value="tiny">Tiny</SelectItem>
-              <SelectItem value="large">Large</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Text Formatting */}
-        <div className="flex items-center gap-1">
+        {/* Text Format Buttons */}
+        <div className="flex items-center gap-1 ml-2">
           <IconButton
             icon={<Bold />}
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -107,18 +154,11 @@ export const Topbar: FC = () => {
             onClick={() => editor.chain().focus().toggleStrike().run()}
             active={editor.isActive("strike")}
           />
-        </div>
-
-        {/* Headings + Paragraph */}
-        <div className="flex items-center gap-1">
           <IconButton
-            icon={<Pilcrow />}
-            onClick={() => editor.chain().focus().setParagraph().run()}
-            active={editor.isActive("paragraph")}
+            icon={<Highlighter />}
+            onClick={() => editor.chain().focus().toggleHighlight().run()}
+            active={editor.isActive("highlight")}
           />
-        </div>
-
-        <div className="flex items-center gap-1">
           <IconButton
             icon={<Code />}
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -159,8 +199,8 @@ export const Topbar: FC = () => {
           />
         </div>
 
-        {/* Undo/Redo */}
-        <div className="flex items-center gap-1">
+        {/* Undo / Redo */}
+        <div className="flex items-center gap-1 ml-auto">
           <IconButton
             icon={<Undo2 />}
             onClick={() => editor.chain().focus().undo().run()}
@@ -177,7 +217,6 @@ export const Topbar: FC = () => {
   );
 };
 
-// Reusable IconButton component
 const IconButton: FC<{
   icon: JSX.Element;
   onClick: () => void;
@@ -187,7 +226,7 @@ const IconButton: FC<{
   <Button
     onClick={onClick}
     disabled={disabled}
-    variant={active ? "secondary" : "ghost"}
+    variant={active ? "default" : "ghost"}
     className={`p-2 rounded-md ${active ? "bg-muted text-foreground" : ""}`}
   >
     {icon}

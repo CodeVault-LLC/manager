@@ -4,17 +4,11 @@ import { createRoot } from 'react-dom/client'
 
 import './index.css'
 import { createRouter } from './router'
-import { Translations } from '@manager/common/src'
 
 declare global {
   interface Window {
     electron: IpcRenderer
     api: unknown
-
-    i18n: {
-      getLocale: () => Translations
-      setLocale: (lang: string) => Translations
-    }
   }
 }
 

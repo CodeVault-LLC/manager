@@ -1,3 +1,5 @@
+/* eslint-disable import/no-named-as-default */
+
 import { FC } from "react";
 import { EditorProvider, Extensions } from "@tiptap/react";
 import TextStyle from "@tiptap/extension-text-style";
@@ -7,11 +9,22 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
+import Highlight from "@tiptap/extension-highlight";
+import Color from "@tiptap/extension-color";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import Placeholder from "@tiptap/extension-placeholder";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+
 import "./editor.css";
 import { Topbar } from "./ui/topbar";
 import { FooterBar } from "./ui/footer";
 import { all, createLowlight } from "lowlight";
 import StarterKit from "@tiptap/starter-kit";
+import { FontSize } from "./extensions/FontSize";
 
 interface EditorProps {
   value: object | null;
@@ -23,15 +36,25 @@ export const Editor: FC<EditorProps> = ({ value, onValueChange }) => {
   const lowlight = createLowlight(all);
 
   const extensions: Extensions = [
+    StarterKit,
     TextStyle,
     FontFamily,
+    FontSize,
     Typography,
-    TextAlign,
+    TextAlign.configure({ types: ["heading", "paragraph"] }),
     Underline,
-    CodeBlockLowlight.configure({
-      lowlight,
+    Highlight,
+    Color,
+    Subscript,
+    Superscript,
+    CodeBlockLowlight.configure({ lowlight }),
+    Placeholder.configure({
+      placeholder: "Start typing...",
     }),
-    StarterKit,
+    Table.configure({ resizable: true }),
+    TableRow,
+    TableCell,
+    TableHeader,
   ];
 
   if (!value) {
@@ -41,6 +64,8 @@ export const Editor: FC<EditorProps> = ({ value, onValueChange }) => {
   return (
     <div className="flex w-full h-full flex-screen flex-col overflow-y-auto">
       <EditorProvider
+        immediatelyRender={true}
+        shouldRerenderOnTransaction={false}
         slotBefore={[<Topbar key="topbar" />]}
         slotAfter={[<FooterBar />]}
         extensions={extensions}

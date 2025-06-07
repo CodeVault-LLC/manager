@@ -13,6 +13,7 @@ export interface INoteStore {
   getNote: (id: number) => Promise<INote>
   createNote: () => void
   updateNote: (note: Partial<INote>) => void
+  deleteNote: (id: number) => void
 }
 
 export const useNoteStore = create<INoteStore>((set) => ({
@@ -74,6 +75,20 @@ export const useNoteStore = create<INoteStore>((set) => ({
 
     set((state) => ({
       notes: state.notes.map((n) => (n.id === note.id ? response.data : n))
+    }))
+  },
+
+  deleteNote: async (id: number): Promise<void> => {
+    const response = await ipcClient.invoke('notes:deleteNote', id)
+
+    if (response.error) {
+      toast.error(getValue('error.deletingNote'))
+      return
+    }
+
+    set((state) => ({
+      notes: state.notes.filter((note) => note.id !== id),
+      currentNote: state.currentNote?.id === id ? undefined : state.currentNote
     }))
   }
 }))

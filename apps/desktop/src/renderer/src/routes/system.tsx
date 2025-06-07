@@ -39,7 +39,7 @@ function RouteComponent() {
     {
       value: 'network',
       label: t('common.network'),
-      link: '/'
+      link: '/system/network'
     },
     {
       value: 'storage',

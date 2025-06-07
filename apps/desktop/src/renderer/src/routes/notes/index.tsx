@@ -1,17 +1,28 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useNoteStore } from '../../core/store/note.store'
 import { useEffect } from 'react'
-import { Plus } from 'lucide-react'
-import { Button } from '@manager/ui'
+import { Plus, FileText, MoreVertical } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { nb } from 'date-fns/locale'
+import {
+  Input,
+  Button,
+  Card,
+  CardHeader,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  CardContent,
+  CardTitle
+} from '@manager/ui'
 
 export const Route = createFileRoute('/notes/')({
   component: RouteComponent
 })
 
 function RouteComponent() {
-  const { notes, getAll, createNote } = useNoteStore()
+  const { notes, getAll, createNote, deleteNote } = useNoteStore()
 
   useEffect(() => {
     if (notes.length === 0) {
@@ -26,40 +37,76 @@ function RouteComponent() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Your Notes</h1>
-        <Button onClick={handleCreateNote}>
-          <Plus className="w-4 h-4 mr-2" />
-          Create New Note
-        </Button>
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">My Notes</h1>
+          <p className="text-muted-foreground text-sm">
+            View and manage your notes efficiently.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {/* Search and Sort Placeholder */}
+          <Input placeholder="Search notes..." className="w-64" />
+          <Button onClick={handleCreateNote}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Note
+          </Button>
+        </div>
       </div>
 
+      {/* Notes Grid */}
       {notes.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">No notes available.</p>
+        <div className="text-center text-muted-foreground text-sm mt-10">
+          You have no notes yet. Click “New Note” to get started.
+        </div>
       ) : (
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {notes.map((note) => (
             <Link
               to="/notes/$id"
               params={{ id: note.id.toString() }}
               key={note.id}
-              className="block py-4 hover:bg-gray-50 dark:hover:bg-gray-800 px-2 rounded transition-colors"
+              className="group"
             >
-              <div className="flex flex-col sm:flex-row sm:justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">
+              <Card className="transition-shadow hover:shadow-md">
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-xs">Note</span>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={async () => {
+                          void deleteNote(note.id)
+                          void getAll()
+                        }}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardHeader>
+                <CardContent>
+                  <CardTitle className="text-base font-medium truncate mb-1">
                     {note.title || 'Untitled'}
-                  </h3>
-                </div>
-                <div className="text-sm text-gray-400 mt-2 sm:mt-0 sm:text-right">
-                  {note.createdAt
-                    ? formatDistanceToNow(new Date(note.createdAt), {
-                        addSuffix: true,
-                        locale: nb
-                      })
-                    : ''}
-                </div>
-              </div>
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground">
+                    {note.createdAt
+                      ? formatDistanceToNow(note.createdAt, {
+                          addSuffix: true,
+                          locale: nb
+                        })
+                      : 'No date'}
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
           ))}
         </div>

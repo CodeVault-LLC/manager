@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import {
   EErrorCodes,
+  INetwork,
   ISystem,
   ISystemHardware,
   TCommunicationResponse
@@ -80,6 +81,26 @@ export const registerSystemIPC = () => {
           `Error while getting storage overview data: ${error.message}`,
           error
         )
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'system:getNetwork',
+    async (): Promise<TCommunicationResponse<INetwork>> => {
+      try {
+        const network = await systemServices.getNetwork()
+
+        return { data: network }
+      } catch (error: any) {
+        logger.error(`Error while getting system network data: ${error}`, error)
 
         return {
           error: {

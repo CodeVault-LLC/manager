@@ -94,7 +94,12 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
     try {
       set({ isLoading: true })
 
-      const response = await ipcClient.invoke('msn:sport')
+      const response = await ipcClient.invoke('msn:sport', {
+        limit: 10,
+        offset: 0,
+        sport: 'Soccer',
+        league: 'SportRadar_Soccer_SpainLaLiga_2024'
+      })
 
       if (response.data) {
         set({ sports: response.data })

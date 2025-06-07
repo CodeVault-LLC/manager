@@ -108,4 +108,27 @@ export const registerNotesIPC = async () => {
       }
     }
   )
+
+  ipcMain.handle('notes:deleteNote', async (_, noteId: number) => {
+    try {
+      const deletedNote = await notesServices.deleteNote(noteId)
+
+      if (!deletedNote) {
+        logger.info(`Failed to delete note with ID ${noteId}`)
+        return {
+          error: 'Failed to delete note'
+        }
+      }
+
+      return {
+        data: deletedNote.data
+      }
+    } catch (error) {
+      logger.error('Error deleting note', error)
+
+      return {
+        error: 'Failed to delete note'
+      }
+    }
+  })
 }

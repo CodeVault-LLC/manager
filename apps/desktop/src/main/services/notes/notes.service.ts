@@ -47,12 +47,7 @@ export const notesServices = {
   createNote: async () => {
     try {
       const randomTitle = faker.lorem.sentence(3)
-      const content = [
-        {
-          type: 'p',
-          children: [{ text: faker.lorem.paragraph(2) }]
-        }
-      ]
+      const content = `<p>${faker.lorem.paragraph(2)}</p>`
 
       const newNote = await db
         .insert(notes)
@@ -101,6 +96,36 @@ export const notesServices = {
       logger.error('Error updating note', error)
       return {
         error: 'Failed to update note'
+      }
+    }
+  },
+
+  deleteNote: async (id: number) => {
+    try {
+      if (!id) {
+        return {
+          error: 'Invalid note ID'
+        }
+      }
+
+      const deletedNote = await db
+        .delete(notes)
+        .where(eq(notes.id, id))
+        .returning()
+
+      if (deletedNote.length === 0) {
+        return {
+          error: 'Note not found'
+        }
+      }
+
+      return {
+        data: deletedNote[0]
+      }
+    } catch (error) {
+      logger.error('Error deleting note', error)
+      return {
+        error: 'Failed to delete note'
       }
     }
   }

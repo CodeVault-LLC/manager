@@ -5,6 +5,7 @@ import { create } from 'zustand'
 import {
   IBrowser,
   IExtension,
+  INetwork,
   ISystem,
   ISystemHardware,
   ISystemStatistics
@@ -18,6 +19,7 @@ export interface ISystemStore {
   system: ISystem | null
   extensions: IExtension[]
   browsers: IBrowser[]
+  network: INetwork | null
   storage: any
   loading: boolean
 
@@ -40,6 +42,7 @@ export interface ISystemStore {
   getSystemHardware(): void
   getSystem(): void
   getStorageOverview(): void
+  getNetwork(): void
 }
 
 export const useSystemStore = create<ISystemStore>((set, get) => ({
@@ -50,6 +53,7 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   system: null,
   storage: null,
   loading: false,
+  network: null,
 
   systemStatistics: {
     cpu: { current: 0, average: 0 },
@@ -90,6 +94,20 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
         // eslint-disable-next-line no-console
         console.error('getting initial system data error', response.error)
         toast.error(getValue('error.systemRetrievalError'))
+      }
+    })
+  },
+
+  getNetwork: (): void => {
+    set({ loading: true })
+
+    ipcClient.invoke('system:getNetwork').then((response) => {
+      if (response.data) {
+        set({ network: response.data, loading: false })
+      } else {
+        set({ loading: false })
+        // eslint-disable-next-line no-console
+        console.error('getting initial network data error', response.error)
       }
     })
   },

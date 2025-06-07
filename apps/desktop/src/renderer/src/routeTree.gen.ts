@@ -23,6 +23,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as SystemIndexImport } from './routes/system/index'
 import { Route as NotesIndexImport } from './routes/notes/index'
 import { Route as SystemStorageImport } from './routes/system/storage'
+import { Route as SystemNetworkImport } from './routes/system/network'
 import { Route as SystemHardwareImport } from './routes/system/hardware'
 import { Route as SystemBrowsersImport } from './routes/system/browsers'
 import { Route as SettingsSecurityImport } from './routes/settings/security'
@@ -109,6 +110,12 @@ const NotesIndexRoute = NotesIndexImport.update({
 const SystemStorageRoute = SystemStorageImport.update({
   id: '/storage',
   path: '/storage',
+  getParentRoute: () => SystemRoute,
+} as any)
+
+const SystemNetworkRoute = SystemNetworkImport.update({
+  id: '/network',
+  path: '/network',
   getParentRoute: () => SystemRoute,
 } as any)
 
@@ -347,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemHardwareImport
       parentRoute: typeof SystemImport
     }
+    '/system/network': {
+      id: '/system/network'
+      path: '/network'
+      fullPath: '/system/network'
+      preLoaderRoute: typeof SystemNetworkImport
+      parentRoute: typeof SystemImport
+    }
     '/system/storage': {
       id: '/system/storage'
       path: '/storage'
@@ -445,6 +459,7 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 interface SystemRouteChildren {
   SystemBrowsersRoute: typeof SystemBrowsersRoute
   SystemHardwareRoute: typeof SystemHardwareRoute
+  SystemNetworkRoute: typeof SystemNetworkRoute
   SystemStorageRoute: typeof SystemStorageRoute
   SystemIndexRoute: typeof SystemIndexRoute
 }
@@ -452,6 +467,7 @@ interface SystemRouteChildren {
 const SystemRouteChildren: SystemRouteChildren = {
   SystemBrowsersRoute: SystemBrowsersRoute,
   SystemHardwareRoute: SystemHardwareRoute,
+  SystemNetworkRoute: SystemNetworkRoute,
   SystemStorageRoute: SystemStorageRoute,
   SystemIndexRoute: SystemIndexRoute,
 }
@@ -481,6 +497,7 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/system/network': typeof SystemNetworkRoute
   '/system/storage': typeof SystemStorageRoute
   '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
@@ -507,6 +524,7 @@ export interface FileRoutesByTo {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/system/network': typeof SystemNetworkRoute
   '/system/storage': typeof SystemStorageRoute
   '/notes': typeof NotesIndexRoute
   '/system': typeof SystemIndexRoute
@@ -537,6 +555,7 @@ export interface FileRoutesById {
   '/settings/security': typeof SettingsSecurityRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
+  '/system/network': typeof SystemNetworkRoute
   '/system/storage': typeof SystemStorageRoute
   '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
@@ -568,6 +587,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/system/network'
     | '/system/storage'
     | '/notes/'
     | '/system/'
@@ -593,6 +613,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/system/network'
     | '/system/storage'
     | '/notes'
     | '/system'
@@ -621,6 +642,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/system/browsers'
     | '/system/hardware'
+    | '/system/network'
     | '/system/storage'
     | '/notes/'
     | '/system/'
@@ -725,6 +747,7 @@ export const routeTree = rootRoute
       "children": [
         "/system/browsers",
         "/system/hardware",
+        "/system/network",
         "/system/storage",
         "/system/"
       ]
@@ -778,6 +801,10 @@ export const routeTree = rootRoute
     },
     "/system/hardware": {
       "filePath": "system/hardware.tsx",
+      "parent": "/system"
+    },
+    "/system/network": {
+      "filePath": "system/network.tsx",
       "parent": "/system"
     },
     "/system/storage": {

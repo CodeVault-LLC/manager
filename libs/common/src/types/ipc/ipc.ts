@@ -18,6 +18,7 @@ import {
   ISystemHardware,
   ISystemStatistics,
   IpcServiceLog,
+  INetwork,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -77,6 +78,7 @@ export interface IpcHandlers {
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
   "system:getSystemInfo": () => Promise<TCommunicationResponse<ISystem>>;
   "system:storageOverview": () => Promise<TCommunicationResponse<any>>;
+  "system:getNetwork": () => Promise<TCommunicationResponse<INetwork>>;
 
   "application:openExternal": (
     url: string
@@ -88,6 +90,7 @@ export interface IpcHandlers {
   "notes:updateNote": (
     note: Partial<INote>
   ) => Promise<TCommunicationResponse<INote>>;
+  "notes:deleteNote": (id: number) => Promise<TCommunicationResponse<boolean>>;
 
   "browser:initial": () => Promise<TCommunicationResponse<IBrowser[]>>;
   "browser:refresh": () => Promise<TCommunicationResponse<IBrowser[]>>;
@@ -104,7 +107,17 @@ export interface IpcHandlers {
   ) => Promise<TCommunicationResponse<IDashboardWidget>>;
 
   "msn:news": () => Promise<TCommunicationResponse<INews[]>>;
-  "msn:sport": () => Promise<TCommunicationResponse<any>>;
+  "msn:sport": ({
+    limit,
+    offset,
+    sport,
+    league,
+  }: {
+    limit: number;
+    offset: number;
+    sport: string;
+    league: string;
+  }) => Promise<TCommunicationResponse<any>>;
 }
 
 export interface IpcEmittedEvents {
