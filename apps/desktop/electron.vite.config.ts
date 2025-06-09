@@ -2,6 +2,7 @@ import path, { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { getReplacements } from './app-info'
 
 export default defineConfig({
   main: {
@@ -12,6 +13,9 @@ export default defineConfig({
         '@shared': path.resolve(__dirname, '../../packages/shared'),
         '@manager': path.resolve(__dirname, '../../libs/')
       }
+    },
+    define: {
+      ...getReplacements()
     },
     build: {
       rollupOptions: {
@@ -32,8 +36,8 @@ export default defineConfig({
         },
         output: {
           entryFileNames: '[name].js',
-          format: 'cjs',
-        },
+          format: 'cjs'
+        }
       }
     }
   },

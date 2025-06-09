@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import logger from '../../logger'
+import log from '../../logger'
 import { api } from '../api.service'
 import { authServices } from './auth.service'
 import { ConfStorage } from '@main/store'
@@ -76,7 +76,7 @@ export const registerAuthIPC = () => {
 
         return { data: true }
       } catch (error) {
-        logger.error('Error during user registration:', error)
+        log.error('Error during user registration:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -96,7 +96,7 @@ export const registerAuthIPC = () => {
         await ConfStorage.deleteSecureData('userToken')
         return { data: true }
       } catch (error) {
-        logger.error('Error during user sign-out:', error)
+        log.error('Error during user sign-out:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,

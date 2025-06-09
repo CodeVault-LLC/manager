@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import logger from '../../logger'
+import log from '../../logger'
 import { extensionService } from './extension.service'
 import { EErrorCodes } from '@manager/common/src'
 
@@ -30,7 +30,7 @@ export const registerExtensionIPC = async () => {
         data: extensions
       }
     } catch (error) {
-      logger.error('Error loading extensions:', error)
+      log.error('Error loading extensions:', error)
       return {
         error: {
           code: EErrorCodes.FORBIDDEN,

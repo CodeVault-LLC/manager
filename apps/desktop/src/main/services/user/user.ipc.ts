@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import logger from '../../logger'
+import log from '../../logger'
 import { api } from '../api.service'
 import {
   EErrorCodes,
@@ -67,7 +67,7 @@ export const registerUserIPC = () => {
 
         return { data: response.data }
       } catch (error) {
-        logger.error('Error fetching user sessions:', error)
+        log.error('Error fetching user sessions:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -86,7 +86,7 @@ export const registerUserIPC = () => {
 
         return { data: true }
       } catch (error) {
-        logger.error('Error deleting all user sessions:', error)
+        log.error('Error deleting all user sessions:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -105,7 +105,7 @@ export const registerUserIPC = () => {
 
         return { data: true }
       } catch (error) {
-        logger.error(`Error deleting user session ${sessionId}:`, error)
+        log.error(`Error deleting user session ${sessionId}:`, error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -124,7 +124,7 @@ export const registerUserIPC = () => {
 
         return { data: true }
       } catch (error) {
-        logger.error('Error during forgot password:', error)
+        log.error('Error during forgot password:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -143,7 +143,7 @@ export const registerUserIPC = () => {
 
         return { data: true }
       } catch (error) {
-        logger.error('Error during email verification:', error)
+        log.error('Error during email verification:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -162,7 +162,7 @@ export const registerUserIPC = () => {
 
         return { data: true }
       } catch (error) {
-        logger.error('Error verifying email token:', error)
+        log.error('Error verifying email token:', error)
 
         if (
           typeof error === 'object' &&

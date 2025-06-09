@@ -2,7 +2,7 @@ import axios from 'axios'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '@main/database/data-source'
 import { news, newsProvider, newsThumbnail } from '@main/database/models/schema'
-import logger from '@main/logger'
+import log from '@main/logger'
 import { MsnNewsResponse } from '@manager/common/src'
 
 const msnApi = axios.create({
@@ -15,7 +15,7 @@ const msnApi = axios.create({
 
 msnApi.interceptors.response.use(
   (response) => {
-    logger.debug('MSN API response', {
+    log.debug('MSN API response', {
       status: response.status,
       statusText: response.statusText,
       data: response.data
@@ -24,7 +24,7 @@ msnApi.interceptors.response.use(
     return response
   },
   (error) => {
-    logger.error('Error fetching news from MSN API', {
+    log.error('Error fetching news from MSN API', {
       error: error.message
     })
     return Promise.reject(error)
@@ -53,7 +53,7 @@ export const msnNewsServices = {
         })
 
         if (existingNews) {
-          logger.debug('News already exists in the database', {
+          log.debug('News already exists in the database', {
             newsId: card.id
           })
 
@@ -89,7 +89,7 @@ export const msnNewsServices = {
             })
           })
           .catch((error) => {
-            logger.error('Error inserting news into database', error)
+            log.error('Error inserting news into database', error)
           })
       }
 
@@ -97,7 +97,7 @@ export const msnNewsServices = {
 
       return newsResult
     } catch (error) {
-      logger.error('Error fetching news from MSN API', {
+      log.error('Error fetching news from MSN API', {
         error
       })
       throw new Error('Error fetching news from MSN API')
@@ -117,7 +117,7 @@ export const msnNewsServices = {
 
       return newsResult
     } catch (error) {
-      logger.error('Error fetching news from database', {
+      log.error('Error fetching news from database', {
         error
       })
 

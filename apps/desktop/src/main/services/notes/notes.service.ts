@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../../database/data-source'
-import logger from '../../logger'
+import log from '../../logger'
 import { notes } from '../../database/models/schema'
 
 import { faker } from '@faker-js/faker'
@@ -14,7 +14,7 @@ export const notesServices = {
         data: notes
       }
     } catch (error) {
-      logger.error('Error fetching notes', error)
+      log.error('Error fetching notes', error)
       return {
         error: 'Failed to fetch notes'
       }
@@ -37,7 +37,7 @@ export const notesServices = {
         data: note
       }
     } catch (error) {
-      logger.error('Error fetching note by ID', error)
+      log.error('Error fetching note by ID', error)
       return {
         error: 'Failed to fetch note by ID'
       }
@@ -61,7 +61,7 @@ export const notesServices = {
         data: newNote[0]
       }
     } catch (error) {
-      logger.error('Error creating note', error)
+      log.error('Error creating note', error)
 
       return {
         error: 'Failed to create note'
@@ -93,7 +93,7 @@ export const notesServices = {
         data: updatedNote[0]
       }
     } catch (error) {
-      logger.error('Error updating note', error)
+      log.error('Error updating note', error)
       return {
         error: 'Failed to update note'
       }
@@ -123,7 +123,7 @@ export const notesServices = {
         data: deletedNote[0]
       }
     } catch (error) {
-      logger.error('Error deleting note', error)
+      log.error('Error deleting note', error)
       return {
         error: 'Failed to delete note'
       }

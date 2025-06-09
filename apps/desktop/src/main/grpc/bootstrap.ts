@@ -1,7 +1,4 @@
 import path from 'node:path'
-
-import logger from '../logger'
-
 import { manager } from './service-manager'
 
 export const startGrpc = async () => {
@@ -23,5 +20,5 @@ export const startGrpc = async () => {
     bin: path.resolve('resources/builds/system')
   })
 
-  logger.info('Starting gRPC Services')
+  log.info('gRPC services started successfully')
 }

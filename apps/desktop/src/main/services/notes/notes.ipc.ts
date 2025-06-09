@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import logger from '../../logger'
+import log from '../../logger'
 import { notesServices } from './notes.service'
 
 export const registerNotesIPC = async () => {
@@ -8,7 +8,7 @@ export const registerNotesIPC = async () => {
       const notes = await notesServices.getAllNotes()
 
       if (notes.data?.length === 0) {
-        logger.info('No notes found in the database')
+        log.info('No notes found in the database')
         return {
           data: []
         }
@@ -23,7 +23,7 @@ export const registerNotesIPC = async () => {
         data: notes.data
       }
     } catch (error) {
-      logger.error('Error fetching notes', error)
+      log.error('Error fetching notes', error)
 
       return {
         error: 'Failed to fetch notes'
@@ -36,7 +36,7 @@ export const registerNotesIPC = async () => {
       const note = await notesServices.getNoteById(noteId)
 
       if (!note) {
-        logger.info(`Note with ID ${noteId} not found`)
+        log.info(`Note with ID ${noteId} not found`)
         return {
           error: 'Note not found'
         }
@@ -46,7 +46,7 @@ export const registerNotesIPC = async () => {
         data: note.data
       }
     } catch (error) {
-      logger.error('Error fetching note', {
+      log.error('Error fetching note', {
         error
       })
 
@@ -61,7 +61,7 @@ export const registerNotesIPC = async () => {
       const newNote = await notesServices.createNote()
 
       if (!newNote) {
-        logger.info('Failed to create note')
+        log.info('Failed to create note')
         return {
           error: 'Failed to create note'
         }
@@ -71,7 +71,7 @@ export const registerNotesIPC = async () => {
         data: newNote.data
       }
     } catch (error) {
-      logger.error('Error creating note', error)
+      log.error('Error creating note', error)
 
       return {
         error: 'Failed to create note'
@@ -89,7 +89,7 @@ export const registerNotesIPC = async () => {
         const updatedNote = await notesServices.writeNote(id, title, content)
 
         if (!updatedNote?.data) {
-          logger.info(`Failed to update note with ID ${id}`)
+          log.info(`Failed to update note with ID ${id}`)
 
           return {
             error: 'Failed to update note'
@@ -100,7 +100,7 @@ export const registerNotesIPC = async () => {
           data: updatedNote.data
         }
       } catch (error) {
-        logger.error('Error updating note', error)
+        log.error('Error updating note', error)
 
         return {
           error: 'Failed to update note'
@@ -114,7 +114,7 @@ export const registerNotesIPC = async () => {
       const deletedNote = await notesServices.deleteNote(noteId)
 
       if (!deletedNote) {
-        logger.info(`Failed to delete note with ID ${noteId}`)
+        log.info(`Failed to delete note with ID ${noteId}`)
         return {
           error: 'Failed to delete note'
         }
@@ -124,7 +124,7 @@ export const registerNotesIPC = async () => {
         data: deletedNote.data
       }
     } catch (error) {
-      logger.error('Error deleting note', error)
+      log.error('Error deleting note', error)
 
       return {
         error: 'Failed to delete note'

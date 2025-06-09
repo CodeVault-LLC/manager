@@ -2,7 +2,7 @@ import { API_BASE_URL } from '@shared/constants'
 import axios from 'axios'
 import { app } from 'electron'
 import { getSystemVersion } from '../utils/system.helper'
-import logger from '@main/logger'
+import log from '@main/logger'
 import { EErrorCodes, TCommunicationResponse } from '@manager/common/src'
 
 export const api = axios.create({
@@ -27,7 +27,7 @@ api.interceptors.response.use(
   (response) => response,
   (error): Promise<TCommunicationResponse<null>> => {
     if (!error.response) {
-      logger.error('Network error', {
+      log.error('Network error', {
         error: error.message,
         config: error.config
       })
@@ -43,7 +43,7 @@ api.interceptors.response.use(
 
     const status = error.response.status
 
-    logger.error(
+    log.error(
       `API [${status}]: ${error.response.config.method?.toUpperCase()} ${
         error.response.config.url
       } - ${error.response.data?.message || error.message}`,

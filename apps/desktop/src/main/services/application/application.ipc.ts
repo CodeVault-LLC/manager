@@ -1,6 +1,6 @@
 import { ipcMain, shell } from 'electron'
 
-import logger from '@main/logger'
+import log from '@main/logger'
 import { ConfStorage } from '@main/store'
 import { manager } from '../../grpc/service-manager'
 import {
@@ -29,7 +29,7 @@ export const registerApplicationIPC = () => {
 
         return { data: { theme, language } }
       } catch (error: any) {
-        logger.error(
+        log.error(
           `Error while getting system initial data: ${error.message}`,
           error
         )
@@ -56,7 +56,7 @@ export const registerApplicationIPC = () => {
 
         return { data: true }
       } catch (error: any) {
-        logger.error(`Error while setting system data: ${error.message}`, error)
+        log.error(`Error while setting system data: ${error.message}`, error)
 
         return {
           error: {
@@ -81,10 +81,7 @@ export const registerApplicationIPC = () => {
 
         return { data: true }
       } catch (error: any) {
-        logger.error(
-          `Error while opening external link: ${error.message}`,
-          error
-        )
+        log.error(`Error while opening external link: ${error.message}`, error)
 
         return {
           error: {

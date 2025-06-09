@@ -1,11 +1,12 @@
 import os from 'node:os'
-import { BrowserWindow, powerMonitor } from 'electron'
+import { powerMonitor } from 'electron'
 import si from 'systeminformation'
 import { getNetworkUsage } from '../utils/system.helper'
 import { getAppState, setAppState } from '@main/states/app-state'
 import { ISystemStatistics } from '@manager/common/src'
+import { AppWindow } from '../app-window'
 
-export const loadSystemSockets = (mainWindow: BrowserWindow) => {
+export const loadSystemSockets = (mainWindow: AppWindow) => {
   const interval = setInterval(async () => {
     if (getAppState() !== 'active') {
       return
@@ -50,8 +51,8 @@ export const loadSystemSockets = (mainWindow: BrowserWindow) => {
       pid: process.pid
     }
 
-    if (mainWindow && mainWindow.webContents) {
-      mainWindow.webContents.send('system:statistics', statistics)
+    if (mainWindow) {
+      mainWindow.send('system:statistics', statistics)
     }
   }, 1000)
 
@@ -62,16 +63,16 @@ export const loadSystemSockets = (mainWindow: BrowserWindow) => {
 
     if (idleSeconds > idleTime && getAppState() !== 'inactive') {
       setAppState('inactive')
-      if (mainWindow && mainWindow.webContents) {
-        mainWindow.webContents.send('system:inactivity', {
+      if (mainWindow) {
+        mainWindow.send('system:inactivity', {
           inactive: true,
           pid: process.pid
         })
       }
     } else if (idleSeconds <= 5 && getAppState() !== 'active') {
       setAppState('active')
-      if (mainWindow && mainWindow.webContents) {
-        mainWindow.webContents.send('system:inactivity', {
+      if (mainWindow) {
+        mainWindow.send('system:inactivity', {
           inactive: false,
           pid: process.pid
         })

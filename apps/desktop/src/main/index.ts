@@ -1,15 +1,11 @@
-import path, { join } from 'path'
+import './lib/logging/install'
 
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { app, shell, BrowserWindow, session } from 'electron'
-
-import icon from '../../resources/icons/icon.ico?asset'
+import { optimizer } from '@electron-toolkit/utils'
+import { app, BrowserWindow } from 'electron'
 
 import { runMigrations } from './database/data-source'
-import handleDeepLink from './deep-link'
 import { startGrpc } from './grpc/bootstrap'
 import { manager } from './grpc/service-manager'
-import logger from './logger'
 import { registerApplicationIPC } from './services/application/application.ipc'
 import { loadDashboardServices } from './services/dashboard.service'
 import { registerDeveloperIPC } from './services/developer/developer.ipc'
@@ -21,172 +17,212 @@ import { registerAuthIPC, registerUserIPC } from './services/user'
 import { loadSystemSockets } from './sockets/system.socket'
 import { ConfStorage } from './store'
 import { registerNotesIPC } from './services/notes/notes.ipc'
-import { homedir } from 'os'
+import {
+  enableSourceMaps,
+  withSourceMappedStack
+} from './lib/source-map-support'
+import { AppWindow } from './app-window'
+import { now } from './now'
+import { showUncaughtException } from './show-uncaught-exception'
+import { reportError } from './exception-reporting'
 
-const gotTheLock = app.requestSingleInstanceLock()
-if (!gotTheLock) {
-  app.quit()
-} else {
-  app.on('second-instance', (_, argv) => {
-    const mainWindow = BrowserWindow.getAllWindows()[0]
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore()
-      mainWindow.focus()
+app.setAppLogsPath()
+enableSourceMaps()
 
-      const deepLink = argv.find((arg) => arg.startsWith('managerapp://'))
+let mainWindow: AppWindow | null = null
+
+const launchTime = now() // Store the launch time for performance tracking
+
+let preventQuit = false
+let readyTime: number | null = null
+
+type OnDidLoadFn = (window: AppWindow) => void
+
+let onDidLoadFns: Array<OnDidLoadFn> | null = []
+
+function handleUncaughtException(error: Error) {
+  preventQuit = true
+
+  // If we haven't got a window we'll assume it's because
+  // we've just launched and haven't created it yet.
+  // It could also be because we're encountering an unhandled
+  // exception on shutdown but that's less likely and since
+  // this only affects the presentation of the crash dialog
+  // it's a safe assumption to make.
+  const isLaunchError = mainWindow === null
+
+  if (mainWindow) {
+    mainWindow.destroy()
+    mainWindow = null
+  }
+
+  showUncaughtException(isLaunchError, error)
+}
+
+/**
+ * Calculates the number of seconds the app has been running
+ */
+function getUptimeInSeconds() {
+  return (now() - launchTime) / 1000
+}
+
+function getExtraErrorContext(): Record<string, string> {
+  return {
+    uptime: getUptimeInSeconds().toFixed(3),
+    time: new Date().toString()
+  }
+}
+
+/** Extra argument for the protocol launcher on Windows */
+//const protocolLauncherArg = '--protocol-launcher'
+
+// On Windows, in order to get notifications properly working for dev builds,
+// we'll want to set the right App User Model ID from production builds.
+if (__WIN32__ && __DEV__) {
+  app.setAppUserModelId('com.electron.managerapp')
+}
+
+app.on('window-all-closed', () => {
+  // If we don't subscribe to this event and all windows are closed, the default
+  // behavior is to quit the app. We don't want that though, we control that
+  // behavior through the mainWindow onClose event such that on macOS we only
+  // hide the main window when a user attempts to close it.
+  //
+  // If we don't subscribe to this and change the default behavior we break
+  // the crash process window which is shown after the main window is closed.
+})
+
+process.on('uncaughtException', (error: Error) => {
+  error = withSourceMappedStack(error)
+  void reportError(error, getExtraErrorContext())
+  handleUncaughtException(error)
+})
+
+function handleAppURL(url: string): void {
+  void log.info('Processing protocol url:', url.toString())
+}
+
+let isDuplicateInstance = false
+
+const gotSingleInstanceLock = app.requestSingleInstanceLock()
+isDuplicateInstance = !gotSingleInstanceLock
+
+app.on('second-instance', (event, args, workingDirectory) => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized) {
+      mainWindow.restore()
+    }
+
+    if (!mainWindow.isVisible) {
+      mainWindow.show()
+    }
+
+    mainWindow.focus()
+  }
+
+  // handleCommandLineArguments(args)
+  /* 
+  const deepLink = argv.find((arg) => arg.startsWith('managerapp://'))
       if (deepLink) {
         void handleDeepLink(deepLink)
       }
-    }
-  })
+        */
+})
 
-  const extensionsOnLoad: string[] = []
+if (isDuplicateInstance) {
+  app.quit()
+}
 
-  if (is.dev) {
-    if (process.platform === 'darwin') {
-      // macOS specific extensions
-      extensionsOnLoad.push(
-        path.join(
-          homedir(),
-          '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/6.1.2_0'
-        )
-      )
-    }
-    if (process.platform === 'linux') {
-      // Linux specific extensions
-      extensionsOnLoad.push(join(__dirname, '../extensions/react-devtools'))
-    }
-    if (process.platform === 'win32') {
-      // Windows specific extensions
-      extensionsOnLoad.push(join(__dirname, '../extensions/react-devtools'))
-    }
-  }
-
-  void app.whenReady().then(async () => {
-    try {
-      electronApp.setAppUserModelId('com.electron')
-
-      // Register protocol for deep linking (Windows & Linux)
-      if (process.defaultApp) {
-        if (process.argv.length >= 2) {
-          app.setAsDefaultProtocolClient('managerapp', process.execPath, [
-            path.resolve(process.argv[1])
-          ])
-        }
-      } else {
-        app.setAsDefaultProtocolClient('managerapp')
-      }
-
-      // Register extensions listed
-      for (const extensionPath of extensionsOnLoad) {
-        try {
-          await session.defaultSession
-            .loadExtension(extensionPath, {
-              allowFileAccess: true
-            })
-            .then(() => {
-              logger.info(`Extension loaded successfully from ${extensionPath}`)
-            })
-            .catch((error) => {
-              logger.error(
-                `Failed to load extension from ${extensionPath}:`,
-                error
-              )
-            })
-        } catch (error) {
-          logger.error(`Failed to load extension at ${extensionPath}:`, error)
-        }
-      }
-
-      app.on('browser-window-created', (_, window) => {
-        optimizer.watchWindowShortcuts(window)
-      })
-
-      await ConfStorage.validateExistence()
-      await runMigrations().catch((error) => {
-        logger.error('Error running migrations:', error)
-      })
-
-      createWindow()
-
-      app.on('activate', function () {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
-      })
-
-      registerIpc()
-
-      await startGrpc()
-      logger.info('gRPC services initialized successfully')
-    } catch (error) {
-      logger.error('Error during app initialization:', error)
-    }
-  })
-
-  app.on('before-quit', async () => {
-    logger.info('Application is quitting, stopping all services...')
-
-    // Stop all services gracefully
-    await manager.stopAllServices()
-  })
-
-  // Handle Deep Links (macOS)
+app.on('will-finish-launching', () => {
+  // macOS only
   app.on('open-url', (event, url) => {
     event.preventDefault()
-    void handleDeepLink(url)
+    handleAppURL(url)
   })
+})
 
-  // Handle Deep Links (Windows/Linux)
-  if (process.platform !== 'darwin') {
-    const deepLink = process.argv.find((arg) => arg.startsWith('managerapp://'))
-    if (deepLink) {
-      void handleDeepLink(deepLink)
+app.on('ready', async () => {
+  try {
+    if (isDuplicateInstance) {
+      return
     }
+
+    readyTime = now() - launchTime
+
+    app.on('browser-window-created', (_, window) => {
+      optimizer.watchWindowShortcuts(window)
+    })
+
+    await ConfStorage.validateExistence()
+    await runMigrations().catch((error) => {
+      log.error('Error running migrations:', error)
+    })
+
+    createWindow()
+
+    app.on('activate', function () {
+      if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    })
+
+    registerIpc()
+
+    await startGrpc()
+    log.info('gRPC services initialized successfully')
+  } catch (error) {
+    log.error('Error during app initialization:', error)
   }
-}
+})
+
+app.on('before-quit', async () => {
+  log.info('Application is quitting, stopping all services...')
+
+  // Stop all services gracefully
+  await manager.stopAllServices()
+})
+
 let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: true,
-      contextIsolation: true
+  const window = new AppWindow()
+
+  window.onClosed(() => {
+    mainWindow = null
+
+    if (stopSystemSockets) {
+      stopSystemSockets()
+    }
+
+    if (!__DARWIN__ && !preventQuit) {
+      app.quit()
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  window.onDidLoad(() => {
+    window.show()
 
-    // STOP the previous interval if one exists
+    window.sendLaunchTimingStats({
+      mainReadyTime: readyTime!,
+      loadTime: window.loadTime!,
+      rendererReadyTime: window.rendererReadyTime!
+    })
+
+    const fns = onDidLoadFns!
+    onDidLoadFns = null
+    for (const fn of fns) {
+      fn(window)
+    }
+
     if (stopSystemSockets) {
       stopSystemSockets()
     }
 
     // START a new system socket
-    stopSystemSockets = loadSystemSockets(mainWindow)
+    stopSystemSockets = loadSystemSockets(window)
   })
 
-  mainWindow.on('closed', () => {
-    if (stopSystemSockets) {
-      stopSystemSockets()
-    }
-  })
+  window.load()
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    void shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    void mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
+  mainWindow = window
 }
 
 /**

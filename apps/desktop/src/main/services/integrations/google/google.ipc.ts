@@ -1,5 +1,5 @@
 import { ipcMain, shell } from 'electron'
-import logger from '../../../logger'
+import log from '../../../logger'
 import { api } from '@main/services/api.service'
 import { EErrorCodes, TCommunicationResponse } from '@manager/common/src'
 
@@ -19,10 +19,7 @@ export const registerGoogleIPC = () => {
           data: true
         }
       } catch (error) {
-        logger.error(
-          'Error while trying to open Google authentication URL',
-          error
-        )
+        log.error('Error while trying to open Google authentication URL', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -46,10 +43,7 @@ export const registerGoogleIPC = () => {
           data: revoked
         }
       } catch (error) {
-        logger.error(
-          'Error while trying to revoke Google authentication',
-          error
-        )
+        log.error('Error while trying to revoke Google authentication', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,

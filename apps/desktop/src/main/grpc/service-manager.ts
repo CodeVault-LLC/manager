@@ -6,7 +6,8 @@ import { performance } from 'node:perf_hooks'
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 
-import logger from '../logger'
+import { getAvailablePort } from '../utils/system.helper'
+
 import {
   EServiceStatus,
   EServiceType,
@@ -42,6 +43,9 @@ class ServiceManager {
   private logs: IpcServiceLog[] = []
 
   constructor() {
+    // Initialize periodic health checks and crash monitoring
+    log.info('Starting Service Manager with periodic checks')
+
     setInterval(() => this.monitorHealth(), 5000)
     setInterval(() => this.monitorCrashes(), 10000)
   }
@@ -63,12 +67,15 @@ class ServiceManager {
   }): Promise<{ address: string; token: string }> {
     const key = `${packageName}.${serviceName}`
     if (this.services.has(key)) {
-      logger.warn(`Service ${key} already started`)
+      log.warn(`Service ${key} already started`)
+
       const svc = this.services.get(key)!
       return { address: svc.address, token: svc.token }
     }
 
     const token = crypto.randomBytes(16).toString('hex')
+
+    // Load the proto file and get the service definition
     const packageDef = protoLoader.loadSync(protoPath, {
       keepCase: true,
       longs: String,
@@ -99,7 +106,7 @@ class ServiceManager {
         wrappedImpl[method] = (call: any, callback: any) => {
           const auth = call.metadata.get('authorization')[0]
           if (auth !== token) {
-            logger.warn(`[AUTH FAIL] ${packageName}.${serviceName}.${method}`)
+            log.warn(`[AUTH FAIL] ${packageName}.${serviceName}.${method}`)
             return callback({
               code: grpc.status.UNAUTHENTICATED,
               message: 'Invalid token'
@@ -107,7 +114,7 @@ class ServiceManager {
           }
 
           const start = performance.now()
-          logger.info(`[gRPC CALL] ${packageName}.${serviceName}.${method}`)
+          log.info(`[gRPC CALL] ${packageName}.${serviceName}.${method}`)
 
           const done = (err: any, res: any) => {
             const time = performance.now() - start
@@ -134,7 +141,7 @@ class ServiceManager {
       })
 
       server.start()
-      logger.info(`✅ Started ${key} (in-process) on ${address}`)
+      log.info(`✅ Started ${key} (in-process) on ${address}`)
 
       const client = new (serviceDef as any)(
         address,
@@ -157,100 +164,19 @@ class ServiceManager {
     }
 
     if (bin) {
-      if (!existsSync(bin)) {
-        logger.error(`❌ Binary not found: ${bin}`)
-        this.services.set(key, {
-          address: '',
-          token,
-          client: {} as TClient,
-          startedAt,
-          binaryPath: bin,
-          crashed: true,
-          crashCount: 0,
-          responseTimes: [],
-          lastCheck: Date.now(),
-          status: 'OUTAGE'
-        })
-
-        return Promise.reject(new Error(`Binary not found: ${bin}`))
-      }
-
-      const binKey = bin
-      if (this.binaries.has(binKey)) {
-        const existing = this.binaries.get(binKey)!
-        child = existing.child
-        port = existing.port
-        logger.info(`♻️ Reusing binary ${binKey} for service ${key}`)
-      } else {
-        port = port ?? (await getAvailablePort())
-        logger.info(`🚀 Launching binary ${binKey} on port ${port}`)
-
-        child = spawn(bin, ['--port', port.toString()], {
-          stdio: 'pipe',
-          env: {
-            ...process.env,
-            GRPC_PORT: port.toString(),
-            GRPC_TOKEN: token
-          }
-        })
-
-        child.stdout?.on('data', (data) => {
-          const message = data.toString().trim()
-          this.logs.push({
-            timestamp: new Date().toISOString(),
-            service: binKey,
-            level: 'info',
-            message
-          })
-          if (this.logs.length > 1000) this.logs.shift()
-          logger.info(`[${binKey}] ${message}`)
-        })
-
-        child.stderr?.on('data', (data) => {
-          const message = data.toString().trim()
-          this.logs.push({
-            timestamp: new Date().toISOString(),
-            service: binKey,
-            level: 'error',
-            message
-          })
-          if (this.logs.length > 1000) this.logs.shift()
-          logger.error(`[${binKey}] ${message}`)
-        })
-
-        child.on('error', (err) => {
-          logger.error(`❌ Binary error in ${binKey}:`, err)
-        })
-
-        child.on('exit', (code) => {
-          logger.warn(`🚪 Binary ${binKey} exited with code ${code}`)
-        })
-
-        this.binaries.set(binKey, { child, port })
-        await waitForGrpcStartup(`127.0.0.1:${port}`, 4000)
-      }
-
-      const address = `127.0.0.1:${port}`
-      const client = new (serviceDef as any)(
-        address,
-        grpc.credentials.createInsecure()
-      ) as TClient
-
-      this.services.set(key, {
-        address,
+      const binaryServiceResponse = await this.startBinaryService(
+        bin,
+        port,
         token,
-        client,
-        child,
+        key,
+        serviceDef,
         startedAt,
-        binaryPath: bin,
-        crashed: false,
-        crashCount: 0,
-        responseTimes: [],
-        lastCheck: Date.now(),
-        status: 'OPERATIONAL'
-      })
+        child
+      )
 
-      return { address, token }
+      log.info(`✅ Started ${key} (binary) on ${binaryServiceResponse.address}`)
+
+      return binaryServiceResponse
     }
 
     throw new Error('Invalid service configuration')
@@ -305,25 +231,26 @@ class ServiceManager {
         const binEntry = this.binaries.get(svc.binaryPath)
         if (binEntry?.child) {
           binEntry.child.kill('SIGTERM')
-          logger.info(
+          log.info(
             `🛑 Terminating binary ${svc.binaryPath} as no more services use it`
           )
           this.binaries.delete(svc.binaryPath)
         }
       } else {
-        logger.info(
+        log.info(
           `🧩 Service ${key} removed, but binary is still used by others`
         )
       }
     }
 
     this.services.delete(key)
-    logger.info(`🛑 Stopped ${key}`)
+    log.info(`🛑 Stopped ${key}`)
   }
 
   async stopAllServices() {
     for (const key of this.services.keys()) {
       const [packageName, serviceName] = key.split('.')
+
       this.stopService(packageName, serviceName)
     }
   }
@@ -408,7 +335,7 @@ class ServiceManager {
         svc.lastCheck = Date.now()
       } catch (err) {
         svc.status = 'DEGRADED'
-        logger.warn(`⚠️ Health check failed for ${key}:`, err)
+        log.warn(`⚠️ Health check failed for ${key}:`, err)
       }
     }
   }
@@ -419,16 +346,14 @@ class ServiceManager {
         const retryCount = this.crashRetries.get(key) ?? 0
         if (retryCount >= 5) continue
 
-        logger.warn(
-          `🌀 Attempting restart of ${key} (attempt ${retryCount + 1})`
-        )
+        log.warn(`🌀 Attempting restart of ${key} (attempt ${retryCount + 1})`)
         const [pkg, name] = key.split('.')
 
         try {
           this.stopService(pkg, name)
           this.crashRetries.set(key, retryCount + 1)
         } catch {
-          logger.error(`❌ Restart failed for ${key}`)
+          log.error(`❌ Restart failed for ${key}`)
         }
       }
     }
@@ -445,6 +370,142 @@ class ServiceManager {
 
     return 'API'
   }
+
+  /**
+   * Starts a binary service and returns its address and token.
+   * If the binary is already running, it reuses the existing instance.
+   * This method handles both in-process and out-of-process services.
+   * @param bin - The path to the binary executable.
+   * @param port - Optional port to use, if not provided an available port will be found.
+   * @param token - The token for authentication.
+   * @param key - Unique key for the service, defaults to binary path.
+   * @param serviceDef - Optional gRPC service definition.
+   * @param startedAt - Timestamp when the service was started.
+   * @param child - Optional existing child process to reuse.
+   * @returns Promise resolving to the service address and token.
+   * @throws Error if the binary is not found.
+   * @internal
+   * @private
+   */
+  private async startBinaryService<TClient extends TypedServiceClient>(
+    bin: string,
+    port: number | undefined,
+    token: string,
+    key: string = bin, // Use binary path as key
+
+    serviceDef?: grpc.ServiceDefinition<TClient>,
+    startedAt: number = Date.now(),
+
+    child?: ChildProcessWithoutNullStreams
+  ): Promise<{ address: string; token: string }> {
+    // Adds .exe extension on Windows if not already present
+    if (process.platform === 'win32' && !bin.endsWith('.exe')) {
+      bin += '.exe'
+    }
+
+    // Check if the binary exists
+    if (!existsSync(bin)) {
+      log.error(`❌ Binary not found: ${bin}`)
+      this.services.set(key, {
+        address: '',
+        token,
+        client: {} as TClient,
+        startedAt,
+        binaryPath: bin,
+        crashed: true,
+        crashCount: 0,
+        responseTimes: [],
+        lastCheck: Date.now(),
+        status: 'OUTAGE'
+      })
+
+      this.logs.push({
+        timestamp: new Date().toISOString(),
+        service: key,
+        level: 'error',
+        message: `Binary not found: ${bin}`
+      })
+
+      return Promise.reject(new Error(`Binary not found: ${bin}`))
+    }
+
+    const binKey = bin
+    if (this.binaries.has(binKey)) {
+      const existing = this.binaries.get(binKey)!
+      child = existing.child
+      port = existing.port
+      log.info(`♻️ Reusing binary ${binKey} for service ${key}`)
+    } else {
+      port = port ?? (await getAvailablePort())
+      log.info(`🚀 Launching binary ${binKey} on port ${port}`)
+
+      child = spawn(bin, ['--port', port.toString()], {
+        stdio: 'pipe',
+        env: {
+          ...process.env,
+          GRPC_PORT: port.toString(),
+          GRPC_TOKEN: token
+        }
+      })
+
+      child.stdout?.on('data', (data) => {
+        const message = data.toString().trim()
+        this.logs.push({
+          timestamp: new Date().toISOString(),
+          service: binKey,
+          level: 'info',
+          message
+        })
+        if (this.logs.length > 1000) this.logs.shift()
+        log.info(`[${binKey}] ${message}`)
+      })
+
+      child.stderr?.on('data', (data) => {
+        const message = data.toString().trim()
+        this.logs.push({
+          timestamp: new Date().toISOString(),
+          service: binKey,
+          level: 'error',
+          message
+        })
+        if (this.logs.length > 1000) this.logs.shift()
+        log.error(`[${binKey}] ${message}`)
+      })
+
+      child.on('error', (err) => {
+        log.error(`❌ Binary error in ${binKey}:`, err)
+      })
+
+      child.on('exit', (code) => {
+        log.warn(`🚪 Binary ${binKey} exited with code ${code}`)
+      })
+
+      this.binaries.set(binKey, { child, port })
+      await waitForGrpcStartup(`127.0.0.1:${port}`, 4000)
+    }
+
+    const address = `127.0.0.1:${port}`
+    const client = new (serviceDef as any)(
+      address,
+      grpc.credentials.createInsecure()
+    ) as TClient
+
+    this.services.set(key, {
+      address,
+      token,
+      client,
+      child,
+      startedAt,
+      binaryPath: bin,
+      crashed: false,
+      crashCount: 0,
+      responseTimes: [],
+      lastCheck: Date.now(),
+      status: 'OPERATIONAL'
+    })
+
+    return { address, token }
+  }
 }
 
 async function waitForGrpcStartup(
@@ -460,18 +521,6 @@ async function waitForGrpcStartup(
       if (err) reject(new Error(`gRPC server at ${address} not ready in time.`))
       else resolve()
     })
-  })
-}
-
-async function getAvailablePort(): Promise<number> {
-  const net = await import('node:net')
-  return await new Promise((resolve, reject) => {
-    const server = net.createServer()
-    server.listen(0, () => {
-      const port = (server.address() as any).port
-      server.close(() => resolve(port))
-    })
-    server.on('error', reject)
   })
 }
 

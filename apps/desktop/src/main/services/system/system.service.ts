@@ -1,7 +1,7 @@
 import si from 'systeminformation'
 import { INetwork, ISystem, ISystemHardware } from '@manager/common/src'
 import { runPowerShellScript } from '../../utils/powershell'
-import logger from '@main/logger'
+import log from '@main/logger'
 import path from 'node:path'
 import { runAppleScript } from '../../utils/applescript'
 import { manager } from '../../grpc/service-manager'
@@ -10,28 +10,28 @@ import { runCommand } from '../../utils/command'
 export const systemServices = {
   getSystemHardware: async (): Promise<ISystemHardware> => {
     const system = await si.system()
-    logger.debug('System:', system)
+    log.debug('System:', system)
 
     const cpu = await si.cpu()
-    logger.debug('CPU:', cpu)
+    log.debug('CPU:', cpu)
 
     const memory = await si.mem()
-    logger.debug('Memory:', memory)
+    log.debug('Memory:', memory)
 
     const os = await si.osInfo()
-    logger.debug('OS:', os)
+    log.debug('OS:', os)
 
     const graphics = await si.graphics()
-    logger.debug('Graphics:', graphics)
+    log.debug('Graphics:', graphics)
 
     const network = await si.networkInterfaces()
-    logger.debug('Network:', network)
+    log.debug('Network:', network)
 
     const motherboard = await si.baseboard()
-    logger.debug('Motherboard:', motherboard)
+    log.debug('Motherboard:', motherboard)
 
     const battery = await si.battery()
-    logger.debug('Battery:', battery)
+    log.debug('Battery:', battery)
 
     const networkParsed = network.map((item) => ({
       name: item.iface,
@@ -98,7 +98,7 @@ export const systemServices = {
       return data
     }
 
-    logger.warn('getSystemInfo is not implemented for this platform.')
+    log.warn('getSystemInfo is not implemented for this platform.')
     return Promise.reject('getSystemInfo is not implemented for this platform.')
   },
 
@@ -113,14 +113,14 @@ export const systemServices = {
     const response = await new Promise<any>((resolve, reject) => {
       client.GetFileSpaceOverview(preparedRequest, (err, res) => {
         if (err || !res) {
-          logger.error('gRPC call failed:', err)
+          log.error('gRPC call failed:', err)
           return reject(new Error(err?.message || 'gRPC response missing'))
         }
         resolve(res)
       })
     })
 
-    logger.info('gRPC call successful:', response)
+    log.info('gRPC call successful:', response)
 
     return response
   },
@@ -140,7 +140,7 @@ export const systemServices = {
           try {
             return JSON.parse(v)
           } catch (e) {
-            logger.error('Failed to parse network JSON:', e)
+            log.error('Failed to parse network JSON:', e)
             return {}
           }
         }

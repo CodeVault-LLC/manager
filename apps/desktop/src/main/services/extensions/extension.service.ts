@@ -1,5 +1,5 @@
 import { IExtension } from '@manager/common/src'
-import logger from '../../logger'
+import log from '../../logger'
 import { api } from '../api.service'
 import { db } from '@main/database/data-source'
 
@@ -9,7 +9,7 @@ export const extensionService = {
       const response = await api.get<IExtension[]>('/extensions')
       return response.data
     } catch (error) {
-      logger.error('Error fetching extensions from marketplace:', error)
+      log.error('Error fetching extensions from marketplace:', error)
       throw error
     }
   },
@@ -20,7 +20,7 @@ export const extensionService = {
 
       return installedExtensions
     } catch (error) {
-      logger.error('Error fetching installed extensions:', error)
+      log.error('Error fetching installed extensions:', error)
       throw error
     }
   }

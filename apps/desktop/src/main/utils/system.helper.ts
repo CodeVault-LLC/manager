@@ -68,3 +68,15 @@ export async function getNetworkUsage() {
     transmitted: tx
   }
 }
+
+export async function getAvailablePort(): Promise<number> {
+  const net = await import('node:net')
+  return await new Promise((resolve, reject) => {
+    const server = net.createServer()
+    server.listen(0, () => {
+      const port = (server.address() as any).port
+      server.close(() => resolve(port))
+    })
+    server.on('error', reject)
+  })
+}

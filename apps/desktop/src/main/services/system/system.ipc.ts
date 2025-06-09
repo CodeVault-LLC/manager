@@ -8,7 +8,7 @@ import {
 } from '@manager/common/src'
 import { registerBrowserIPC } from './browser.ipc'
 import { systemServices } from './system.service'
-import logger from '@main/logger'
+import log from '@main/logger'
 
 /**
  * Register all IPC handlers related to system management
@@ -23,14 +23,14 @@ export const registerSystemIPC = () => {
       try {
         const systemInfo = await systemServices.getSystemInfo()
 
-        logger.debug('System info data', systemInfo)
+        log.debug('System info data', systemInfo)
 
         return { data: systemInfo }
       } catch (error: any) {
         // eslint-disable-next-line no-console
         console.error('Error while getting system info data:', error)
 
-        logger.error('Errror while getting system info data: ', error)
+        log.error('Errror while getting system info data: ', error)
 
         return {
           error: {
@@ -48,13 +48,13 @@ export const registerSystemIPC = () => {
       try {
         const hardware = await systemServices.getSystemHardware()
 
-        logger.debug('System hardware data', {
+        log.debug('System hardware data', {
           hardware
         })
 
         return { data: hardware }
       } catch (error: any) {
-        logger.error(
+        log.error(
           `Error while getting system hardware data: ${error.message}`,
           error
         )
@@ -77,7 +77,7 @@ export const registerSystemIPC = () => {
 
         return { data: storageOverview }
       } catch (error: any) {
-        logger.error(
+        log.error(
           `Error while getting storage overview data: ${error.message}`,
           error
         )
@@ -100,7 +100,7 @@ export const registerSystemIPC = () => {
 
         return { data: network }
       } catch (error: any) {
-        logger.error(`Error while getting system network data: ${error}`, error)
+        log.error(`Error while getting system network data: ${error}`, error)
 
         return {
           error: {

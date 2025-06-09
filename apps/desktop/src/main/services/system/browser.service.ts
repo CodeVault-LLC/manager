@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import os from 'node:os'
-import logger from '../../logger'
+import log from '../../logger'
 import { IBrowser } from '@manager/common/src'
 
 const username = os.userInfo().username
@@ -56,7 +56,7 @@ export const browserServices = {
       try {
         return fs.existsSync(path)
       } catch (error) {
-        logger.error(
+        log.error(
           `Error checking if browser is installed at path ${path}:`,
           error
         )
