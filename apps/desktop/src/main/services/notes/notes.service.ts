@@ -1,6 +1,5 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../../database/data-source'
-import log from '../../logger'
 import { notes } from '../../database/models/schema'
 
 import { faker } from '@faker-js/faker'

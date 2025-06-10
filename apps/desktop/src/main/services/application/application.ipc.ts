@@ -1,6 +1,5 @@
 import { ipcMain, shell } from 'electron'
 
-import log from '@main/logger'
 import { ConfStorage } from '@main/store'
 import { manager } from '../../grpc/service-manager'
 import {

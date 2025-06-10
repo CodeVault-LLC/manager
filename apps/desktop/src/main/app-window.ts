@@ -37,7 +37,7 @@ export class AppWindow {
       autoHideMenuBar: true,
 
       webPreferences: {
-        preload: path.join(__dirname, 'preload.js'),
+        preload: path.join(__dirname, '../preload/index.js'),
         contextIsolation: true,
         nodeIntegration: false,
         sandbox: true,
@@ -48,6 +48,7 @@ export class AppWindow {
     }
 
     this.window = new BrowserWindow(windowOptions)
+    savedWindowState.manage(this.window)
 
     let quitting = false
 
@@ -126,10 +127,14 @@ export class AppWindow {
     }
   }
 
+  /**
+   * Emit the `onDidLoad` event if the page has loaded and the renderer has
+   * signalled that it's ready.
+   */
   private maybeEmitDidLoad() {
-    if (!this.rendererLoaded) {
+    /*if (!this.rendererLoaded) {
       return
-    }
+    }*/
 
     this.emitter.emit('did-load', null)
   }
@@ -144,7 +149,11 @@ export class AppWindow {
     }
   }
 
-  onDidLoad(fn: () => void) {
+  /**
+   * Register a function to call when the window is done loading. At that point
+   * the page has loaded and the renderer has signalled that it is ready.
+   */
+  onDidLoad(fn: () => void): Disposable {
     return this.emitter.on('did-load', fn)
   }
 

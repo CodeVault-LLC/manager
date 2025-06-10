@@ -2,7 +2,6 @@ import { Buffer } from 'buffer'
 import { ipcMain } from 'electron'
 import { ConvertImageRequest } from '../../../grpc/__generated/system'
 import { manager } from '../../../grpc/service-manager'
-import log from '../../../logger'
 import {
   EErrorCodes,
   IConvertedImageData,

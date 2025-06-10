@@ -8,11 +8,11 @@ export const ipcClient = {
     channel: T,
     ...args: Parameters<IpcHandlers[T]>
   ): Promise<Awaited<ReturnType<IpcHandlers[T]>>> => {
-    if (useErrorStore.getState().getError(EErrorCodes.NETWORK_ERROR)) {
+    /*if (useErrorStore.getState().getError(EErrorCodes.NETWORK_ERROR)) {
       return Promise.reject(new Error('Network error')) as Promise<
         Awaited<ReturnType<IpcHandlers[T]>>
       >
-    }
+    }*/
 
     try {
       return await window.electron.invoke(channel, ...args)

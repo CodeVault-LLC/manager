@@ -1,5 +1,4 @@
 import { ipcMain } from 'electron'
-import log from '../../logger'
 import { extensionService } from './extension.service'
 import { EErrorCodes } from '@manager/common/src'
 

@@ -2,7 +2,6 @@ import axios from 'axios'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '@main/database/data-source'
 import { news, newsProvider, newsThumbnail } from '@main/database/models/schema'
-import log from '@main/logger'
 import { MsnNewsResponse } from '@manager/common/src'
 
 const msnApi = axios.create({

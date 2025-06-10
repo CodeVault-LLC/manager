@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import { Emitter, Disposable } from 'event-kit'
 
 const minWidth = 600
@@ -14,13 +14,12 @@ const minHeight = 500
 export class CrashWindow {
   private readonly window: Electron.BrowserWindow
   private readonly emitter = new Emitter()
-  private readonly errorType: ErrorType
   private readonly error: Error
 
   private hasFinishedLoading = false
   private hasSentReadyEvent = false
 
-  constructor(errorType: ErrorType, error: Error) {
+  constructor(error: Error) {
     const windowOptions: Electron.BrowserWindowConstructorOptions = {
       width: minWidth,
       height: minHeight,
@@ -47,13 +46,12 @@ export class CrashWindow {
     }
 
     this.window = new BrowserWindow(windowOptions)
-    addTrustedIPCSender(this.window.webContents)
+    //addTrustedIPCSender(this.window.webContents)
 
     this.error = error
-    this.errorType = errorType
   }
 
-  public load() {
+  load() {
     log.debug('Starting crash process')
 
     // We only listen for the first of the loading events to avoid a bug in
@@ -77,7 +75,7 @@ export class CrashWindow {
     })
 
     this.window.webContents.on('did-finish-load', () => {
-      this.window.webContents.setVisualZoomLevelLimits(1, 1)
+      void this.window.webContents.setVisualZoomLevelLimits(1, 1)
     })
 
     this.window.webContents.on('did-fail-load', () => {
@@ -104,9 +102,9 @@ export class CrashWindow {
       this.window.close()
     })
 
-    registerWindowStateChangedEvents(this.window)
+    //registerWindowStateChangedEvents(this.window)
 
-    this.window.loadURL(`file://${__dirname}/crash.html`)
+    void this.window.loadURL(`file://${__dirname}/crash.html`)
   }
 
   /**
@@ -119,11 +117,11 @@ export class CrashWindow {
     }
   }
 
-  public onClose(fn: () => void) {
+  onClose(fn: () => void) {
     this.window.on('closed', fn)
   }
 
-  public onFailedToLoad(fn: () => void) {
+  onFailedToLoad(fn: () => void) {
     this.emitter.on('did-fail-load', fn)
   }
 
@@ -131,16 +129,16 @@ export class CrashWindow {
    * Register a function to call when the window is done loading. At that point
    * the page has loaded and the renderer has signalled that it is ready.
    */
-  public onDidLoad(fn: () => void): Disposable {
+  onDidLoad(fn: () => void): Disposable {
     return this.emitter.on('did-load', fn)
   }
 
-  public focus() {
+  focus() {
     this.window.focus()
   }
 
   /** Show the window. */
-  public show() {
+  show() {
     log.debug('Showing crash process window')
     this.window.show()
   }
@@ -155,12 +153,12 @@ export class CrashWindow {
       name: this.error.name
     }
 
-    const details: ICrashDetails = {
+    /*const details: ICrashDetails = {
       type: this.errorType,
       error: friendlyError
-    }
+    }*/
 
-    ipcWebContents.send(this.window.webContents, 'error', details)
+    //ipcWebContents.send(this.window.webContents, 'error', details)
   }
 
   destroy() {

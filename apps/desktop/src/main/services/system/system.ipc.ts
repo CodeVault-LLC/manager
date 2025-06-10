@@ -8,7 +8,7 @@ import {
 } from '@manager/common/src'
 import { registerBrowserIPC } from './browser.ipc'
 import { systemServices } from './system.service'
-import log from '@main/logger'
+import { ProcessService } from '../../lib/process'
 
 /**
  * Register all IPC handlers related to system management
@@ -96,7 +96,19 @@ export const registerSystemIPC = () => {
     'system:getNetwork',
     async (): Promise<TCommunicationResponse<INetwork>> => {
       try {
-        const network = await systemServices.getNetwork()
+        const network =
+          await ProcessService.getInstance().runTask<INetwork>('getNetwork')
+
+        if (!network) {
+          log.error('Network data is empty or undefined')
+
+          return {
+            error: {
+              code: EErrorCodes.FORBIDDEN,
+              message: 'error.forbidden'
+            }
+          }
+        }
 
         return { data: network }
       } catch (error: any) {

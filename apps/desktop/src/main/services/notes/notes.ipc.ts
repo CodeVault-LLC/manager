@@ -1,5 +1,4 @@
 import { ipcMain } from 'electron'
-import log from '../../logger'
 import { notesServices } from './notes.service'
 
 export const registerNotesIPC = async () => {

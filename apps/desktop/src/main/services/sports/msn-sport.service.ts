@@ -7,7 +7,6 @@ import {
   sportGames,
   sportGameParticipants
 } from '@main/database/models/schema'
-import log from '@main/logger'
 import { MsnSportResponse } from '@manager/common/src'
 
 const msnApi = axios.create({

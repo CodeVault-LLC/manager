@@ -1,5 +1,4 @@
 import { ipcMain } from 'electron'
-import log from '../../logger'
 import { api } from '../api.service'
 import {
   EErrorCodes,

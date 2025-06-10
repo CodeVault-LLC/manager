@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron'
 import { msnSportServices } from '../sports/msn-sport.service'
 import { msnNewsServices } from './msn.service'
-import log from '@main/logger'
 import { EErrorCodes, INews, TCommunicationResponse } from '@manager/common/src'
 
 export const registerMsnIPC = async () => {

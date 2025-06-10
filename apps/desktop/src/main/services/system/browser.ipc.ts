@@ -1,6 +1,5 @@
 import { eq } from 'drizzle-orm'
 import { ipcMain } from 'electron'
-import log from '../../logger'
 import { browserList, browserServices } from './browser.service'
 import { db } from '@main/database/data-source'
 import { browsers } from '@main/database/models/browser.model'

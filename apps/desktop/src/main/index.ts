@@ -26,6 +26,8 @@ import { now } from './now'
 import { showUncaughtException } from './show-uncaught-exception'
 import { reportError } from './exception-reporting'
 
+import './services/network'
+
 app.setAppLogsPath()
 enableSourceMaps()
 
@@ -49,14 +51,12 @@ function handleUncaughtException(error: Error) {
   // exception on shutdown but that's less likely and since
   // this only affects the presentation of the crash dialog
   // it's a safe assumption to make.
-  const isLaunchError = mainWindow === null
-
   if (mainWindow) {
     mainWindow.destroy()
     mainWindow = null
   }
 
-  showUncaughtException(isLaunchError, error)
+  showUncaughtException(error)
 }
 
 /**
@@ -184,6 +184,7 @@ let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
   const window = new AppWindow()
+  window.load()
 
   window.onClosed(() => {
     mainWindow = null
@@ -219,8 +220,6 @@ function createWindow(): void {
     // START a new system socket
     stopSystemSockets = loadSystemSockets(window)
   })
-
-  window.load()
 
   mainWindow = window
 }

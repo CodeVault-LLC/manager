@@ -8,7 +8,7 @@ import { DesktopConsoleTransport } from './desktop-console-transport'
 import { DesktopFileTransport } from './desktop-file-transport'
 import { LogLevel } from './lib/logging/log-level'
 
-function initializeWinston(path: string): winston.LogMethod {
+function initializeWinston(path: string): winston.Logger {
   const timestamp = () => new Date().toISOString()
 
   const fileLogger = new DesktopFileTransport({
@@ -19,19 +19,17 @@ function initializeWinston(path: string): winston.LogMethod {
     )
   })
 
-  // Return undefined (noop function)
   fileLogger.on('error', () => {})
 
   const consoleLogger = new DesktopConsoleTransport({
     level: process.env.NODE_ENV === 'development' ? 'debug' : 'error'
   })
 
-  winston.configure({
+  // Create and return a new logger instance
+  return winston.createLogger({
     transports: [consoleLogger, fileLogger],
     format: winston.format.simple()
   })
-
-  return winston.log
 }
 
 const getLogger = memoizeOne(async () => {
@@ -44,7 +42,7 @@ export async function log(level: LogLevel, message: string) {
   try {
     const logger = await getLogger()
     await new Promise<void>((resolve, reject) => {
-      logger(level, message, (error) => {
+      logger.log(level, message, (error) => {
         if (error) {
           reject(error)
         } else {

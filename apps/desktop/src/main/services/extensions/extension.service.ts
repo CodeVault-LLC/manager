@@ -1,5 +1,4 @@
 import { IExtension } from '@manager/common/src'
-import log from '../../logger'
 import { api } from '../api.service'
 import { db } from '@main/database/data-source'
 

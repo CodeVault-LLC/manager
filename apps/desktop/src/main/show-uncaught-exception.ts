@@ -6,7 +6,7 @@ import { formatError } from './lib/logging/format-error'
 let hasReportedUncaughtException = false
 
 /** Show the uncaught exception UI. */
-export function showUncaughtException(isLaunchError: boolean, error: Error) {
+export function showUncaughtException(error: Error) {
   log.error(formatError(error))
 
   if (hasReportedUncaughtException) {
@@ -17,7 +17,7 @@ export function showUncaughtException(isLaunchError: boolean, error: Error) {
 
   setCrashMenu()
 
-  const window = new CrashWindow(isLaunchError ? 'launch' : 'generic', error)
+  const window = new CrashWindow(error)
 
   window.onDidLoad(() => {
     window.show()
