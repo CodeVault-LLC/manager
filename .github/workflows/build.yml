@@ -82,11 +82,11 @@ jobs:
           name: electron-build-macos-latest
           path: apps/desktop/dist # Must match the upload path for semantic-release to find them
 
-      - name: Download Linux artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: electron-build-ubuntu-latest
-          path: apps/desktop/dist # Must match the upload path for semantic-release to find them
+      #- name: Download Linux artifacts
+      #  uses: actions/download-artifact@v4
+      #  with:
+      #    name: electron-build-ubuntu-latest
+      #    path: apps/desktop/dist # Must match the upload path for semantic-release to find them
 
       - name: Run semantic-release
         env:

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@bufbuild/protobuf':
+        specifier: ^2.5.2
+        version: 2.5.2
       '@electron-toolkit/preload':
         specifier: ^3.0.2
         version: 3.0.2(electron@34.5.8)
@@ -125,9 +128,6 @@ importers:
       winston-transport:
         specifier: ^4.9.0
         version: 4.9.0
-      wire:
-        specifier: link:@bufbuild/protobuf/wire
-        version: link:@bufbuild/protobuf/wire
       zustand:
         specifier: ^5.0.5
         version: 5.0.5(@types/react@18.3.23)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
