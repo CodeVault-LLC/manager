@@ -1,5 +1,7 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { autoUpdater } from 'electron-updater'
+import electronUpdater from 'electron-updater'
+
+const { autoUpdater } = electronUpdater
 
 autoUpdater.logger = log
 autoUpdater.autoDownload = false
@@ -7,6 +9,8 @@ autoUpdater.autoDownload = false
 export function setupAutoUpdater(mainWindow: BrowserWindow) {
   // Check for updates immediately when app is ready
   if (!__DEV__) {
+    log.info('Setting up auto-updater...')
+
     setTimeout(() => {
       void checkForUpdates()
     }, 3000)
@@ -19,6 +23,9 @@ export function setupAutoUpdater(mainWindow: BrowserWindow) {
       60 * 60 * 1000
     )
   }
+
+  // for testing
+  void checkForUpdates()
 
   // Listen for update events
   autoUpdater.on('checking-for-update', () => {

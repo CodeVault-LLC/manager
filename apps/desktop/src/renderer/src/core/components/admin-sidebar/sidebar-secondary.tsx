@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -9,6 +8,7 @@ import {
 } from '@manager/ui'
 import { LucideIcon } from 'lucide-react'
 import { Link, LinkProps } from '@tanstack/react-router'
+import { useApplicationStore } from '../../store/application.store'
 
 export interface NavSecondaryProps {
   items: {
@@ -22,10 +22,24 @@ export function NavSecondary({
   items,
   ...props
 }: NavSecondaryProps & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const { doUpdateAction, update } = useApplicationStore()
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
+          {update?.isUpdateAvailable && (
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => doUpdateAction(true)}>
+                <span className="text-red-500">
+                  {update?.isUpdateAvailable
+                    ? 'Update Available'
+                    : 'No Updates'}
+                </span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>

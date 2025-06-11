@@ -11,8 +11,6 @@ export const runPowerShellScript = <T>(file: string): Promise<T> => {
       (error, stdout, stderr) => {
         if (error) return reject(stderr || error.message)
         try {
-          // eslint-disable-next-line no-console
-          console.log('PowerShell output:', stdout, stderr)
           resolve(JSON.parse(stdout))
         } catch (err) {
           // eslint-disable-next-line no-console

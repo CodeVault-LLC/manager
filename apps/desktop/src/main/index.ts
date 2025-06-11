@@ -185,8 +185,9 @@ let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
   const window = new AppWindow()
-  setupAutoUpdater(window.getWindow)
   window.load()
+
+  setupAutoUpdater(window.getWindow)
 
   window.onClosed(() => {
     mainWindow = null

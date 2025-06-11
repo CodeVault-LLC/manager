@@ -45,9 +45,8 @@ interface IApplicationStore {
   openExternalLink: (url: string) => Promise<void>
 
   doUpdateAction: (data: boolean) => Promise<void>
-  subscribeToUpdateStatus: (
-    callback: (data: IApplicationUpdate) => void
-  ) => void
+  subscribeToUpdateStatus: () => void
+  unsubscribeFromUpdateStatus: () => void
   subscribeToUpdateProgress: (callback: (progress: number) => void) => void
 }
 
@@ -106,15 +105,19 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     }
   },
 
-  subscribeToUpdateStatus: (callback: (data: IApplicationUpdate) => void) => {
+  subscribeToUpdateStatus: () => {
     ipcClient.on(
       'application:updateStatus',
-      (_event: any, data: IApplicationUpdate) => {
-        set({ update: data })
-        callback(data)
+      (_event: any, update: IApplicationUpdate) => {
+        set({ update })
       }
     )
   },
+  unsubscribeFromUpdateStatus: () => {
+    ipcClient.removeAll('application:updateStatus')
+    set({ update: null })
+  },
+
   subscribeToUpdateProgress: (callback: (progress: number) => void) => {
     ipcClient.on(
       'application:updateDownloadProgress',

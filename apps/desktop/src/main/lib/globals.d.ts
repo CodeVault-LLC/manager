@@ -40,6 +40,12 @@ declare const __RELEASE_CHANNEL__:
   | 'test'
   | 'development'
 
+/** The repository owner for the app, used for update URLs */
+declare const __REPO_OWNER__: string
+
+/** The repository name for the app, used for update URLs */
+declare const __REPO_NAME__: string
+
 interface IDesktopLogger {
   info: (message: string, ...args: any[]) => void
   warn: (message: string, ...args: any[]) => void

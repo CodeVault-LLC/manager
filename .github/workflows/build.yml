@@ -1,36 +1,58 @@
-name: Build/Release
+name: Build & Release
 
 on:
   push:
-    branches:
-      - master
-      - main
-      - beta
-      - alpha
+    branches: [main, master, beta, alpha]
 
 jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: npm install -g pnpm && pnpm install
+        working-directory: apps/desktop
+
+      - name: Get next semantic version
+        id: get-version
+        run: |
+          VERSION=$(npx semantic-release --dry-run | grep -oP 'Release version: \K[0-9]+\.[0-9]+\.[0-9]+')
+          echo "Detected release version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
   build:
+    needs: version
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout Git repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - run: pnpm install
+        working-directory: apps/desktop
 
-      - name: Build Electron app for ${{ matrix.os }}
+      - name: Patch package.json with version
+        run: |
+          node -e "let fs=require('fs');let p=require('./apps/desktop/package.json');p.version='${{ needs.version.outputs.version }}';fs.writeFileSync('./apps/desktop/package.json', JSON.stringify(p, null, 2));"
+
+      - name: Build Electron app
         run: pnpm run build:${{ matrix.os == 'windows-latest' && 'windows-artifacts' || matrix.os == 'macos-latest' && 'macos-artifacts' || 'linux-artifacts' }}
         working-directory: apps/desktop
 
@@ -47,7 +69,7 @@ jobs:
             apps/desktop/dist/latest*.yml
 
   release:
-    needs: build
+    needs: [build]
     runs-on: ubuntu-latest
 
     permissions:
@@ -56,44 +78,33 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout Git repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # semantic-release requires full history
+          fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - run: pnpm install
         working-directory: apps/desktop
 
-      # Download artifacts from all build jobs
       - name: Download Windows artifacts
         uses: actions/download-artifact@v4
         with:
           name: electron-build-windows-latest
-          path: apps/desktop/dist # Must match the upload path for semantic-release to find them
+          path: apps/desktop/dist
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
         with:
           name: electron-build-macos-latest
-          path: apps/desktop/dist # Must match the upload path for semantic-release to find them
-
-      #- name: Download Linux artifacts
-      #  uses: actions/download-artifact@v4
-      #  with:
-      #    name: electron-build-ubuntu-latest
-      #    path: apps/desktop/dist # Must match the upload path for semantic-release to find them
+          path: apps/desktop/dist
 
       - name: Run semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run release
-        working-directory: apps/desktop # Semantic-release needs to run from the dir where package.json is located
+        working-directory: apps/desktop

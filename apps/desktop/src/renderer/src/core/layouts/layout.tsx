@@ -25,13 +25,20 @@ export const Layout: FC<TAdminLayout> = (props) => {
 
   const { fetchCurrentUser } = useUserStore()
 
-  const { fetchInitialSettings, language } = useApplicationStore()
+  const {
+    fetchInitialSettings,
+    language,
+    subscribeToUpdateStatus,
+    unsubscribeFromUpdateStatus
+  } = useApplicationStore()
 
   useEffect(() => {
     void fetchInitialSettings() // Init application settings
     void fetchCurrentUser()
     //doBrowserRefresh() Not needed here, should be handled in page
     subscribeToSystemInactivity()
+    subscribeToUpdateStatus()
+
     //void fetchNews()
 
     if (language) {
@@ -40,6 +47,7 @@ export const Layout: FC<TAdminLayout> = (props) => {
 
     return () => {
       unsubscribeFromSystemInactivity()
+      unsubscribeFromUpdateStatus()
     }
   }, [])
 

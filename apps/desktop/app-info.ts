@@ -20,6 +20,8 @@ export function getReplacements() {
     __WIN32__: process.platform === 'win32',
     __LINUX__: process.platform === 'linux',
     __APP_NAME__: s(productName),
+    __REPO_OWNER__: s('codevault-llc'),
+    __REPO_NAME__: s('manager'),
     __APP_VERSION__: s(version),
     __DEV__: isDevBuild,
     __DEV_SECRETS__: isDevBuild || !process.env.DESKTOP_OAUTH_CLIENT_SECRET,
