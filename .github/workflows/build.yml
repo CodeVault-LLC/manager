@@ -28,7 +28,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(npx semantic-release --dry-run | grep -oP 'Release version: \K[0-9]+\.[0-9]+\.[0-9]+')
+          set -e
+          OUTPUT=$(npx semantic-release --dry-run)
+
+          echo "$OUTPUT"
+
+          VERSION=$(echo "$OUTPUT" | grep -oP 'Skip v\K[0-9]+\.[0-9]+\.[0-9]+(?= tag creation in dry-run mode)')
+
+          if [ -z "$VERSION" ]; then
+            echo "::error::Could not extract version from semantic-release output"
+            exit 1
+          fi
+
           echo "Detected release version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
