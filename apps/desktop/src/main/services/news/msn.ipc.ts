@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron'
 import { msnSportServices } from '../sports/msn-sport.service'
 import { msnNewsServices } from './msn.service'
-import logger from '@main/logger'
 import { EErrorCodes, INews, TCommunicationResponse } from '@manager/common/src'
 
 export const registerMsnIPC = async () => {
@@ -73,7 +72,7 @@ export const registerMsnIPC = async () => {
           })
         }
       } catch (error) {
-        logger.error('Failed to fetch news', error)
+        log.error('Failed to fetch news', error)
 
         return {
           error: {
@@ -130,7 +129,7 @@ export const registerMsnIPC = async () => {
           data: latestGames
         }
       } catch (error) {
-        logger.error('Failed to fetch news', error)
+        log.error('Failed to fetch news', error)
 
         return {
           error: {

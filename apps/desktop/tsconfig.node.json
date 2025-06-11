@@ -10,7 +10,7 @@
 
     "../../libs/**/*.d.ts",
     "../../libs/**/*.ts",
-    "../../libs/**/*.tsx",
+    "../../libs/**/*.tsx", "app-info.ts", "package-info.ts", "dist-info.ts",
   ],
   "compilerOptions": {
     "composite": true,
@@ -23,6 +23,6 @@
   },
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"]
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
   }
 }

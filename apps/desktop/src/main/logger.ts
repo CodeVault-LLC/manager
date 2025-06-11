@@ -1,40 +1,59 @@
-import path from 'node:path'
+import * as winston from 'winston'
+import { mkdir } from 'node:fs/promises'
 
-import { app } from 'electron'
-import { createLogger, format, transports } from 'winston'
+import memoizeOne from 'memoize-one'
 
-const { combine, timestamp, printf, colorize, json, align } = format
+import { getLogDirectoryPath } from './lib/logging/get-log-path'
+import { DesktopConsoleTransport } from './desktop-console-transport'
+import { DesktopFileTransport } from './desktop-file-transport'
+import { LogLevel } from './lib/logging/log-level'
 
-const consoleFormat = combine(
-  colorize({ all: true }),
-  timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  align(),
-  printf(({ timestamp, level, message, stack }) => {
-    return `${timestamp} ${level}: ${message}${stack ? `\n${stack}` : ''}`
+function initializeWinston(path: string): winston.Logger {
+  const timestamp = () => new Date().toISOString()
+
+  const fileLogger = new DesktopFileTransport({
+    logDirectory: path,
+    level: 'info',
+    format: winston.format.printf(
+      ({ level, message }) => `${timestamp()} - ${level}: ${message}`
+    )
   })
-)
-const fileFormat = combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), json())
 
-const logger = createLogger({
-  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-  format: fileFormat,
-  transports: [
-    new transports.File({
-      filename: path.join(app.getPath('logs'), 'error.log'),
-      level: 'error'
-    }),
-    new transports.File({
-      filename: path.join(app.getPath('logs'), 'combined.log')
-    })
-  ]
-})
+  fileLogger.on('error', () => {})
 
-if (process.env.NODE_ENV === 'development') {
-  logger.add(
-    new transports.Console({
-      format: consoleFormat
-    })
-  )
+  const consoleLogger = new DesktopConsoleTransport({
+    level: process.env.NODE_ENV === 'development' ? 'debug' : 'error'
+  })
+
+  // Create and return a new logger instance
+  return winston.createLogger({
+    transports: [consoleLogger, fileLogger],
+    format: winston.format.simple()
+  })
 }
 
-export default logger
+const getLogger = memoizeOne(async () => {
+  const logDirectory = getLogDirectoryPath()
+  await mkdir(logDirectory, { recursive: true })
+  return initializeWinston(logDirectory)
+})
+
+export async function log(level: LogLevel, message: string) {
+  try {
+    const logger = await getLogger()
+    await new Promise<void>((resolve, reject) => {
+      logger.log(level, message, (error) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
+  } catch (error) {
+    // Later fallback to send something to renderer or dump to somewhere else.
+
+    // eslint-disable-next-line no-console
+    console.error('Failed to log message:', error)
+  }
+}

@@ -2,7 +2,6 @@ import { Buffer } from 'buffer'
 import { ipcMain } from 'electron'
 import { ConvertImageRequest } from '../../../grpc/__generated/system'
 import { manager } from '../../../grpc/service-manager'
-import logger from '../../../logger'
 import {
   EErrorCodes,
   IConvertedImageData,
@@ -36,7 +35,7 @@ export const registerImageIPC = async () => {
           (resolve, reject) => {
             client.ConvertImage(preparedRequest, (err, res) => {
               if (err || !res) {
-                logger.error('gRPC call failed:', err)
+                log.error('gRPC call failed:', err)
                 return reject(
                   new Error(err?.message || 'gRPC response missing')
                 )
@@ -46,7 +45,7 @@ export const registerImageIPC = async () => {
           }
         )
 
-        logger.info('gRPC call successful:', response)
+        log.info('gRPC call successful:', response)
 
         return {
           data: {
@@ -56,7 +55,7 @@ export const registerImageIPC = async () => {
           }
         }
       } catch (error) {
-        logger.error('Image conversion failed:', error)
+        log.error('Image conversion failed:', error)
         return {
           error: {
             code: EErrorCodes.FILE_CONVERSION_ERROR,

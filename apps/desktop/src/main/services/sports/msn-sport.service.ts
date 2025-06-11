@@ -7,7 +7,6 @@ import {
   sportGames,
   sportGameParticipants
 } from '@main/database/models/schema'
-import logger from '@main/logger'
 import { MsnSportResponse } from '@manager/common/src'
 
 const msnApi = axios.create({
@@ -20,7 +19,7 @@ const msnApi = axios.create({
 
 msnApi.interceptors.response.use(
   (response) => {
-    logger.debug('MSN API response', {
+    log.debug('MSN API response', {
       status: response.status,
       statusText: response.statusText,
       data: response.data
@@ -28,7 +27,7 @@ msnApi.interceptors.response.use(
     return response
   },
   (error) => {
-    logger.error('Error fetching data from MSN API', error.message)
+    log.error('Error fetching data from MSN API', error.message)
     return Promise.reject(error)
   }
 )
@@ -118,7 +117,7 @@ export const msnSportServices = {
 
       return { success: true }
     } catch (error) {
-      logger.error('Error processing games from MSN API', error)
+      log.error('Error processing games from MSN API', error)
       throw new Error('Failed to process MSN sports data')
     }
   },
@@ -145,7 +144,7 @@ export const msnSportServices = {
 
       return games
     } catch (error) {
-      logger.error('Error fetching games from database', {
+      log.error('Error fetching games from database', {
         error
       })
       throw new Error('Failed to fetch games from database')

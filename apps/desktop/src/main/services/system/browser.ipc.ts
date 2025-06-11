@@ -1,6 +1,5 @@
 import { eq } from 'drizzle-orm'
 import { ipcMain } from 'electron'
-import logger from '../../logger'
 import { browserList, browserServices } from './browser.service'
 import { db } from '@main/database/data-source'
 import { browsers } from '@main/database/models/browser.model'
@@ -40,7 +39,7 @@ export const registerBrowserIPC = async () => {
           data: filteredBrowsers
         }
       } catch (error) {
-        logger.error('Error loading browser services:', error)
+        log.error('Error loading browser services:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,
@@ -108,7 +107,7 @@ export const registerBrowserIPC = async () => {
           data: filteredBrowsers
         }
       } catch (error) {
-        logger.error('Error refreshing browser services:', error)
+        log.error('Error refreshing browser services:', error)
         return {
           error: {
             code: EErrorCodes.FORBIDDEN,

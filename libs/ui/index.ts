@@ -7,7 +7,6 @@ export * from "./src/ui/dropdown-menu";
 export * from "./src/ui/input";
 export * from "./src/ui/input-otp";
 export * from "./src/ui/label";
-export * from "./src/ui/progress";
 export * from "./src/ui/select";
 export * from "./src/ui/separator";
 export * from "./src/ui/sidebar";

@@ -23,3 +23,11 @@ export interface IApplication {
   themes?: ITheme[];
   languages?: ILanguage[];
 }
+
+export interface IApplicationUpdate {
+  appVersion: string;
+  avaliableVersion: string;
+
+  isUpdateAvailable: boolean;
+  isUpdateFinished: boolean;
+}
