@@ -59,15 +59,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "pnpm"
-          cache-dependency-path: "apps/desktop/pnpm-lock.yaml"
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install dependencies
         run: pnpm install
-        # working-directory: apps/desktop # If your pnpm-lock.yaml and node_modules are only in apps/desktop
+        working-directory: apps/desktop
 
       # Download artifacts from all build jobs
       - name: Download Windows artifacts
