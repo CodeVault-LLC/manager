@@ -34,8 +34,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        working-directory: apps/desktop
 
       - name: Run semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run release
+        working-directory: apps/desktop
