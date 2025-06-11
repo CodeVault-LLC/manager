@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/codevault-llc/manager/compare/v1.0.0...v1.1.0) (2025-06-11)
+
+
+### Features
+
+* implement auto-updater functionality and enhance release asset management ([958ae4c](https://github.com/codevault-llc/manager/commit/958ae4c57f92e0a7f9ecaa9866c78e8477b04517))
+
 # 1.0.0 (2025-06-11)
 
 
