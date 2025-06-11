@@ -33,7 +33,6 @@ module.exports = {
   },
 
   generateNotes: (pluginConfig, context) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { commits, nextRelease, _, logger } = context
 
     logger.log('Generating release notes for version %s', nextRelease.version)

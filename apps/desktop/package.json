@@ -65,8 +65,8 @@
       }
     ],
     "plugins": [
-      "./scripts/semantic-release-codevault.js",
-      "./scripts/semantic-release-codevault-formatter.js",
+      "./scripts/semantic-release-codevault.cjs",
+      "./scripts/semantic-release-codevault-formatter.cjs",
       [
         "@semantic-release/commit-analyzer",
         {

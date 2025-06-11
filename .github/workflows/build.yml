@@ -24,6 +24,9 @@ jobs:
 
       - name: Get next semantic version
         id: get-version
+        working-directory: apps/desktop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(npx semantic-release --dry-run | grep -oP 'Release version: \K[0-9]+\.[0-9]+\.[0-9]+')
           echo "Detected release version: $VERSION"
