@@ -43,8 +43,11 @@
     "build:linux": "electron-vite build && electron-builder --linux",
     "grpc:generate": "grpc_tools_node_protoc_ts --ts_out=src/grpc --grpc_out=src/grpc --proto_path=src/grpc src/grpc/*.proto",
     "database:generate": "drizzle-kit generate",
-    "build:electron-artifacts": "pnpm run typecheck && electron-vite build && electron-builder --win nsis zip --mac dmg zip --linux AppImage deb --publish never",
-    "release": "pnpm run build:electron-artifacts && semantic-release"
+    "build:current-os": "pnpm run typecheck && electron-vite build && electron-builder --publish never",
+    "build:windows-artifacts": "pnpm run typecheck && electron-vite build && electron-builder --win nsis zip --publish never",
+    "build:macos-artifacts": "pnpm run typecheck && electron-vite build && electron-builder --mac dmg zip --publish never",
+    "build:linux-artifacts": "pnpm run typecheck && electron-vite build && electron-builder --linux AppImage deb --publish never",
+    "release": "semantic-release"
   },
   "release": {
     "branches": [
@@ -108,7 +111,7 @@
       [
         "@semantic-release/github",
         {
-          "assets": "dist/**/*",
+          "assets": [],
           "failComment": false,
           "successComment": false
         }

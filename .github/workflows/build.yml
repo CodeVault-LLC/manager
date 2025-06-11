@@ -9,8 +9,50 @@ on:
       - alpha
 
 jobs:
+  # Job to build Electron app for a specific OS
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Git repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm" # Cache pnpm modules
+          cache-dependency-path: "apps/desktop/pnpm-lock.yaml" # Specific to monorepo/sub-directory
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install # Runs pnpm install in the repository root
+        # If your pnpm-lock.yaml and node_modules are only in apps/desktop,
+        # you might need 'working-directory: apps/desktop' here too.
+        # But generally, pnpm install runs at the root if it's a monorepo.
+        # Let's assume the pnpm-lock.yaml is at the root for this example.
+
+      - name: Build Electron app for ${{ matrix.os }}
+        run: pnpm run build:${{ matrix.os == 'windows-latest' && 'windows-artifacts' || matrix.os == 'macos-latest' && 'macos-artifacts' || 'linux-artifacts' }}
+        working-directory: apps/desktop # Run build script from the Electron app's directory
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: electron-build-${{ matrix.os }}
+          path: apps/desktop/dist/ # Ensure this matches your electron-builder output directory relative to repo root
+          # Note: electron-builder.yml has 'output: ./dist', meaning 'apps/desktop/dist' from repo root if working-directory is apps/desktop
+          # If 'output: dist' directly in electron-builder.yml and that file is in apps/desktop, then output is apps/desktop/dist
+
+  # Job to run semantic-release after all builds are complete
   release:
-    runs-on: ubuntu-latest
+    needs: build # This job depends on all 'build' jobs completing successfully
+    runs-on: ubuntu-latest # semantic-release typically runs on Linux
 
     permissions:
       contents: write
@@ -21,22 +63,43 @@ jobs:
       - name: Checkout Git repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # semantic-release requires full history
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: "apps/desktop/pnpm-lock.yaml"
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: apps/desktop
+        # working-directory: apps/desktop # If your pnpm-lock.yaml and node_modules are only in apps/desktop
+
+      # Download artifacts from all build jobs
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: electron-build-windows-latest
+          path: apps/desktop/dist # Must match the upload path for semantic-release to find them
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: electron-build-macos-latest
+          path: apps/desktop/dist # Must match the upload path for semantic-release to find them
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: electron-build-ubuntu-latest
+          path: apps/desktop/dist # Must match the upload path for semantic-release to find them
 
       - name: Run semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm run release
-        working-directory: apps/desktop
+        run: pnpm run release # This now just runs semantic-release
+        working-directory: apps/desktop # Semantic-release needs to run from the dir where package.json is located
