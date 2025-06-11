@@ -19,6 +19,7 @@ import {
   ISystemStatistics,
   IpcServiceLog,
   INetwork,
+  IApplicationUpdate,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -64,6 +65,9 @@ export interface IpcHandlers {
   "application:initial": () => Promise<
     TCommunicationResponse<{ theme: ETheme; language: string }>
   >;
+  "application:updateAction": (
+    data: boolean
+  ) => Promise<TCommunicationResponse<boolean>>;
   "application:serviceStatus": () => Promise<
     TCommunicationResponse<IServiceStatus[]>
   >;
@@ -124,4 +128,7 @@ export interface IpcEmittedEvents {
   "auth:google:callback": (response: boolean) => void;
   "system:statistics": (data: ISystemStatistics) => void;
   "system:inactivity": (data: { inactive: boolean; pid: number }) => void;
+
+  "application:updateStatus": (data: IApplicationUpdate) => void;
+  "application:updateDownloadProgress": (progress: number) => void;
 }

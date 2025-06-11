@@ -42,7 +42,90 @@
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
     "grpc:generate": "grpc_tools_node_protoc_ts --ts_out=src/grpc --grpc_out=src/grpc --proto_path=src/grpc src/grpc/*.proto",
-    "database:generate": "drizzle-kit generate"
+    "database:generate": "drizzle-kit generate",
+    "build:electron-artifacts": "pnpm run typecheck && electron-vite build && electron-builder --win nsis zip --mac dmg zip --linux AppImage deb --publish never",
+    "release": "pnpm run build:electron-artifacts && semantic-release"
+  },
+  "release": {
+    "branches": [
+      {
+        "name": "master",
+        "channel": "latest"
+      },
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "angular",
+          "releaseRules": [
+            {
+              "type": "docs",
+              "scope": "README",
+              "release": "patch"
+            },
+            {
+              "type": "refactor",
+              "release": "patch"
+            },
+            {
+              "type": "style",
+              "release": "patch"
+            },
+            {
+              "type": "perf",
+              "release": "patch"
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "angular"
+        }
+      ],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": "dist/**/*",
+          "failComment": false,
+          "successComment": false
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ],
+    "tagFormat": "v${version}",
+    "repositoryUrl": "https://github.com/codevault-llc/manager"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
@@ -87,6 +170,12 @@
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.1.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.3",
     "@tanstack/react-router": "^1.120.7",
     "@tanstack/router-devtools": "^1.120.7",
     "@types/google-protobuf": "^3.15.12",
@@ -96,6 +185,7 @@
     "@types/semver": "^7.7.0",
     "@vitejs/plugin-react": "^4.5.0",
     "autoprefixer": "^10.4.21",
+    "conventional-changelog-angular": "^8.0.0",
     "drizzle-kit": "^0.30.6",
     "electron": "^34.0.0",
     "electron-builder": "^25.1.8",
@@ -111,6 +201,7 @@
     "prettier": "^3.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "semantic-release": "^24.2.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"

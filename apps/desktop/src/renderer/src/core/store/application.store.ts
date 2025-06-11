@@ -1,7 +1,12 @@
 import { ipcClient } from '@renderer/utils/ipcClient'
 import { create } from 'zustand'
 
-import { ETheme, IpcServiceLog, IServiceStatus } from '@manager/common/src'
+import {
+  ETheme,
+  IApplicationUpdate,
+  IpcServiceLog,
+  IServiceStatus
+} from '@manager/common/src'
 
 interface ITheme {
   id: ETheme
@@ -24,6 +29,8 @@ interface IApplicationStore {
 
   themes: ITheme[]
   languages: ILanguage[]
+  update: IApplicationUpdate | null
+  updateProgress: number
 
   fetchInitialSettings: () => Promise<void>
 
@@ -36,6 +43,12 @@ interface IApplicationStore {
   setLanguage: (language: string) => Promise<void>
 
   openExternalLink: (url: string) => Promise<void>
+
+  doUpdateAction: (data: boolean) => Promise<void>
+  subscribeToUpdateStatus: (
+    callback: (data: IApplicationUpdate) => void
+  ) => void
+  subscribeToUpdateProgress: (callback: (progress: number) => void) => void
 }
 
 export const useApplicationStore = create<IApplicationStore>((set, get) => ({
@@ -43,6 +56,8 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   language: 'en',
   status: [],
   logs: [],
+  update: null,
+  updateProgress: 0,
 
   themes: [
     { id: ETheme.SYSTEM, name: 'System', previewColor: '#ffffff' },
@@ -75,6 +90,39 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
       // eslint-disable-next-line no-console
       console.error('getting initial system data error', error)
     }
+  },
+
+  doUpdateAction: async (data: boolean) => {
+    try {
+      const response = await ipcClient.invoke('application:updateAction', data)
+
+      if (response.error) {
+        // eslint-disable-next-line no-console
+        console.error('updating application action error', response.error)
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('updating application action error', error)
+    }
+  },
+
+  subscribeToUpdateStatus: (callback: (data: IApplicationUpdate) => void) => {
+    ipcClient.on(
+      'application:updateStatus',
+      (_event: any, data: IApplicationUpdate) => {
+        set({ update: data })
+        callback(data)
+      }
+    )
+  },
+  subscribeToUpdateProgress: (callback: (progress: number) => void) => {
+    ipcClient.on(
+      'application:updateDownloadProgress',
+      (_event: any, progress: number) => {
+        set({ updateProgress: progress })
+        callback(progress)
+      }
+    )
   },
 
   setHtmlTheme: (theme: ETheme) => {
