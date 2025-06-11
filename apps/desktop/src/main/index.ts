@@ -27,6 +27,7 @@ import { showUncaughtException } from './show-uncaught-exception'
 import { reportError } from './exception-reporting'
 
 import './services/network'
+import { setupAutoUpdater } from './lib/updater'
 
 app.setAppLogsPath()
 enableSourceMaps()
@@ -184,6 +185,7 @@ let stopSystemSockets: (() => void) | null = null
 
 function createWindow(): void {
   const window = new AppWindow()
+  setupAutoUpdater(window.getWindow)
   window.load()
 
   window.onClosed(() => {

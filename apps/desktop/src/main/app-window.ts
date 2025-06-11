@@ -186,6 +186,10 @@ export class AppWindow {
     return this.window.isMinimized()
   }
 
+  get getWindow() {
+    return this.window
+  }
+
   restore() {
     if (this.window.isMinimized()) {
       this.window.restore()

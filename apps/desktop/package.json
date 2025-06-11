@@ -111,7 +111,32 @@
       [
         "@semantic-release/github",
         {
-          "assets": [],
+          "assets": [
+            {
+              "path": "dist/*.exe",
+              "label": "Windows Installer"
+            },
+            {
+              "path": "dist/*.dmg",
+              "label": "macOS Disk Image"
+            },
+            {
+              "path": "dist/*.zip",
+              "label": "macOS Archive"
+            },
+            {
+              "path": "dist/*.AppImage",
+              "label": "Linux AppImage"
+            },
+            {
+              "path": "dist/*.deb",
+              "label": "Linux Debian Package"
+            },
+            {
+              "path": "dist/latest*.yml",
+              "label": "Latest Info"
+            }
+          ],
           "failComment": false,
           "successComment": false
         }

@@ -1,8 +1,15 @@
 appId: no.codevault.manager
 productName: Manager
+copyright: Copyright © 2024 Codevault LLC
+
 artifactName: ${name}-${version}-${os}-${arch}.${ext}
 
-publish: { provider: github, releaseType: draft, vPrefixedTagName: true }
+publish:
+  provider: github
+  releaseType: release
+  vPrefixedTagName: true
+  owner: codevault-llc
+
 forceCodeSigning: false
 
 # native dependencies compiling gets triggered in ./scripts/prepare-native-deps.ts
