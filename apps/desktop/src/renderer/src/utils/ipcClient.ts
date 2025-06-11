@@ -1,6 +1,5 @@
 import { IpcRendererListener } from '@electron-toolkit/preload'
-import { EErrorCodes, IpcEmittedEvents, IpcHandlers } from '@manager/common/src'
-import { useErrorStore } from '@renderer/core/store/error.store'
+import { IpcEmittedEvents, IpcHandlers } from '@manager/common/src'
 
 export const ipcClient = {
   // Wrapper for invoking IPC methods
@@ -8,12 +7,6 @@ export const ipcClient = {
     channel: T,
     ...args: Parameters<IpcHandlers[T]>
   ): Promise<Awaited<ReturnType<IpcHandlers[T]>>> => {
-    /*if (useErrorStore.getState().getError(EErrorCodes.NETWORK_ERROR)) {
-      return Promise.reject(new Error('Network error')) as Promise<
-        Awaited<ReturnType<IpcHandlers[T]>>
-      >
-    }*/
-
     try {
       return await window.electron.invoke(channel, ...args)
     } catch (error) {

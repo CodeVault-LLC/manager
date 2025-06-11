@@ -107,7 +107,7 @@ let isDuplicateInstance = false
 const gotSingleInstanceLock = app.requestSingleInstanceLock()
 isDuplicateInstance = !gotSingleInstanceLock
 
-app.on('second-instance', (event, args, workingDirectory) => {
+app.on('second-instance', (_, __, ___) => {
   if (mainWindow) {
     if (mainWindow.isMinimized) {
       mainWindow.restore()

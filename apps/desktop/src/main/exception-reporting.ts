@@ -41,18 +41,19 @@ export async function reportError(
     }
   }
 
-  const body = [...data.entries()]
+  /*const body = [...data.entries()]
     .map(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
     )
-    .join('&')
+    .join('&')*/
 
   try {
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((_, __) => {
       // TODO: Add a API endpoint for this
     })
     log.info('Error report submitted')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     log.error('Failed submitting error report', error)
   }

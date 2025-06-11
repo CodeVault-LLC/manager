@@ -158,7 +158,7 @@ export class AppWindow {
   }
 
   /** Send the app launch timing stats to the renderer. */
-  sendLaunchTimingStats(stats: ILaunchStats) {
+  sendLaunchTimingStats(_: ILaunchStats) {
     //ipcWebContents.send(this.window.webContents, 'launch-timing-stats', stats)
   }
 
@@ -216,9 +216,9 @@ export class AppWindow {
   }
 
   /** Is the page loaded and has the renderer signalled it's ready? */
-  private get rendererLoaded(): boolean {
+  /*private get rendererLoaded(): boolean {
     return !!this.loadTime && !!this.rendererReadyTime
-  }
+  }*/
 
   // Some function to send to frontend (TEMPORARY)
   send(channel: string, ...args: any[]) {

@@ -14,12 +14,12 @@ const minHeight = 500
 export class CrashWindow {
   private readonly window: Electron.BrowserWindow
   private readonly emitter = new Emitter()
-  private readonly error: Error
+  //private readonly error: Error
 
   private hasFinishedLoading = false
   private hasSentReadyEvent = false
 
-  constructor(error: Error) {
+  constructor(_: Error) {
     const windowOptions: Electron.BrowserWindowConstructorOptions = {
       width: minWidth,
       height: minHeight,
@@ -48,7 +48,7 @@ export class CrashWindow {
     this.window = new BrowserWindow(windowOptions)
     //addTrustedIPCSender(this.window.webContents)
 
-    this.error = error
+    //this.error = error
   }
 
   load() {
@@ -147,7 +147,7 @@ export class CrashWindow {
   private sendError() {
     // `Error` can't be JSONified so it doesn't transport nicely over IPC. So
     // we'll just manually copy the properties we care about.
-    const friendlyError = {
+    /*const friendlyError = {
       stack: this.error.stack,
       message: this.error.message,
       name: this.error.name
@@ -157,7 +157,6 @@ export class CrashWindow {
       type: this.errorType,
       error: friendlyError
     }*/
-
     //ipcWebContents.send(this.window.webContents, 'error', details)
   }
 
