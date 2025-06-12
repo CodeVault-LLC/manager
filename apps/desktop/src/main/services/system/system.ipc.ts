@@ -22,14 +22,10 @@ export const registerSystemIPC = () => {
     async (): Promise<TCommunicationResponse<ISystem>> => {
       try {
         const systemInfo = await systemServices.getSystemInfo()
-
         log.debug('System info data', systemInfo)
 
         return { data: systemInfo }
       } catch (error: any) {
-        // eslint-disable-next-line no-console
-        console.error('Error while getting system info data:', error)
-
         log.error('Errror while getting system info data: ', error)
 
         return {

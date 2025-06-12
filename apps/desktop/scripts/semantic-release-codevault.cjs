@@ -33,15 +33,6 @@ module.exports = {
   },
 
   generateNotes: (pluginConfig, context) => {
-    const { commits, nextRelease, _, logger } = context
-
-    logger.log('Generating release notes for version %s', nextRelease.version)
-
-    // Basic release notes generation
-    const notes = commits
-      .map((commit) => `* ${commit.subject} (${commit.hash})`)
-      .join('\n')
-
-    return `## Version ${nextRelease.version}\n\n${notes}`
+    return null
   }
 }

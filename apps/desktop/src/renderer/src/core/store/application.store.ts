@@ -109,6 +109,8 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     ipcClient.on(
       'application:updateStatus',
       (_event: any, update: IApplicationUpdate) => {
+        console.log('Subscribing to update status', update)
+
         set({ update })
       }
     )

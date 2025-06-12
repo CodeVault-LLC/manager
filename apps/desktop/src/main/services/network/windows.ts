@@ -1,7 +1,8 @@
-import { INetwork } from '@manager/common/src' // Adjust this path as per your project structure
+import { IAdapterInfo, INetwork } from '@manager/common/src' // Adjust this path as per your project structure
 import { ProcessService } from '../../lib/process' // Assuming this path is correct
 import { runCommand } from '../../utils/command' // Assuming this path is correct
 import { INetworkProvider } from './network.d' // Assuming this is INetworkProvider as defined before
+import { safeJsonParse } from '../../utils/json'
 
 ProcessService.getInstance().registerTask<INetwork>(
   'getNetwork',
@@ -122,7 +123,7 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
       leaseTime: ''
     }
 
-    let currentNetworkState = { ...defaultNetwork }
+    const currentNetworkState = { ...defaultNetwork }
 
     try {
       const netAdapterInfoJson = await runCommand(
@@ -130,14 +131,20 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         {
           expectedType: 'string',
           defaultValue: '{}',
-          timeout: 7000,
-          shell: 'powershell'
+          timeout: 7000
         }
       )
 
-      const activeAdapters = JSON.parse(netAdapterInfoJson)
+      const activeAdapters: IAdapterInfo = safeJsonParse(netAdapterInfoJson, {
+        Name: '',
+        InterfaceDescription: '',
+        LinkSpeed: '',
+        Status: '',
+        MacAddress: '',
+        Nlmtu: null
+      })
 
-      if (!activeAdapters || activeAdapters.length === 0) {
+      if (!activeAdapters) {
         log.warn(
           'No active network adapters found. Returning default network state.'
         )
@@ -145,19 +152,94 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         return defaultNetwork
       }
 
-      const primaryAdapter = activeAdapters // Already sorted by InterfaceMetric implicitly by Get-NetAdapter
+      const primaryAdapter = activeAdapters
 
       if (!primaryAdapter) {
         log.warn('No primary active network adapter found.')
         return defaultNetwork
       }
 
-      // Now, fetch ipconfig /all output
-      const ipconfigAllOutput = await runCommand('ipconfig /all', {
-        expectedType: 'string',
-        defaultValue: '',
-        timeout: 5000
-      })
+      const [
+        ipconfigAllOutput,
+        externalIP,
+        pingResult,
+        firewallStatusJson,
+        vpnAdaptersJson,
+        openPortsRaw,
+        activeConnectionsRaw,
+        hostname
+      ] = await Promise.all([
+        runCommand('ipconfig /all', {
+          expectedType: 'string',
+          defaultValue: '',
+          timeout: 5000
+        }),
+        runCommand('Invoke-RestMethod -Uri https://api.ipify.org', {
+          match: /^\d{1,3}(\.\d{1,3}){3}$/,
+          defaultValue: '',
+          timeout: 5000
+        }),
+        runCommand('ping -n 1 8.8.8.8', {
+          defaultValue: '',
+          timeout: 2000
+        }),
+        runCommand(
+          'Get-NetFirewallProfile | Select-Object Name,Enabled | ConvertTo-Json',
+          {
+            expectedType: 'string',
+            defaultValue: '[]',
+            timeout: 5000,
+            transform: (v) => {
+              try {
+                const parsed = safeJsonParse(v, {
+                  Name: '',
+                  Enabled: false
+                })
+                return JSON.stringify(Array.isArray(parsed) ? parsed : [parsed])
+              } catch (e) {
+                log.error('Failed to parse firewall status JSON (win):', e)
+                return '[]'
+              }
+            }
+          }
+        ),
+        runCommand(
+          "Get-NetAdapter -Physical -IncludeHidden | Where-Object {$_.Name -like '*VPN*' -or $_.Name -like '*Tunnel*' -or $_.Name -like '*Tap*' -or $_.Name -like '*tun*'} | Where-Object Status -eq 'Up' | Select-Object Name | ConvertTo-Json",
+          {
+            expectedType: 'string',
+            defaultValue: '[]',
+            timeout: 5000,
+            transform: (v) => {
+              try {
+                if (!v) {
+                  log.warn('No VPN adapters found or command returned empty.')
+                  return '[]'
+                }
+
+                const parsed = safeJsonParse(v, '[]')
+                return JSON.stringify(Array.isArray(parsed) ? parsed : [parsed])
+              } catch (e) {
+                log.error('Failed to parse VPN adapter JSON (win):', e)
+                return '[]'
+              }
+            }
+          }
+        ),
+        runCommand('netstat -anp TCP | findstr /i "LISTENING"', {
+          expectedType: 'string',
+          defaultValue: '',
+          timeout: 5000
+        }),
+        runCommand('(netstat -an | Select-String ESTABLISHED).Count', {
+          expectedType: 'string',
+          defaultValue: '0',
+          timeout: 5000
+        }),
+        runCommand('hostname', {
+          expectedType: 'string',
+          defaultValue: ''
+        })
+      ])
 
       // Parse ipconfig /all output specifically for the primary adapter
       const adapterDetails = await parseIpconfigAllForAdapter(
@@ -176,23 +258,9 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
       currentNetworkState.ssid = adapterDetails.ssid || ''
       currentNetworkState.mtu = primaryAdapter.Nlmtu || 1500 // Get MTU from Get-NetAdapter
       currentNetworkState.leaseTime = adapterDetails.leaseExpires || '' // Often lease expires is more useful
-
-      // External IP (using public API, can sometimes fail due to network issues)
-      currentNetworkState.externalIP = await runCommand(
-        'Invoke-RestMethod -Uri https://api.ipify.org',
-        {
-          match: /^\d{1,3}(\.\d{1,3}){3}$/,
-          defaultValue: '',
-          timeout: 5000,
-          shell: 'powershell'
-        }
-      )
+      currentNetworkState.externalIP = externalIP || ''
 
       // Ping for Latency and Status (ping Google DNS)
-      const pingResult = await runCommand('ping -n 1 8.8.8.8', {
-        defaultValue: '',
-        timeout: 2000
-      })
       const latencyMatch = pingResult.match(/Average = (\d+)ms/)
       currentNetworkState.latency = latencyMatch
         ? parseInt(latencyMatch[1], 10)
@@ -209,8 +277,7 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
           {
             expectedType: 'string',
             defaultValue: '0',
-            timeout: 3000,
-            shell: 'powershell'
+            timeout: 3000
           }
         )
         // This command needs careful testing. A more robust way might be:
@@ -219,67 +286,16 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         currentNetworkState.signalStrength = parseInt(signalRaw, 10) || 0
       }
 
-      // Firewall Status (Windows Defender Firewall)
-      const firewallStatusJson = await runCommand(
-        'Get-NetFirewallProfile | Select-Object Name,Enabled | ConvertTo-Json',
-        {
-          expectedType: 'string',
-          defaultValue: '[]',
-          timeout: 5000,
-          shell: 'powershell',
-          transform: (v) => {
-            try {
-              const parsed = JSON.parse(v)
-              return JSON.stringify(Array.isArray(parsed) ? parsed : [parsed])
-            } catch (e) {
-              log.error('Failed to parse firewall status JSON (win):', e)
-              return '[]'
-            }
-          }
-        }
-      )
-      const parsedFirewallStatus = JSON.parse(firewallStatusJson)
+      const parsedFirewallStatus = safeJsonParse(firewallStatusJson, '[]')
       currentNetworkState.firewallEnabled =
         Array.isArray(parsedFirewallStatus) &&
         parsedFirewallStatus.some((profile: any) => profile?.Enabled === true)
 
-      // VPN Active (check for VPN adapters being 'Up')
-      const vpnAdaptersJson = await runCommand(
-        "Get-NetAdapter -Physical -IncludeHidden | Where-Object {$_.Name -like '*VPN*' -or $_.Name -like '*Tunnel*' -or $_.Name -like '*Tap*' -or $_.Name -like '*tun*'} | Where-Object Status -eq 'Up' | Select-Object Name | ConvertTo-Json",
-        {
-          expectedType: 'string',
-          defaultValue: '[]',
-          timeout: 5000,
-          shell: 'powershell',
-          transform: (v) => {
-            try {
-              if (!v) {
-                log.warn('No VPN adapters found or command returned empty.')
-                return '[]'
-              }
-
-              const parsed = JSON.parse(v)
-              return JSON.stringify(Array.isArray(parsed) ? parsed : [parsed])
-            } catch (e) {
-              log.error('Failed to parse VPN adapter JSON (win):', e)
-              return '[]'
-            }
-          }
-        }
-      )
-      const parsedVpnAdapters = JSON.parse(vpnAdaptersJson)
+      const parsedVpnAdapters = safeJsonParse(vpnAdaptersJson, '[]')
       currentNetworkState.vpnActive =
         Array.isArray(parsedVpnAdapters) && parsedVpnAdapters.length > 0
 
       // Open Ports (using netstat)
-      const openPortsRaw = await runCommand(
-        'netstat -anp TCP | findstr /i "LISTENING"', // Using findstr for more robust matching
-        {
-          expectedType: 'string',
-          defaultValue: '',
-          timeout: 5000
-        }
-      )
       const openPorts = openPortsRaw
         .split('\n')
         .map((line) => {
@@ -289,23 +305,11 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         .filter((n) => !isNaN(n))
       currentNetworkState.openPorts = [...new Set(openPorts)]
 
-      // Active Connections
-      const activeConnectionsRaw = await runCommand(
-        'netstat -an | findstr /i "ESTABLISHED" /c', // Using findstr for more robust matching
-        {
-          expectedType: 'string',
-          defaultValue: '0',
-          timeout: 5000
-        }
-      )
       currentNetworkState.activeConnections =
         parseInt(activeConnectionsRaw.trim(), 10) || 0
 
       // Hostname
-      currentNetworkState.hostname = await runCommand('hostname', {
-        expectedType: 'string',
-        defaultValue: ''
-      })
+      currentNetworkState.hostname = hostname
     } catch (error) {
       log.error(`Critical error getting network info on Windows: ${error}`)
       return defaultNetwork

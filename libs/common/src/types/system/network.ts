@@ -21,3 +21,16 @@ export interface INetwork {
   mtu: number;
   leaseTime: string;
 }
+
+/**
+ * Unparsed network information.
+ * This interface represents the raw output from network commands.
+ */
+export interface IAdapterInfo {
+  Name: string;
+  InterfaceDescription: string;
+  LinkSpeed: string;
+  Status: string;
+  MacAddress: string;
+  Nlmtu: number | null;
+}

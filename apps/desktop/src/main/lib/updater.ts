@@ -106,7 +106,29 @@ export function setupAutoUpdater(mainWindow: BrowserWindow) {
 
 async function checkForUpdates() {
   try {
-    return await autoUpdater.checkForUpdates()
+    const updates = await autoUpdater.checkForUpdates()
+    if (updates === null) {
+      log.warn('No updates found or check failed')
+      return {
+        status: 'no-updates-found',
+        message: 'No updates found or check failed'
+      }
+    }
+
+    if (updates && updates?.updateInfo) {
+      log.info('Update available:', updates.updateInfo.version)
+      return {
+        status: 'update-available',
+        version: updates.updateInfo.version,
+        message: `Update available: ${updates.updateInfo.version}`
+      }
+    } else {
+      log.info('No updates available')
+      return {
+        status: 'update-not-available',
+        message: 'No updates available'
+      }
+    }
   } catch (error) {
     log.error('Failed to check for updates:', error)
     return null

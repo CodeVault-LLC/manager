@@ -1,10 +1,3 @@
-## Version 1.1.1
-
-* fix: refine version extraction regex in semantic-release step (b1a7e3f84b8073b46201d19493680023ab4edc5e)
-* fix: improve version extraction logic in semantic-release step (b9cee20ad528d9da26df1953ad706f54b8a8a3d6)
-* fix: update semantic release scripts and improve versioning logic (06ff3073b6ae0b0024886e38aa1244ea48a44ebc)
-* fix: enhance auto-updater functionality and add semantic release scripts (418901428b0141f7abd2d4e7134fdff7f798f413)
-
 ## [1.1.1](https://github.com/codevault-llc/manager/compare/v1.1.0...v1.1.1) (2025-06-11)
 
 

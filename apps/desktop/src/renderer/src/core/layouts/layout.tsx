@@ -35,7 +35,6 @@ export const Layout: FC<TAdminLayout> = (props) => {
   useEffect(() => {
     void fetchInitialSettings() // Init application settings
     void fetchCurrentUser()
-    //doBrowserRefresh() Not needed here, should be handled in page
     subscribeToSystemInactivity()
     subscribeToUpdateStatus()
 

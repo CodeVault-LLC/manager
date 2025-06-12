@@ -40,7 +40,9 @@ function RouteComponent() {
   const { network, getNetwork, loading } = useSystemStore()
 
   useEffect(() => {
-    void getNetwork()
+    if (!network) {
+      getNetwork()
+    }
   }, [getNetwork])
 
   const InfoBlock = ({
