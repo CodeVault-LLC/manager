@@ -15,14 +15,13 @@ export const comparePassword = (
 
 export const generateJWT = (
   id: number | string,
-  JWT_SECRET: string,
   JWT_EXPIRES_IN: number,
 ): string => {
   return sign(
     {
       id,
     },
-    JWT_SECRET,
+    configuration.required.JWT_SECRET,
     {
       expiresIn: JWT_EXPIRES_IN,
     },

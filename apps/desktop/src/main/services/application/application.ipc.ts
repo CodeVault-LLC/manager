@@ -6,9 +6,12 @@ import {
   EErrorCodes,
   ETheme,
   IApplication,
+  IGeoLocation,
   IpcServiceLog,
   TCommunicationResponse
 } from '@manager/common/src'
+import { ProcessService } from '../../lib/process'
+import { SessionStorage } from '../../lib/session'
 
 /**
  * Register all IPC handlers related to application settings
@@ -17,31 +20,33 @@ import {
  * @returns {void}
  */
 export const registerApplicationIPC = () => {
-  ipcMain.handle(
-    'application:initial',
-    async (): Promise<
-      TCommunicationResponse<{ theme: ETheme; language: string }>
-    > => {
-      try {
-        const theme = (await ConfStorage.get('theme')) ?? ETheme.LIGHT
-        const language = (await ConfStorage.get('language')) ?? 'en'
+  ipcMain.handle('application:initial', async () => {
+    try {
+      const theme = (await ConfStorage.get('theme')) ?? ETheme.LIGHT
+      const language = (await ConfStorage.get('language')) ?? 'en'
 
-        return { data: { theme, language } }
-      } catch (error: any) {
-        log.error(
-          `Error while getting system initial data: ${error.message}`,
-          error
+      const geolocation =
+        await ProcessService.getInstance().runTask<IGeoLocation>(
+          'getGeoLocation'
         )
 
-        return {
-          error: {
-            code: EErrorCodes.FORBIDDEN,
-            message: 'error.forbidden'
-          }
+      SessionStorage.getInstance().setItem('geolocation', geolocation)
+
+      return { data: { theme, language, geolocation } }
+    } catch (error: any) {
+      log.error(
+        `Error while getting system initial data: ${error.message}`,
+        error
+      )
+
+      return {
+        error: {
+          code: EErrorCodes.FORBIDDEN,
+          message: 'error.forbidden'
         }
       }
     }
-  )
+  })
 
   ipcMain.handle(
     'application:setAppSettings',

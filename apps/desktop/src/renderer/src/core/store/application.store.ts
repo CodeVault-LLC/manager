@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import {
   ETheme,
   IApplicationUpdate,
+  IGeoLocation,
   IpcServiceLog,
   IServiceStatus
 } from '@manager/common/src'
@@ -23,6 +24,7 @@ interface ILanguage {
 interface IApplicationStore {
   theme: ETheme
   language: string
+  geolocation: IGeoLocation | null
 
   status: IServiceStatus[]
   logs: IpcServiceLog[]
@@ -53,6 +55,8 @@ interface IApplicationStore {
 export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   theme: ETheme.SYSTEM,
   language: 'en',
+  geolocation: null,
+
   status: [],
   logs: [],
   update: null,
@@ -74,9 +78,9 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
       const system = await ipcClient.invoke('application:initial')
 
       if (system.data) {
-        const { theme, language } = system.data
+        const { theme, language, geolocation } = system.data
 
-        set({ theme, language })
+        set({ theme, language, geolocation })
         get().setHtmlTheme(theme)
       }
 
@@ -109,12 +113,11 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     ipcClient.on(
       'application:updateStatus',
       (_event: any, update: IApplicationUpdate) => {
-        console.log('Subscribing to update status', update)
-
         set({ update })
       }
     )
   },
+
   unsubscribeFromUpdateStatus: () => {
     ipcClient.removeAll('application:updateStatus')
     set({ update: null })

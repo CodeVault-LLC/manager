@@ -44,6 +44,7 @@ export const userMiddleware = async (
     const xSystemHeader = req.headers['x-system'] as string | undefined;
 
     if (!authorizationHeader || !xSystemHeader) {
+      console.log('Missing authorization or x-system header');
       res.status(401).send('Unauthorized');
       return;
     }
@@ -51,6 +52,7 @@ export const userMiddleware = async (
     const token = authorizationHeader.split(' ')[1];
 
     if (!token) {
+      console.log('No token found in authorization header');
       res.status(401).send('Unauthorized');
       return;
     }
@@ -60,18 +62,21 @@ export const userMiddleware = async (
     } | null;
 
     if (!decodedToken) {
+      console.log('Invalid token', decodedToken, token);
       res.status(401).send('Unauthorized');
       return;
     }
 
     const session = await SessionService.retrieveSessionByToken(token);
     if (!session) {
+      console.log('Session not found for token');
       res.status(401).send('Unauthorized');
       return;
     }
 
     const user = await UserService.retrieveUser(session.userId);
     if (!user) {
+      console.log('User not found for session');
       res.status(401).send('Unauthorized');
       return;
     }

@@ -20,6 +20,8 @@ import {
   IpcServiceLog,
   INetwork,
   IApplicationUpdate,
+  IGeoLocation,
+  Timesery,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -63,7 +65,11 @@ export interface IpcHandlers {
   ) => Promise<TCommunicationResponse<IConvertedImageResponse>>;
 
   "application:initial": () => Promise<
-    TCommunicationResponse<{ theme: ETheme; language: string }>
+    TCommunicationResponse<{
+      theme: ETheme;
+      language: string;
+      geolocation: IGeoLocation;
+    }>
   >;
   "application:updateAction": (
     data: boolean
@@ -122,6 +128,8 @@ export interface IpcHandlers {
     sport: string;
     league: string;
   }) => Promise<TCommunicationResponse<any>>;
+
+  "weather:current": () => Promise<TCommunicationResponse<Timesery[]>>;
 }
 
 export interface IpcEmittedEvents {

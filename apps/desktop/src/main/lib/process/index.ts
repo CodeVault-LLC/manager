@@ -25,10 +25,10 @@ export class ProcessService {
    */
   registerTask<TResult = any, TParams extends any[] = []>(
     taskName: string,
-    platform: NodeJS.Platform,
+    platform: NodeJS.Platform | 'all',
     taskFunction: ProcessTask<TParams, TResult>
   ): void {
-    if (process.platform !== platform) return
+    if (process.platform !== platform && platform !== 'all') return
 
     if (this.platformTasks[taskName]) {
       log.warn(

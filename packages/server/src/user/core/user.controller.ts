@@ -98,7 +98,6 @@ router.post(
 
       const token = generateJWT(
         newUser.id,
-        configuration.required.JWT_SECRET ?? '',
         parseInt(configuration.required.JWT_EXPIRES_IN ?? ''),
       );
 
@@ -148,7 +147,6 @@ router.post(
 
       const token = generateJWT(
         user.id,
-        configuration.required.JWT_SECRET ?? '',
         parseInt(configuration.required.JWT_EXPIRES_IN ?? ''),
       );
 

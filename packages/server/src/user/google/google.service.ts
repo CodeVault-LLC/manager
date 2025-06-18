@@ -10,7 +10,7 @@ import {
 } from '@/models/schema';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { generateJWT } from '@/utils/jwt';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import https from 'node:https';
 import { z } from 'zod';
 import { Response } from 'express';
@@ -59,11 +59,7 @@ const scopes = [
 ];
 
 export const getGoogleAuthURL = (userId: number) => {
-  const jwt = generateJWT(
-    userId + configuration.dynamic.GOOGLE_STATE,
-    configuration.required.JWT_SECRET,
-    60 * 5,
-  );
+  const jwt = generateJWT(userId + configuration.dynamic.GOOGLE_STATE, 60 * 5);
   const state = configuration.dynamic.GOOGLE_STATE + jwt;
 
   return googleOauth2Client.generateAuthUrl({

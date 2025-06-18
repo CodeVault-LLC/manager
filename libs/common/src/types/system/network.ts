@@ -34,3 +34,16 @@ export interface IAdapterInfo {
   MacAddress: string;
   Nlmtu: number | null;
 }
+
+export interface IGeoLocation {
+  ip: string;
+  hostname: string;
+  city: string;
+  region: string;
+  country: string;
+  loc: string; // Latitude and longitude in "lat,long" format
+  org: string;
+  postal: string;
+  timezone: string;
+  readme: string;
+}

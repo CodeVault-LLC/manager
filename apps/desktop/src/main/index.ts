@@ -28,6 +28,7 @@ import { reportError } from './exception-reporting'
 
 import './services/network'
 import { setupAutoUpdater } from './lib/updater'
+import { registerWeatherIPC } from './services/weather'
 
 app.setAppLogsPath()
 enableSourceMaps()
@@ -246,4 +247,5 @@ function registerIpc() {
   registerApplicationIPC()
   registerSystemIPC()
   void registerMsnIPC()
+  void registerWeatherIPC()
 }

@@ -5,6 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useSystemStore } from '../core/store/system.store'
 import { useDashboardStore } from '../core/store/dashboard.store'
+import { YrCard } from '../core/components/admin-widgets/yr-card'
 
 const WorkspaceManagementPage = () => {
   const { subscribeToSystemStatistics, unsubscribeFromSystemStatistics } =
@@ -29,6 +30,8 @@ const WorkspaceManagementPage = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <FeaturedMatches />
+
+        <YrCard />
       </div>
     </div>
   )

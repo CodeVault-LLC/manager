@@ -1,4 +1,4 @@
-import { IDashboardWidget, INews, ISport } from '@manager/common/src'
+import { IDashboardWidget, INews, ISport, Timesery } from '@manager/common/src'
 import { ipcClient } from '@renderer/utils/ipcClient'
 import { toast } from 'sonner'
 import { create } from 'zustand'
@@ -6,6 +6,7 @@ import { create } from 'zustand'
 export interface IDashboardStore {
   widgets: IDashboardWidget[]
   news: INews[]
+  weather: Timesery[]
   sports: ISport[]
   isLoading: boolean
 
@@ -15,6 +16,7 @@ export interface IDashboardStore {
   ) => Promise<IDashboardWidget<any> | undefined>
 
   fetchNews: () => Promise<void>
+  fetchWeather: () => Promise<void>
   fetchSports: () => Promise<void>
 }
 
@@ -22,6 +24,7 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
   widgets: [],
   isLoading: false,
   news: [],
+  weather: [],
   sports: [],
 
   fetchWidgets: async () => {
@@ -70,6 +73,24 @@ export const useDashboardStore = create<IDashboardStore>((set, get) => ({
     }
 
     return get().widgets.find((widget) => widget.name === widget_name)?.data
+  },
+
+  fetchWeather: async () => {
+    try {
+      set({ isLoading: true })
+
+      const response = await ipcClient.invoke('weather:current')
+
+      if (response.data) {
+        set({ weather: response.data })
+      } else {
+        toast.error('Failed to fetch weather data')
+      }
+    } catch (error) {
+      toast.error(`Failed to fetch weather data: ${error}`)
+    } finally {
+      set({ isLoading: false })
+    }
   },
 
   fetchNews: async () => {

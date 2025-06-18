@@ -1,8 +1,34 @@
-import { FC } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@manager/ui'
+import { useDashboardStore } from '../../store/dashboard.store'
 
 export const YrCard: FC = () => {
+  const { weather, fetchWeather } = useDashboardStore()
+
+  useEffect(() => {
+    void fetchWeather()
+  }, [fetchWeather])
+
+  const closestWeather = useCallback(() => {
+    if (weather.length === 0) return null
+
+    const currentDate = new Date()
+    const closestDate = weather.reduce((prev, curr) => {
+      const prevDate = new Date(prev.time)
+      const currDate = new Date(curr.time)
+
+      return Math.abs(currDate.getTime() - currentDate.getTime()) <
+        Math.abs(prevDate.getTime() - currentDate.getTime())
+        ? curr
+        : prev
+    })
+
+    return closestDate
+  }, [weather])
+
+  console.log('Closest Weather:', closestWeather())
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-row items-center justify-between">

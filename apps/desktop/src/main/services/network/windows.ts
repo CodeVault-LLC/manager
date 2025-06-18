@@ -1,4 +1,4 @@
-import { IAdapterInfo, INetwork } from '@manager/common/src' // Adjust this path as per your project structure
+import { IAdapterInfo, IGeoLocation, INetwork } from '@manager/common/src' // Adjust this path as per your project structure
 import { ProcessService } from '../../lib/process' // Assuming this path is correct
 import { runCommand } from '../../utils/command' // Assuming this path is correct
 import { INetworkProvider } from './network.d' // Assuming this is INetworkProvider as defined before
@@ -10,6 +10,14 @@ ProcessService.getInstance().registerTask<INetwork>(
   'win32',
   async () => {
     return getNetworkWin()
+  }
+)
+
+ProcessService.getInstance().registerTask<IGeoLocation>(
+  'getGeolocation',
+  'all',
+  async () => {
+    return getGeolocationWin()
   }
 )
 
@@ -302,3 +310,66 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
 
     return currentNetworkState
   }
+
+const getGeolocationWin: INetworkProvider['getGeolocation'] = async () => {
+  const defaultGeoLocation: IGeoLocation = {
+    ip: '127.0.0.1',
+    hostname: 'localhost',
+    city: 'Unknown',
+    region: 'Unknown',
+    country: 'Unknown',
+    loc: '0,0',
+    org: 'Unknown',
+    postal: '00000',
+    timezone: 'UTC',
+    readme: 'https://ipinfo.io/missingauth'
+  }
+
+  try {
+    const response = await fetch('https://ipinfo.io/json', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      log.warn(`Failed to fetch geolocation data: ${response.statusText}`)
+      return defaultGeoLocation
+    }
+
+    const geoOutput = await response.json()
+    const geoData = safeJsonParse(geoOutput, {
+      ip: '',
+      hostname: '',
+      city: '',
+      region: '',
+      country: '',
+      loc: '0,0',
+      org: '',
+      postal: '',
+      timezone: '',
+      readme: ''
+    })
+
+    if (!geoData || !geoData.loc) {
+      log.warn('No geolocation data found. Returning default values.')
+      return defaultGeoLocation
+    }
+
+    const [latitude, longitude] = geoData.loc.split(',').map(parseFloat)
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      log.warn('Invalid geolocation coordinates. Returning default values.')
+      return defaultGeoLocation
+    }
+
+    return {
+      ...geoData,
+      loc: `${latitude},${longitude}`
+    }
+  } catch (error) {
+    log.error(`Error getting geolocation on Windows: ${error}`)
+    return defaultGeoLocation
+  }
+}

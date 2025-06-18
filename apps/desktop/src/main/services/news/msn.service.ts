@@ -14,11 +14,11 @@ const msnApi = axios.create({
 
 msnApi.interceptors.response.use(
   (response) => {
-    log.debug('MSN API response', {
+    /*log.debug('MSN API response', {
       status: response.status,
       statusText: response.statusText,
       data: response.data
-    })
+    })*/
 
     return response
   },
@@ -52,10 +52,6 @@ export const msnNewsServices = {
         })
 
         if (existingNews) {
-          log.debug('News already exists in the database', {
-            newsId: card.id
-          })
-
           continue
         }
 
