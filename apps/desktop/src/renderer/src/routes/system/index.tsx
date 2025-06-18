@@ -30,6 +30,17 @@ export const Route = createFileRoute('/system/')({
   component: RouteComponent
 })
 
+function hasValidData(data: Record<string, any> | any[]): boolean {
+  if (Array.isArray(data)) return data.length > 0
+  return Object.values(data || {}).some(
+    (val) =>
+      val !== null &&
+      val !== undefined &&
+      val !== '' &&
+      (!Array.isArray(val) || val.length > 0)
+  )
+}
+
 function LabelValue({
   label,
   value,
@@ -39,6 +50,15 @@ function LabelValue({
   value: any
   tooltip?: string
 }) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === '' ||
+    (Array.isArray(value) && value.length === 0)
+  ) {
+    return null
+  }
+
   if (tooltip) {
     return (
       <div className="flex justify-between py-1">
@@ -48,9 +68,16 @@ function LabelValue({
           </TooltipTrigger>
           <TooltipContent>{tooltip}</TooltipContent>
         </Tooltip>
-        <span className="font-medium text-sm text-right max-w-[60%] truncate">
-          {String(value)}
-        </span>
+
+        {typeof value === 'boolean' ? (
+          <Badge variant={value ? 'outline' : 'secondary'} className="text-xs">
+            {value ? 'Enabled' : 'Disabled'}
+          </Badge>
+        ) : (
+          <span className="font-medium text-sm text-right max-w-[60%] truncate">
+            {String(value)}
+          </span>
+        )}
       </div>
     )
   }
@@ -108,13 +135,24 @@ function RouteComponent() {
   return (
     <ScrollArea className="h-full">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-        <InfoCard title="System" icon={<UserCircle className="w-5 h-5" />}>
-          <LabelValue label="User" value={system.current_user} />
-          <LabelValue label="Computer Name" value={system.computer_name} />
-          <LabelValue label="Domain Joined" value={system.domain_joined} />
-          <LabelValue label="Boot Time" value={system.boot_time} />
-          <LabelValue label="Uptime" value={system.uptime} />
-        </InfoCard>
+        {hasValidData(system) && (
+          <InfoCard title="System" icon={<UserCircle className="w-5 h-5" />}>
+            <LabelValue label="User" value={system.current_user} />
+            <LabelValue label="Computer Name" value={system.computer_name} />
+            {system.domain_joined !== 'false' && (
+              <div className="flex justify-between py-1">
+                <span className="text-muted-foreground text-sm">
+                  Organization
+                </span>
+                <Badge className="text-xs bg-green-500 text-white">
+                  Domain Joined
+                </Badge>
+              </div>
+            )}
+            <LabelValue label="Boot Time" value={system.boot_time} />
+            <LabelValue label="Uptime" value={system.uptime} />
+          </InfoCard>
+        )}
 
         <InfoCard title="Hardware" icon={<Cpu className="w-5 h-5" />}>
           <LabelValue label="CPU" value={system.cpu.name} />
@@ -184,28 +222,30 @@ function RouteComponent() {
           <LabelValue label="Time Zone" value={system.time_zone} />
         </InfoCard>
 
-        <InfoCard title="Network" icon={<Wifi className="w-5 h-5" />}>
-          {system.network.interfaces.map((data) => (
-            <div key={data.name} className="mb-3">
-              <Badge variant="outline" className="mb-1">
-                {data.name}
-              </Badge>
-              <LabelValue label="IP" value={data.ip_address} />
-              <LabelValue
-                label="Speed"
-                value={`${data.link_speed_mbps} Mbps`}
-                tooltip="Link speed reported by the adapter."
-              />
-              <LabelValue label="Gateway" value={data.gateway} />
-              <LabelValue
-                label="DNS"
-                value={(data.dns_servers || []).join(', ')}
-                tooltip="Domain Name System servers used for resolving hostnames."
-              />
-            </div>
-          ))}
-          <LabelValue label="Public IP" value={system.network.public_ip} />
-        </InfoCard>
+        {hasValidData(system.network?.interfaces) && (
+          <InfoCard title="Network" icon={<Wifi className="w-5 h-5" />}>
+            {system.network.interfaces.map((data) => (
+              <div key={data.name} className="mb-3">
+                <Badge variant="outline" className="mb-1">
+                  {data.name}
+                </Badge>
+                <LabelValue label="IP" value={data.ip_address} />
+                <LabelValue
+                  label="Speed"
+                  value={`${data.link_speed_mbps} Mbps`}
+                  tooltip="Link speed reported by the adapter."
+                />
+                <LabelValue label="Gateway" value={data.gateway} />
+                <LabelValue
+                  label="DNS"
+                  value={(data.dns_servers || []).join(', ')}
+                  tooltip="Domain Name System servers used for resolving hostnames."
+                />
+              </div>
+            ))}
+            <LabelValue label="Public IP" value={system.network.public_ip} />
+          </InfoCard>
+        )}
 
         <InfoCard title="Disks" icon={<HardDrive className="w-5 h-5" />}>
           {(system.disk_usage || []).map((disk: any) => (
@@ -221,6 +261,7 @@ function RouteComponent() {
         <InfoCard title="Security" icon={<ShieldCheck className="w-5 h-5" />}>
           <LabelValue label="Antivirus" value={system.antivirus} />
           <LabelValue label="VPN" value={system.vpn} />
+
           <LabelValue
             label="Firewall (Private)"
             value={system.firewall.private}

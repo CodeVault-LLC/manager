@@ -16,8 +16,8 @@ if (Get-Command Get-WindowsUpdate -ErrorAction SilentlyContinue) {
 # --- Battery Info ---
 $battery = Get-WmiObject Win32_Battery -ErrorAction SilentlyContinue
 $report.battery = if ($battery) {
-    @{ Status = $battery.BatteryStatus; Charge = $battery.EstimatedChargeRemaining }
-} else { "no_battery" }
+    @{ Charge = $battery.EstimatedChargeRemaining; Status = if ($battery.BatteryStatus -eq 2) { "Charging" } else { "Discharging" } }
+} else { @{ Charge = 0; Status = "unknown" } }
 
 # --- Uptime ---
 $boot = Safe-Invoke { (Get-CimInstance Win32_OperatingSystem).LastBootUpTime } (Get-Date)
@@ -70,13 +70,13 @@ $report.vpn = if ($vpn.Count -gt 0) { "active" } else { "inactive" }
 # --- Antivirus ---
 $report.antivirus = Safe-Invoke {
     (Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct).displayName
-} "unavailable"
+} "none"
 
 # --- Network ---
 $netAdapters = Safe-Invoke {
     Get-NetAdapter | Where-Object { $_.Status -eq "Up" }
 } @()
-$report.network = @{}
+$report.network = @{interfaces = @()}
 
 foreach ($adapter in $netAdapters) {
     try {
@@ -91,16 +91,17 @@ foreach ($adapter in $netAdapters) {
             [math]::Round($linkSpeedRaw / 1MB, 2)
         }
 
-        $report.network[$adapter.Name] = @{
+        $report.network.interfaces += @{
+            name = $adapter.Name
             ip_address       = $ipInfo.IPAddress
             link_speed_mbps  = $linkSpeedMbps
-            gateway          = if ($gwInfo) { $gwInfo.NextHop } else { "none" }
+            gateway          = if ($gwInfo) { $gwInfo.NextHop } else { "unavailable" }
             dns_servers      = $dnsInfo.ServerAddresses
         }
     } catch {
-        $report.network[$adapter.Name] = @{
-            error  = "Failed to gather network info"
-            reason = $_.Exception.Message
+        $report.network.interfaces += @{
+            name = $adapter.Name
+            error = "Failed to retrieve network details: $_"
         }
     }
 }
@@ -120,12 +121,12 @@ $report.time_zone = (Get-TimeZone).Id
 $report.computer_name = $env:COMPUTERNAME
 $report.current_user = $env:USERNAME
 $report.system_uuid = (Get-CimInstance Win32_ComputerSystemProduct).UUID
-$report.domain_joined = if ((Get-WmiObject Win32_ComputerSystem).PartOfDomain) { "yes" } else { "no" }
+$report.domain_joined = if ((Get-WmiObject Win32_ComputerSystem).PartOfDomain) { "true" } else { "false" }
 
 # --- Hardware ---
 $cpu = Get-CimInstance Win32_Processor | Select-Object -First 1
 $ram = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory
-$gpu = Get-CimInstance Win32_VideoController
+$gpu = Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name
 $board = Get-CimInstance Win32_BaseBoard | Select-Object -First 1
 $bios = Get-CimInstance Win32_BIOS | Select-Object -First 1
 
@@ -135,8 +136,8 @@ $report.cpu = @{
     logical_processors = $cpu.NumberOfLogicalProcessors
     max_clock_speed_mhz = $cpu.MaxClockSpeed
 }
-$report.ram_gb = [math]::Round($ram / 1GB, 2)
-$report.gpus = $gpu | Select-Object -ExpandProperty Name
+$report.ram_gb = [math]::Round($ram / 1GB)
+$report.gpus = $gpu
 $report.motherboard = @{
     manufacturer = $board.Manufacturer
     product = $board.Product
@@ -154,15 +155,15 @@ $report.bitlocker = Safe-Invoke {
             protection_status = $_.ProtectionStatus
         }
     }
-} "unsupported"
+} @{ protection_status = 0; drive = "C:" }
 
 # --- Firewall Status ---
 $fw = Safe-Invoke { Get-NetFirewallProfile } $null
 if ($fw) {
     $report.firewall = @{
-        domain  = $fw | Where-Object {$_.Name -eq "Domain"} | Select-Object -ExpandProperty Enabled
-        private = $fw | Where-Object {$_.Name -eq "Private"} | Select-Object -ExpandProperty Enabled
-        public  = $fw | Where-Object {$_.Name -eq "Public"} | Select-Object -ExpandProperty Enabled
+        domain  = ($fw | Where-Object {$_.Name -eq "Domain"}).Enabled
+        private = ($fw | Where-Object {$_.Name -eq "Private"}).Enabled
+        public  = ($fw | Where-Object {$_.Name -eq "Public"}).Enabled
     }
 }
 

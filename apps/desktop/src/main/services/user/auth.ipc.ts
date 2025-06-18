@@ -28,7 +28,7 @@ export const registerAuthIPC = () => {
           password
         })
         const token = response.data.token
-        if (token) await ConfStorage.setSecureData('userToken', token)
+        if (token) await ConfStorage.setSecret('userToken', token)
 
         return { data: true }
       } catch (error: any) {
@@ -71,7 +71,7 @@ export const registerAuthIPC = () => {
         )
 
         const token = response.data.token
-        if (token) await ConfStorage.setSecureData('userToken', token)
+        if (token) await ConfStorage.setSecret('userToken', token)
 
         return { data: true }
       } catch (error) {
@@ -92,7 +92,7 @@ export const registerAuthIPC = () => {
       try {
         await api.post('/users/signout/')
 
-        await ConfStorage.deleteSecureData('userToken')
+        await ConfStorage.deleteSecret('userToken')
         return { data: true }
       } catch (error) {
         log.error('Error during user sign-out:', error)

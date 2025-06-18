@@ -23,8 +23,8 @@ export const registerApplicationIPC = () => {
       TCommunicationResponse<{ theme: ETheme; language: string }>
     > => {
       try {
-        const theme = (await ConfStorage.getSecureData('theme')) ?? ETheme.LIGHT
-        const language = (await ConfStorage.getSecureData('language')) ?? 'en'
+        const theme = (await ConfStorage.get('theme')) ?? ETheme.LIGHT
+        const language = (await ConfStorage.get('language')) ?? 'en'
 
         return { data: { theme, language } }
       } catch (error: any) {
@@ -50,8 +50,8 @@ export const registerApplicationIPC = () => {
       application: IApplication
     ): Promise<TCommunicationResponse<boolean>> => {
       try {
-        await ConfStorage.setSecureData('theme', application.theme)
-        await ConfStorage.setSecureData('language', application.language)
+        await ConfStorage.set('theme', application.theme)
+        await ConfStorage.set('language', application.language)
 
         return { data: true }
       } catch (error: any) {

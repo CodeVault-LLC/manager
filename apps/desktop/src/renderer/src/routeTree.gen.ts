@@ -363,53 +363,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/entertainment': {
-      id: '/entertainment'
-      path: '/entertainment'
-      fullPath: '/entertainment'
-      preLoaderRoute: typeof EntertainmentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes': {
-      id: '/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/status': {
-      id: '/status'
-      path: '/status'
-      fullPath: '/status'
-      preLoaderRoute: typeof StatusRouteImport
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/system': {
@@ -419,109 +377,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verify-email': {
-      id: '/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailRouteImport
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/developer/icons': {
-      id: '/developer/icons'
-      path: '/developer/icons'
-      fullPath: '/developer/icons'
-      preLoaderRoute: typeof DeveloperIconsRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entertainment/manga': {
-      id: '/entertainment/manga'
-      path: '/manga'
-      fullPath: '/entertainment/manga'
-      preLoaderRoute: typeof EntertainmentMangaRouteImport
-      parentRoute: typeof EntertainmentRoute
-    }
-    '/notes/$id': {
-      id: '/notes/$id'
-      path: '/$id'
-      fullPath: '/notes/$id'
-      preLoaderRoute: typeof NotesIdRouteImport
-      parentRoute: typeof NotesRoute
-    }
-    '/policies/faq': {
-      id: '/policies/faq'
-      path: '/policies/faq'
-      fullPath: '/policies/faq'
-      preLoaderRoute: typeof PoliciesFaqRouteImport
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/policies/privacy': {
-      id: '/policies/privacy'
-      path: '/policies/privacy'
-      fullPath: '/policies/privacy'
-      preLoaderRoute: typeof PoliciesPrivacyRouteImport
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/policies/terms': {
-      id: '/policies/terms'
-      path: '/policies/terms'
-      fullPath: '/policies/terms'
-      preLoaderRoute: typeof PoliciesTermsRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/connections': {
-      id: '/settings/connections'
-      path: '/connections'
-      fullPath: '/settings/connections'
-      preLoaderRoute: typeof SettingsConnectionsRouteImport
-      parentRoute: typeof SettingsRoute
+    '/entertainment': {
+      id: '/entertainment'
+      path: '/entertainment'
+      fullPath: '/entertainment'
+      preLoaderRoute: typeof EntertainmentRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/settings/extensions': {
-      id: '/settings/extensions'
-      path: '/extensions'
-      fullPath: '/settings/extensions'
-      preLoaderRoute: typeof SettingsExtensionsRouteImport
-      parentRoute: typeof SettingsRoute
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/settings/general': {
-      id: '/settings/general'
-      path: '/general'
-      fullPath: '/settings/general'
-      preLoaderRoute: typeof SettingsGeneralRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/security': {
-      id: '/settings/security'
-      path: '/security'
-      fullPath: '/settings/security'
-      preLoaderRoute: typeof SettingsSecurityRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/system/browsers': {
-      id: '/system/browsers'
-      path: '/browsers'
-      fullPath: '/system/browsers'
-      preLoaderRoute: typeof SystemBrowsersRouteImport
-      parentRoute: typeof SystemRoute
-    }
-    '/system/hardware': {
-      id: '/system/hardware'
-      path: '/hardware'
-      fullPath: '/system/hardware'
-      preLoaderRoute: typeof SystemHardwareRouteImport
-      parentRoute: typeof SystemRoute
-    }
-    '/system/network': {
-      id: '/system/network'
-      path: '/network'
-      fullPath: '/system/network'
-      preLoaderRoute: typeof SystemNetworkRouteImport
-      parentRoute: typeof SystemRoute
-    }
-    '/system/storage': {
-      id: '/system/storage'
-      path: '/storage'
-      fullPath: '/system/storage'
-      preLoaderRoute: typeof SystemStorageRouteImport
+    '/system/': {
+      id: '/system/'
+      path: '/'
+      fullPath: '/system/'
+      preLoaderRoute: typeof SystemIndexRouteImport
       parentRoute: typeof SystemRoute
     }
     '/notes/': {
@@ -531,25 +440,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotesIndexRouteImport
       parentRoute: typeof NotesRoute
     }
-    '/system/': {
-      id: '/system/'
-      path: '/'
-      fullPath: '/system/'
-      preLoaderRoute: typeof SystemIndexRouteImport
+    '/system/storage': {
+      id: '/system/storage'
+      path: '/storage'
+      fullPath: '/system/storage'
+      preLoaderRoute: typeof SystemStorageRouteImport
       parentRoute: typeof SystemRoute
     }
-    '/entertainment/manga/$id': {
-      id: '/entertainment/manga/$id'
+    '/system/network': {
+      id: '/system/network'
+      path: '/network'
+      fullPath: '/system/network'
+      preLoaderRoute: typeof SystemNetworkRouteImport
+      parentRoute: typeof SystemRoute
+    }
+    '/system/hardware': {
+      id: '/system/hardware'
+      path: '/hardware'
+      fullPath: '/system/hardware'
+      preLoaderRoute: typeof SystemHardwareRouteImport
+      parentRoute: typeof SystemRoute
+    }
+    '/system/browsers': {
+      id: '/system/browsers'
+      path: '/browsers'
+      fullPath: '/system/browsers'
+      preLoaderRoute: typeof SystemBrowsersRouteImport
+      parentRoute: typeof SystemRoute
+    }
+    '/settings/security': {
+      id: '/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof SettingsSecurityRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/general': {
+      id: '/settings/general'
+      path: '/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof SettingsGeneralRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/extensions': {
+      id: '/settings/extensions'
+      path: '/extensions'
+      fullPath: '/settings/extensions'
+      preLoaderRoute: typeof SettingsExtensionsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/connections': {
+      id: '/settings/connections'
+      path: '/connections'
+      fullPath: '/settings/connections'
+      preLoaderRoute: typeof SettingsConnectionsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/policies/terms': {
+      id: '/policies/terms'
+      path: '/policies/terms'
+      fullPath: '/policies/terms'
+      preLoaderRoute: typeof PoliciesTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policies/privacy': {
+      id: '/policies/privacy'
+      path: '/policies/privacy'
+      fullPath: '/policies/privacy'
+      preLoaderRoute: typeof PoliciesPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policies/faq': {
+      id: '/policies/faq'
+      path: '/policies/faq'
+      fullPath: '/policies/faq'
+      preLoaderRoute: typeof PoliciesFaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes/$id': {
+      id: '/notes/$id'
       path: '/$id'
-      fullPath: '/entertainment/manga/$id'
-      preLoaderRoute: typeof EntertainmentMangaIdRouteImport
-      parentRoute: typeof EntertainmentMangaRoute
+      fullPath: '/notes/$id'
+      preLoaderRoute: typeof NotesIdRouteImport
+      parentRoute: typeof NotesRoute
+    }
+    '/entertainment/manga': {
+      id: '/entertainment/manga'
+      path: '/manga'
+      fullPath: '/entertainment/manga'
+      preLoaderRoute: typeof EntertainmentMangaRouteImport
+      parentRoute: typeof EntertainmentRoute
+    }
+    '/developer/icons': {
+      id: '/developer/icons'
+      path: '/developer/icons'
+      fullPath: '/developer/icons'
+      preLoaderRoute: typeof DeveloperIconsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/entertainment/manga/': {
       id: '/entertainment/manga/'
       path: '/'
       fullPath: '/entertainment/manga/'
       preLoaderRoute: typeof EntertainmentMangaIndexRouteImport
+      parentRoute: typeof EntertainmentMangaRoute
+    }
+    '/entertainment/manga/$id': {
+      id: '/entertainment/manga/$id'
+      path: '/$id'
+      fullPath: '/entertainment/manga/$id'
+      preLoaderRoute: typeof EntertainmentMangaIdRouteImport
       parentRoute: typeof EntertainmentMangaRoute
     }
   }

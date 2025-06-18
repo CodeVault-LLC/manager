@@ -21,14 +21,18 @@
     "storage": "Storage",
     "security": "Security",
     "tryAgain": "Try Again",
-    "icons": "Icons"
+    "icons": "Icons",
+    "help": "Help"
   },
   "navigation": {
     "home": "Home",
     "settings": "Settings",
     "entertainment": "Entertainment",
     "verifyEmail": "Verify Email",
-    "notes": "Notes"
+    "notes": "Notes",
+    "network": "Network",
+    "developer": "Developer",
+    "system": "System"
   },
   "user": {
     "logout": "Logout",

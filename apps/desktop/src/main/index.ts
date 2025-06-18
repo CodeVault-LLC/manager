@@ -154,7 +154,7 @@ app.on('ready', async () => {
       optimizer.watchWindowShortcuts(window)
     })
 
-    await ConfStorage.validateExistence()
+    await ConfStorage.init()
     await runMigrations().catch((error) => {
       log.error('Error running migrations:', error)
     })

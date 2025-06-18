@@ -1,12 +1,16 @@
 import path, { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import {
+  defineConfig,
+  externalizeDepsPlugin,
+  bytecodePlugin
+} from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { getReplacements } from './app-info'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin(), bytecodePlugin()],
     resolve: {
       alias: {
         '@main': path.resolve('src/main'),
@@ -24,6 +28,7 @@ export default defineConfig({
     }
   },
   preload: {
+    plugins: [],
     resolve: {
       alias: {
         '@manager': path.resolve(__dirname, '../../libs/')

@@ -1,8 +1,6 @@
 import { useI18n } from '@renderer/hooks/use-i18n'
 import {
   CheckCircleIcon,
-  FilmIcon,
-  Frame,
   HelpCircleIcon,
   MonitorIcon,
   NotebookIcon,
@@ -10,40 +8,30 @@ import {
   SettingsIcon,
   TerminalIcon
 } from 'lucide-react'
-import * as React from 'react'
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail
 } from '@manager/ui'
 
 import { NavMain, NavMainProps } from './sidebar-main'
 import { NavSecondary, NavSecondaryProps } from './sidebar-secondary'
 import { NavUser } from './sidebar-user'
-import { TeamSwitcher } from './sidebar-workspace'
+import { Link } from '@tanstack/react-router'
 
 export const AppSidebar = (props: { className?: string }) => {
   const { t } = useI18n()
 
   const data: {
-    teams: {
-      name: string
-      logo: React.ComponentType
-      plan: string
-    }[]
     navMain: NavMainProps['items']
     navSecondary: NavSecondaryProps['items']
   } = {
-    teams: [
-      {
-        name: 'Design Engineering',
-        logo: Frame,
-        plan: 'Team'
-      }
-    ],
     navMain: [
       {
         title: 'Dashboard',
@@ -57,7 +45,7 @@ export const AppSidebar = (props: { className?: string }) => {
           }
         ]
       },
-      {
+      /*{
         // Entertainment (e.g. games, movies, etc.)
         title: 'Entertainment',
         url: '/entertainment',
@@ -69,7 +57,7 @@ export const AppSidebar = (props: { className?: string }) => {
             url: '/entertainment/manga'
           }
         ]
-      },
+      },*/
       {
         title: t('navigation.notes'),
         url: '/notes',
@@ -83,7 +71,7 @@ export const AppSidebar = (props: { className?: string }) => {
         ]
       },
       {
-        title: 'System',
+        title: t('navigation.system'),
         url: '/system/browsers',
         icon: MonitorIcon,
         items: [
@@ -92,13 +80,17 @@ export const AppSidebar = (props: { className?: string }) => {
             url: '/system'
           },
           {
+            title: t('common.network'),
+            url: '/system/network'
+          },
+          {
             title: t('common.browsers'),
             url: '/system/browsers'
           }
         ]
       },
       {
-        title: 'Developer',
+        title: t('navigation.developer'),
         url: '/developer/icons',
         icon: TerminalIcon,
         items: [
@@ -121,7 +113,7 @@ export const AppSidebar = (props: { className?: string }) => {
         icon: SettingsIcon
       },
       {
-        title: 'Get Help',
+        title: t('common.help'),
         url: '/',
         icon: HelpCircleIcon
       }
@@ -131,7 +123,23 @@ export const AppSidebar = (props: { className?: string }) => {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <Link to="/">
+                <img
+                  src="../../resources/icons/icon-256x256.png?asset"
+                  alt="Manager Logo"
+                  className="h-6 w-6 mr-2"
+                />
+                <span className="text-base font-semibold">Manager</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

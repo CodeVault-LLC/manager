@@ -70,7 +70,7 @@ export const News: FC = () => {
                     />
                   </div>
 
-                  <div className="flex flex-col flex-1 p-4 overflow-hidden justify-between gap-1">
+                  <div className="flex flex-col flex-1 p-4 overflow-hidden justify-between">
                     <div className="flex items-center">
                       <img
                         src={`${item.provider.brandLogoUrl}?h=24&w=24`}
@@ -82,12 +82,12 @@ export const News: FC = () => {
                       </span>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col overflow-hidden">
                       <a
                         className="text-sm font-medium dark:text-blue-500 text-blue-600 cursor-pointer"
                         onClick={() => openExternalLink(item.homepageUrl)}
                       >
-                        <h3 className="text-base font-semibold leading-tight truncate">
+                        <h3 className="text-base font-semibold leading-tight">
                           {item.title}
                         </h3>
                       </a>

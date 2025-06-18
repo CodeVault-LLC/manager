@@ -21,14 +21,18 @@
     "storage": "Lagring",
     "security": "Sikkerhet",
     "tryAgain": "Prøv igjen",
-    "icons": "Ikoner"
+    "icons": "Ikoner",
+    "help": "Hjelp"
   },
   "navigation": {
     "home": "Hjem",
     "settings": "Innstillinger",
     "entertainment": "Underholdning",
     "verifyEmail": "Bekreft e-post",
-    "notes": "Notater"
+    "notes": "Notater",
+    "network": "Nettverk",
+    "developer": "Utvikler",
+    "system": "System"
   },
   "user": {
     "logout": "Logg ut",

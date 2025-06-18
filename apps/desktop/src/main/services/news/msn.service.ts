@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq, lt } from 'drizzle-orm'
 import { db } from '@main/database/data-source'
 import { news, newsProvider, newsThumbnail } from '@main/database/models/schema'
 import { MsnNewsResponse } from '@manager/common/src'
@@ -121,6 +121,21 @@ export const msnNewsServices = {
       })
 
       throw new Error('Error fetching news from database')
+    }
+  },
+
+  cleanupOldNews: async (olderThanMs: number) => {
+    try {
+      await db.transaction(async (tx) => {
+        await tx
+          .delete(news)
+          .where(lt(news.publishedDate, new Date(Date.now() - olderThanMs)))
+      })
+    } catch (error) {
+      log.error('Error cleaning up old news', {
+        error
+      })
+      throw new Error('Error cleaning up old news')
     }
   }
 }

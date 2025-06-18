@@ -6,5 +6,5 @@
     "paths": {
       "@manager/ui": ["../../libs/ui/src/*"]
     }
-  }
+  },
 }

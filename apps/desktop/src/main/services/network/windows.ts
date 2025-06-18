@@ -3,6 +3,7 @@ import { ProcessService } from '../../lib/process' // Assuming this path is corr
 import { runCommand } from '../../utils/command' // Assuming this path is correct
 import { INetworkProvider } from './network.d' // Assuming this is INetworkProvider as defined before
 import { safeJsonParse } from '../../utils/json'
+import { SessionStorage } from '../../lib/session'
 
 ProcessService.getInstance().registerTask<INetwork>(
   'getNetwork',
@@ -19,7 +20,6 @@ interface IpConfigAdapterInfo {
   macAddress: string
   gateway: string
   dnsServers: string[]
-  connectionType: 'WiFi' | 'Ethernet'
   ssid: string // Only for Wi-Fi adapters
   leaseObtained: string
   leaseExpires: string
@@ -28,74 +28,64 @@ interface IpConfigAdapterInfo {
 
 async function parseIpconfigAllForAdapter(
   ipconfigAllOutput: string,
-  adapterName: string // The description from netsh
+  adapter: IAdapterInfo
 ): Promise<Partial<IpConfigAdapterInfo>> {
   const adapterInfo: Partial<IpConfigAdapterInfo> = {
-    connectionType: 'WiFi',
     dnsServers: []
   }
 
-  // Escape adapterName for regex (e.g., if it contains special characters)
-  const escapedAdapterName = adapterName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const adapterSectionRegex = new RegExp(
-    `\\s*${escapedAdapterName}[\\s\\S]*?(?:\\n\\n|$)`,
+  // Escape adapterDescription for regex
+  const escapedDesc = adapter.InterfaceDescription.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    '\\$&'
+  )
+
+  // Find the section that includes this description
+  const adapterRegex = new RegExp(
+    `\\s*${escapedDesc}[\\s\\S]*?(?:\\n\\n|$)`,
     'i'
   )
 
-  const match = ipconfigAllOutput.match(adapterSectionRegex)
+  const match = ipconfigAllOutput.match(adapterRegex)
 
   if (!match) {
-    log.warn(`Could not find ipconfig /all section for adapter: ${adapterName}`)
+    log.warn(
+      `No matching adapter found in ipconfig output for description: ${adapter.InterfaceDescription}`
+    )
     return adapterInfo
   }
 
   const section = match[0]
 
-  // IP Address
-  const ipv4Match = section.match(
-    /IPv4 Address[^:\r\n]*:\s*(\d{1,3}(\.\d{1,3}){3})/
-  )
-  if (ipv4Match) adapterInfo.ipAddress = ipv4Match[1]
+  // Extract values
+  const getMatch = (regex: RegExp) => {
+    const m = section.match(regex)
+    return m ? m[1].trim() : undefined
+  }
 
-  // MAC Address
-  const macMatch = section.match(
-    /Physical Address[^:\r\n]*:\s*([0-9A-Fa-f]{2}(-[0-9A-Fa-f]{2}){5})/
+  adapterInfo.ipAddress = getMatch(/IPv4 Address[^\n:]*:\s*([\d.]+)/i)
+  adapterInfo.macAddress = getMatch(
+    /Physical Address[^\n:]*:\s*([0-9A-Fa-f:-]+)/i
   )
-  if (macMatch) adapterInfo.macAddress = macMatch[1]
+  adapterInfo.gateway = getMatch(/Default Gateway[^\n:]*:\s*([\d.]+)/i)
 
-  // Default Gateway
-  const gatewayMatch = section.match(
-    /Default Gateway[^:\r\n]*:\s*(\d{1,3}(\.\d{1,3}){3})/
-  )
-  if (gatewayMatch) adapterInfo.gateway = gatewayMatch[1]
-
-  // DNS Servers
-  const dnsMatch = section.match(
-    /DNS Servers[^:\r\n]*:((?:\s*\d{1,3}(\.\d{1,3}){3})+)/
-  )
+  // DNS Servers (can be multiline)
+  const dnsServers: string[] = []
+  const dnsMatch = section.match(/DNS Servers[^\n:]*:\s*((?:\n?\s+[\d.]+)+)/i)
   if (dnsMatch) {
-    adapterInfo.dnsServers = dnsMatch[1].trim().split(/\s+/).filter(Boolean)
+    dnsMatch[1].split('\n').forEach((line) => {
+      const ip = line.trim()
+      if (/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) dnsServers.push(ip)
+    })
+    adapterInfo.dnsServers = dnsServers
   }
 
-  // Connection Type and SSID (infer from adapter description)
-  if (section.includes('Wireless LAN adapter Wi-Fi')) {
-    adapterInfo.connectionType = 'WiFi'
-    const ssidMatch = section.match(/SSID[^:\r\n]*:\s*(.*)/)
-    if (ssidMatch) adapterInfo.ssid = ssidMatch[1].trim()
-  } else if (section.includes('Ethernet adapter')) {
-    adapterInfo.connectionType = 'Ethernet'
-  }
+  // SSID (optional, may not appear in ipconfig)
+  const ssid = getMatch(/SSID[^\n:]*:\s*(.*)/i)
+  if (ssid) adapterInfo.ssid = ssid
 
-  // Lease Times
-  const leaseObtainedMatch = section.match(/Lease Obtained[^:\r\n]*:\s*(.*)/)
-  if (leaseObtainedMatch)
-    adapterInfo.leaseObtained = leaseObtainedMatch[1].trim()
-  const leaseExpiresMatch = section.match(/Lease Expires[^:\r\n]*:\s*(.*)/)
-  if (leaseExpiresMatch) adapterInfo.leaseExpires = leaseExpiresMatch[1].trim()
-
-  // MTU - This is typically derived from Get-NetAdapter directly, not ipconfig /all
-  // We will fetch this separately or try to match it.
-  // adapterInfo.mtu will be handled outside this function
+  adapterInfo.leaseObtained = getMatch(/Lease Obtained[^\n:]*:\s*(.*)/i)
+  adapterInfo.leaseExpires = getMatch(/Lease Expires[^\n:]*:\s*(.*)/i)
 
   return adapterInfo
 }
@@ -136,7 +126,7 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
       )
 
       const activeAdapters: IAdapterInfo = safeJsonParse(netAdapterInfoJson, {
-        Name: '',
+        Name: 'WiFi' as IAdapterInfo['Name'],
         InterfaceDescription: '',
         LinkSpeed: '',
         Status: '',
@@ -154,11 +144,6 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
 
       const primaryAdapter = activeAdapters
 
-      if (!primaryAdapter) {
-        log.warn('No primary active network adapter found.')
-        return defaultNetwork
-      }
-
       const [
         ipconfigAllOutput,
         externalIP,
@@ -174,11 +159,12 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
           defaultValue: '',
           timeout: 5000
         }),
-        runCommand('Invoke-RestMethod -Uri https://api.ipify.org', {
-          match: /^\d{1,3}(\.\d{1,3}){3}$/,
-          defaultValue: '',
-          timeout: 5000
-        }),
+        SessionStorage.getInstance().getItem<string>('externalIP') ||
+          runCommand('curl -s https://api.ipify.org', {
+            expectedType: 'string',
+            defaultValue: '',
+            timeout: 5000
+          }),
         runCommand('ping -n 1 8.8.8.8', {
           defaultValue: '',
           timeout: 2000
@@ -244,7 +230,7 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
       // Parse ipconfig /all output specifically for the primary adapter
       const adapterDetails = await parseIpconfigAllForAdapter(
         ipconfigAllOutput,
-        primaryAdapter.InterfaceDescription
+        primaryAdapter
       )
 
       // Populate currentNetworkState from primaryAdapter and adapterDetails
@@ -253,8 +239,7 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         primaryAdapter.MacAddress || adapterDetails.macAddress || '' // Get from Get-NetAdapter first if available
       currentNetworkState.gateway = adapterDetails.gateway || ''
       currentNetworkState.dns = adapterDetails.dnsServers || []
-      currentNetworkState.connectionType =
-        adapterDetails.connectionType || 'WiFi'
+      currentNetworkState.connectionType = primaryAdapter.Name || 'WiFi'
       currentNetworkState.ssid = adapterDetails.ssid || ''
       currentNetworkState.mtu = primaryAdapter.Nlmtu || 1500 // Get MTU from Get-NetAdapter
       currentNetworkState.leaseTime = adapterDetails.leaseExpires || '' // Often lease expires is more useful

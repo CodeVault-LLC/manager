@@ -27,7 +27,7 @@ export interface INetwork {
  * This interface represents the raw output from network commands.
  */
 export interface IAdapterInfo {
-  Name: string;
+  Name: "WiFi" | "Ethernet";
   InterfaceDescription: string;
   LinkSpeed: string;
   Status: string;

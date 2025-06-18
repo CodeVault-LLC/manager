@@ -1,6 +1,6 @@
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   BadgeCheck,
   Bell,
@@ -37,6 +37,7 @@ export const NavUser = () => {
   const { isMobile } = useSidebar()
   const { currentUser, signOut } = useUserStore()
   const { getError } = useErrorStore()
+  const navgiate = useNavigate()
 
   const displayUserLoading = (
     <SidebarMenuButton
@@ -62,12 +63,13 @@ export const NavUser = () => {
   const displayUserNotLoggedIn = (
     <SidebarMenuButton
       size="lg"
+      onClick={() => {
+        void navgiate({ to: '/login', replace: true })
+      }}
       className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
     >
       <Avatar className="h-8 w-8 rounded-lg">
-        <AvatarFallback className="rounded-lg bg-gray-300">
-          {t('user.not_logged_in')}
-        </AvatarFallback>
+        <AvatarFallback className="rounded-lg bg-gray-300"></AvatarFallback>
       </Avatar>
       <div className="grid flex-1 text-left text-sm leading-tight">
         <span className="truncate font-semibold">
@@ -90,7 +92,7 @@ export const NavUser = () => {
               {displayUserLoading}
             </DropdownMenuTrigger>
           ) : !currentUser ? (
-            <DropdownMenuTrigger asChild disabled>
+            <DropdownMenuTrigger asChild>
               {displayUserNotLoggedIn}
             </DropdownMenuTrigger>
           ) : (
@@ -118,8 +120,6 @@ export const NavUser = () => {
               </SidebarMenuButton>
             </DropdownMenuTrigger>
           )}
-
-          {/* Dropdown content */}
 
           {currentUser && (
             <DropdownMenuContent

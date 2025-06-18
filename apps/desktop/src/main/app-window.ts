@@ -1,9 +1,10 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, nativeImage, shell } from 'electron'
 import path, { join } from 'node:path'
 import { now } from './now'
 import windowStateKeeper from 'electron-window-state'
 import { ILaunchStats } from './lib/stats'
 import { Emitter } from 'event-kit'
+import { getResourcePath } from './lib/paths'
 
 export class AppWindow {
   private window: Electron.BrowserWindow
@@ -34,6 +35,9 @@ export class AppWindow {
       minHeight: this.minHeight,
       show: false,
 
+      title: __DEV__ ? `Manager (Development) - ${__APP_VERSION__}` : 'Manager',
+      icon: getResourcePath('icons/icon-512x512.png'),
+
       autoHideMenuBar: true,
 
       webPreferences: {
@@ -48,6 +52,11 @@ export class AppWindow {
     }
 
     this.window = new BrowserWindow(windowOptions)
+    this.window.setOverlayIcon(
+      nativeImage.createFromPath(getResourcePath('icons/icon-512x512.png')),
+      'Manager'
+    )
+
     savedWindowState.manage(this.window)
 
     let quitting = false
