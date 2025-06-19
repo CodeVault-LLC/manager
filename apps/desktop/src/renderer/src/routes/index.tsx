@@ -4,18 +4,20 @@ import { SystemWidget } from '@renderer/core/components/system/system-widget'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useSystemStore } from '../core/store/system.store'
-import { useDashboardStore } from '../core/store/dashboard.store'
 import { YrCard } from '../core/components/admin-widgets/yr-card'
+import { useShallow } from 'zustand/react/shallow'
 
 const WorkspaceManagementPage = () => {
   const { subscribeToSystemStatistics, unsubscribeFromSystemStatistics } =
-    useSystemStore()
-
-  const { fetchNews } = useDashboardStore()
+    useSystemStore(
+      useShallow((state) => ({
+        subscribeToSystemStatistics: state.subscribeToSystemStatistics,
+        unsubscribeFromSystemStatistics: state.unsubscribeFromSystemStatistics
+      }))
+    )
 
   useEffect(() => {
     subscribeToSystemStatistics()
-    void fetchNews()
 
     return () => {
       unsubscribeFromSystemStatistics() // Uncomment if you have an unsubscribe function

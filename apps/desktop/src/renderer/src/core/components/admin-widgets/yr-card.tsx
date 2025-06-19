@@ -1,20 +1,22 @@
-import { FC, useCallback, useEffect } from 'react'
+import { FC, useCallback, useEffect, useMemo } from 'react'
 
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@manager/ui'
 import { useDashboardStore } from '../../store/dashboard.store'
+import { useApplicationStore } from '../../store/application.store'
 
 export const YrCard: FC = () => {
   const { weather, fetchWeather } = useDashboardStore()
+  const { geolocation } = useApplicationStore()
 
   useEffect(() => {
     void fetchWeather()
   }, [fetchWeather])
 
-  const closestWeather = useCallback(() => {
+  const getClosestWeather = useCallback(() => {
     if (weather.length === 0) return null
 
     const currentDate = new Date()
-    const closestDate = weather.reduce((prev, curr) => {
+    return weather.reduce((prev, curr) => {
       const prevDate = new Date(prev.time)
       const currDate = new Date(curr.time)
 
@@ -23,11 +25,14 @@ export const YrCard: FC = () => {
         ? curr
         : prev
     })
-
-    return closestDate
   }, [weather])
 
-  console.log('Closest Weather:', closestWeather())
+  const closestWeatherTime = useMemo(
+    () => getClosestWeather(),
+    [getClosestWeather]
+  )
+
+  console.log('Closest Weather Time:', closestWeatherTime, geolocation)
 
   return (
     <div className="flex flex-col gap-2">
@@ -63,7 +68,7 @@ export const YrCard: FC = () => {
         <p className="font-normal text-sm">En tjeneste fra MET og NRK</p>
       </div>
 
-      <h2 className="text-xl font-semibold">Hamar</h2>
+      <h2 className="text-xl font-semibold">{geolocation?.city ?? 'N/A'}</h2>
 
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-1">
@@ -73,7 +78,9 @@ export const YrCard: FC = () => {
             alt="delvis skyet"
           />
 
-          <p className="text-2xl font-bold">5°</p>
+          <p className="text-2xl font-bold">
+            {closestWeatherTime?.data.instant.details.air_temperature}°
+          </p>
         </div>
 
         <div className="flex flex-col gap-2">

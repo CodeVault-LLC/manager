@@ -156,22 +156,19 @@ export const useSystemStore = create<ISystemStore>((set, get) => ({
   },
 
   setSystemStatistics: (data: ISystemStatistics) => {
-    set((state) => ({
+    set({
       systemStatistics: {
-        ...state.systemStatistics,
-        ...data
+        cpu: data.cpu,
+        memory: data.memory,
+        disk: data.disk,
+        network: data.network,
+        uptime: data.uptime,
+        pid: data.pid
       }
-    }))
+    })
   },
 
   subscribeToSystemStatistics: () => {
-    const listeners = ipcClient.listeners('system:statistics')
-    if (listeners.length > 0) {
-      // eslint-disable-next-line no-console
-      console.warn('Listener already registered for system:statistics')
-      return
-    }
-
     ipcClient.on('system:statistics', (_, data) => {
       get().setSystemStatistics(data)
     })

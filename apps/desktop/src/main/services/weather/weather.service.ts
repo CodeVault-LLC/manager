@@ -6,7 +6,8 @@ const yrApi = axios.create({
   baseURL: 'https://api.met.no/weatherapi/locationforecast/2.0/',
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json'
+    Accept: 'application/json',
+    'User-Agent': 'Manager Desktop App'
   }
 })
 
@@ -42,7 +43,6 @@ export const weatherServices = {
 
   requestLatestWeather: async () => {
     try {
-      //compact?lat=60&lon=11
       const geoLocation =
         SessionStorage.getInstance().getItem<IGeoLocation>('geolocation')
 
@@ -58,10 +58,7 @@ export const weatherServices = {
       }
 
       // store the weather data as session storage
-      SessionStorage.getInstance().setItem(
-        'weather',
-        response.data.properties.timeseries
-      )
+      SessionStorage.getInstance().setItem('weather', response.data)
 
       return response.data.properties.timeseries
     } catch (error) {

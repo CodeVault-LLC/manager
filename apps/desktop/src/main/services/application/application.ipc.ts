@@ -30,6 +30,12 @@ export const registerApplicationIPC = () => {
           'getGeoLocation'
         )
 
+      log.info(
+        `System initial data: theme=${theme}, language=${language}, geolocation=${JSON.stringify(
+          geolocation
+        )}`
+      )
+
       SessionStorage.getInstance().setItem('geolocation', geolocation)
 
       return { data: { theme, language, geolocation } }

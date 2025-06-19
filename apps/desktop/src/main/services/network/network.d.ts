@@ -15,5 +15,5 @@ export interface INetworkProvider {
    * @description This method retrieves the current geolocation data, including latitude and longitude.
    * @return {Promise<IGeolocation>} A promise that resolves to the geolocation data.
    */
-  getGeolocation(): Promise<IGeoLocation>
+  getGeoLocation(): Promise<IGeoLocation>
 }

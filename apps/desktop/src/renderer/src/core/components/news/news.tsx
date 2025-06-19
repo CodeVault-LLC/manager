@@ -8,7 +8,7 @@ import { Badge } from '@manager/ui'
 import { Skeleton } from '@manager/ui/src/ui/skeleton'
 
 export const News: FC = () => {
-  const { news } = useDashboardStore()
+  const { news, fetchNews } = useDashboardStore()
   const { openExternalLink } = useApplicationStore()
 
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
@@ -19,6 +19,10 @@ export const News: FC = () => {
     mode: 'snap',
     loop: true
   })
+
+  useEffect(() => {
+    void fetchNews()
+  }, [])
 
   useEffect(() => {
     if (instanceRef.current) {

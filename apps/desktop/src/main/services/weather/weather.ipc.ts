@@ -25,7 +25,7 @@ export const registerWeatherIPC = async () => {
           data: weather
         }
       } catch (error) {
-        log.error('Failed to fetch news', error)
+        log.error('Failed to fetch weather', error)
 
         return {
           error: {
