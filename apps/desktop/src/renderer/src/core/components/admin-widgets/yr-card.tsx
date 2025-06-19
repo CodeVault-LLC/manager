@@ -3,6 +3,7 @@ import { FC, useCallback, useEffect, useMemo } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@manager/ui'
 import { useDashboardStore } from '../../store/dashboard.store'
 import { useApplicationStore } from '../../store/application.store'
+import { convertSymbolKeyToId } from '../../../utils/yr-weather-symbols'
 
 export const YrCard: FC = () => {
   const { weather, fetchWeather } = useDashboardStore()
@@ -32,7 +33,7 @@ export const YrCard: FC = () => {
     [getClosestWeather]
   )
 
-  console.log('Closest Weather Time:', closestWeatherTime, geolocation)
+  console.log(JSON.stringify(closestWeatherTime, null, 2))
 
   return (
     <div className="flex flex-col gap-2">
@@ -74,8 +75,16 @@ export const YrCard: FC = () => {
         <div className="flex flex-row items-center gap-1">
           <img
             className="current-hour__weather-symbol"
-            src="https://www.yr.no/assets/images/weather-symbols/light-mode/default/svg/03n.svg"
-            alt="delvis skyet"
+            src={`https://nrkno.github.io/yr-weather-symbols/symbols/lightmode/${
+              closestWeatherTime?.data.next_1_hours?.summary?.symbol_code
+                ? convertSymbolKeyToId(
+                    closestWeatherTime.data.next_1_hours.summary.symbol_code
+                  )
+                : 'clearsky_day'
+            }.svg`}
+            alt={
+              closestWeatherTime?.data.next_1_hours?.summary?.symbol_code ?? ''
+            }
           />
 
           <p className="text-2xl font-bold">
@@ -107,7 +116,10 @@ export const YrCard: FC = () => {
               ></path>
             </svg>
 
-            <p className="text-sm font-normal">Føles som 4°</p>
+            <p className="text-sm font-normal">
+              Føles som{' '}
+              {closestWeatherTime?.data.instant.details.air_temperature}°
+            </p>
           </div>
 
           <div className="flex flex-row items-center gap-1">
@@ -125,7 +137,11 @@ export const YrCard: FC = () => {
               ></path>
             </svg>
 
-            <p className="text-sm font-normal">0 mm</p>
+            <p className="text-sm font-normal">
+              {closestWeatherTime?.data.next_1_hours?.details
+                .precipitation_amount ?? 0}{' '}
+              mm
+            </p>
           </div>
 
           <div className="flex flex-row items-center gap-1">
@@ -144,7 +160,9 @@ export const YrCard: FC = () => {
               ></path>
             </svg>
 
-            <p className="text-sm font-normal">1 (3) m/s</p>
+            <p className="text-sm font-normal">
+              {closestWeatherTime?.data.instant.details.wind_speed} m/s
+            </p>
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
