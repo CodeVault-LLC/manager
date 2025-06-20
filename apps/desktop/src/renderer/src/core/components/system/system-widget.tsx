@@ -2,9 +2,17 @@ import { useSystemStore } from '@renderer/core/store/system.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { FC } from 'react'
 
-import { Progress, Card, CardContent } from '@manager/ui'
+import {
+  Progress,
+  Card,
+  CardContent,
+  Alert,
+  AlertTitle,
+  AlertDescription
+} from '@manager/ui'
 
 import { Loader } from '../loader/loading-spinner'
+import { AlertCircle } from 'lucide-react'
 
 const formatUptime = (seconds: number) => {
   const weeks = Math.floor(seconds / 604800)
@@ -113,13 +121,13 @@ export const SystemWidget: FC = () => {
         </CardContent>
       </Card>
 
-      {/* Uptime */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
               {t('system.statistics.uptime')}
             </p>
+
             <div className="mt-1 flex items-center gap-x-2">
               {systemStatistics?.uptime !== undefined ? (
                 <h3 className="text-lg sm:text-2xl font-medium">
@@ -129,7 +137,23 @@ export const SystemWidget: FC = () => {
                 <Loader className="size-6" />
               )}
             </div>
-            {/* No progress bar for uptime needed, you can remove this */}
+
+            {/* Uptime warning */}
+            {systemStatistics?.uptime !== undefined &&
+              systemStatistics.uptime > 7 * 24 * 3600 && (
+                <Alert
+                  variant="warning"
+                  className="mt-4 border-yellow-400 bg-yellow-50 text-yellow-700"
+                >
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle className="font-semibold">
+                    {t('system.uptime.runningForLongTime')}
+                  </AlertTitle>
+                  <AlertDescription className="text-sm">
+                    {t('system.uptime.uptimeLongTimeSuggestion')}
+                  </AlertDescription>
+                </Alert>
+              )}
           </div>
         </CardContent>
       </Card>

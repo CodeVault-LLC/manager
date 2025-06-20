@@ -142,6 +142,10 @@
       "diskUsage": "Disk Usage",
       "networkUsage": "Network Usage",
       "uptime": "Uptime"
+    },
+    "uptime": {
+      "runningForLongTime": "System has been running for a long time",
+      "uptimeLongTimeSuggestion": "Consider restarting your PC to improve performance and prevent memory/resource leaks. Regular reboots help apply updates and maintain system stability."
     }
   },
   "error": {

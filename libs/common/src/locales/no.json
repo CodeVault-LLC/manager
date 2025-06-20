@@ -142,6 +142,10 @@
       "diskUsage": "Diskbruk",
       "networkUsage": "Nettverksbruk",
       "uptime": "Oppetid"
+    },
+    "uptime": {
+      "runningForLongTime": "Systemet har vært i drift i lang tid",
+      "uptimeLongTimeSuggestion": "Vurder å starte PC-en på nytt for å forbedre ytelsen og forhindre minne-/ressurslekkasjer. Regelmessige omstarter hjelper med å bruke oppdateringer og opprettholde systemstabilitet."
     }
   },
   "error": {

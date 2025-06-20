@@ -58,7 +58,7 @@ export const weatherServices = {
       }
 
       // store the weather data as session storage
-      SessionStorage.getInstance().setItem('weather', response.data)
+      SessionStorage.getInstance().setItem('weather', response.data, 10 * 60) // 10 minutes TTL
 
       return response.data.properties.timeseries
     } catch (error) {

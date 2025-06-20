@@ -1,16 +1,47 @@
-import { FC, useCallback, useEffect, useMemo } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@manager/ui'
 import { useDashboardStore } from '../../store/dashboard.store'
 import { useApplicationStore } from '../../store/application.store'
 import { convertSymbolKeyToId } from '../../../utils/yr-weather-symbols'
+import { MapPin } from 'lucide-react'
 
 export const YrCard: FC = () => {
   const { weather, fetchWeather } = useDashboardStore()
   const { geolocation } = useApplicationStore()
 
+  const [lastUpdated, setLastUpdated] = useState<string>(
+    new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  )
+
   useEffect(() => {
     void fetchWeather()
+    setLastUpdated(
+      new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    )
+
+    const interval = setInterval(
+      () => {
+        void fetchWeather()
+        setLastUpdated(
+          new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        )
+      },
+      10 * 60 * 1000
+    ) // 10 minutes
+
+    return () => {
+      clearInterval(interval)
+    }
   }, [fetchWeather])
 
   const getClosestWeather = useCallback(() => {
@@ -33,10 +64,41 @@ export const YrCard: FC = () => {
     [getClosestWeather]
   )
 
-  console.log(JSON.stringify(closestWeatherTime, null, 2))
+  const intervalLabels = ['00–06', '06–12', '12–18', '18–24']
+
+  const groupedForecast = useMemo(() => {
+    const groups: Record<string, typeof weather> = {
+      '00–06': [],
+      '06–12': [],
+      '12–18': [],
+      '18–24': []
+    }
+
+    weather.forEach((entry) => {
+      const hour = new Date(entry.time).getHours()
+      if (hour >= 0 && hour < 6) groups['00–06'].push(entry)
+      else if (hour >= 6 && hour < 12) groups['06–12'].push(entry)
+      else if (hour >= 12 && hour < 18) groups['12–18'].push(entry)
+      else if (hour >= 18 && hour < 24) groups['18–24'].push(entry)
+    })
+
+    return intervalLabels.map((label) => {
+      const group = groups[label]
+      if (group.length === 0) return { label, min: '-', max: '-' }
+
+      const temps = group.map(
+        (entry) => entry.data.instant.details.air_temperature
+      )
+      return {
+        label,
+        min: Math.min(...temps),
+        max: Math.max(...temps)
+      }
+    })
+  }, [weather])
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 p-4 rounded-lg shadow-md w-full max-w-full sm:max-w-md md:max-w-lg">
       <div className="flex flex-row items-center justify-between">
         <a
           className="text-[#00b8f1]"
@@ -66,10 +128,15 @@ export const YrCard: FC = () => {
           </svg>
         </a>
 
-        <p className="font-normal text-sm">En tjeneste fra MET og NRK</p>
+        <p className="font-normal text-xs italic text-gray-700 dark:text-gray-300">
+          En tjeneste fra MET og NRK
+        </p>
       </div>
 
-      <h2 className="text-xl font-semibold">{geolocation?.city ?? 'N/A'}</h2>
+      <div className="flex flex-row items-center gap-1">
+        <MapPin className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+        <h2 className="text-xl font-semibold">{geolocation?.city ?? 'N/A'}</h2>
+      </div>
 
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-1">
@@ -82,6 +149,8 @@ export const YrCard: FC = () => {
                   )
                 : 'clearsky_day'
             }.svg`}
+            width="42"
+            height="42"
             alt={
               closestWeatherTime?.data.next_1_hours?.summary?.symbol_code ?? ''
             }
@@ -183,19 +252,20 @@ export const YrCard: FC = () => {
         </div>
       </div>
 
-      <Table className="w-full">
+      <Table className="w-full text-sm sm:text-base">
         <TableBody>
-          <TableRow>
-            <TableHead>18-00</TableHead>
-            <TableCell>4° / 0°</TableCell>
-          </TableRow>
-
-          <TableRow>
-            <TableHead>00-06</TableHead>
-            <TableCell>5° / 1°</TableCell>
-          </TableRow>
+          {groupedForecast.map(({ label, min, max }) => (
+            <TableRow key={label}>
+              <TableHead className="whitespace-nowrap">{label}</TableHead>
+              <TableCell>{`${max}° / ${min}°`}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
+
+      <p className="text-xs text-gray-500 dark:text-gray-400 italic text-right">
+        Sist oppdatert: {lastUpdated}
+      </p>
     </div>
   )
 }

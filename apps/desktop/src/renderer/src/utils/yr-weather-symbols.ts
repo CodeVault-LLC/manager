@@ -94,3 +94,28 @@ export function convertSymbolKeyToId(
 ): TWeatherSymbolId | undefined {
   return weatherSymbolKeys[key] ?? undefined
 }
+
+export function getWeatherSymbolId(symbol?: {
+  n?: number
+  var?: 'None' | 'Sun' | 'Moon' | 'PolarNight'
+}) {
+  if (symbol == null || symbol.n == null) {
+    return undefined
+  }
+
+  let id = String(symbol.n).padStart(2, '0')
+
+  switch (symbol.var) {
+    case 'Sun':
+      id += 'd'
+      break
+    case 'PolarNight':
+      id += 'm'
+      break
+    case 'Moon':
+      id += 'n'
+      break
+  }
+
+  return id
+}
