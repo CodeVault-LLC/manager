@@ -18,6 +18,7 @@ import {
 
 import { Settings } from 'lucide-react'
 import { useApplicationStore } from '../core/store/application.store'
+import { WidgetManagerDialog } from '../core/components/dashboard-widget/WidgetManagerDialog'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
@@ -47,14 +48,16 @@ export const WorkspaceManagementPage = () => {
 
   const [editorMode, setEditorMode] = useState(false)
 
-  const layout = widgets.map((widget) => ({
-    i: widget.id,
-    x: widget.x || 0,
-    y: widget.y || 0,
-    w: widget.w || 2,
-    h: widget.h || 2,
-    static: widget.static || false
-  }))
+  const layout = widgets
+    .filter((widget) => widget.active)
+    .map((widget) => ({
+      i: widget.id,
+      x: widget.x || 0,
+      y: widget.y || 0,
+      w: widget.w || 2,
+      h: widget.h || 2,
+      static: widget.static || false
+    }))
 
   const { subscribeToSystemStatistics, unsubscribeFromSystemStatistics } =
     useSystemStore(
@@ -110,6 +113,19 @@ export const WorkspaceManagementPage = () => {
           {editorMode ? 'Exit Editor' : 'Edit Mode'}
         </Button>
       </div>
+
+      <WidgetManagerDialog
+        widgets={widgets.map((w) => ({
+          id: w.id,
+          name: w.id.replace(/_/g, ' ').toUpperCase(),
+          category: 'General', // or something more dynamic
+          active: true
+        }))}
+        onToggle={(id, active) => {
+          if (active) void addWidget(id)
+          else updateWidgets(widgets.filter((w) => w.id !== id))
+        }}
+      />
 
       {/* Dashboard grid */}
       <div

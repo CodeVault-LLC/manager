@@ -103,25 +103,41 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   },
 
   updateWidgets: (widgets: IDashboardWidgetItem[]) => {
-    set({ widgets })
+    const existingWidgets = get().widgets.filter(
+      (widget) => !widgets.some((w) => w.id === widget.id)
+    )
+
+    console.log('Existing widgets:', existingWidgets)
+
+    const activeWidgets = widgets.filter((widget) => widget.active)
+
+    const combinedWidgets = [...existingWidgets, ...activeWidgets]
+
+    console.log('Updating widgets:', combinedWidgets)
+
+    set({
+      widgets: combinedWidgets
+    })
+
     ipcClient.invoke('application:setAppSettings', {
       language: get().language,
       theme: get().theme,
-      widgets
+      widgets: activeWidgets
     })
   },
 
   addWidget: async (widgetId: string) => {
     try {
-      const response = await ipcClient.invoke('application:addWidget', widgetId)
+      await ipcClient.invoke('application:addWidget', widgetId)
 
-      if (response.data) {
-        const updatedWidgets = [...get().widgets, response.data]
-        get().updateWidgets(updatedWidgets)
-      } else if (response.error) {
-        // eslint-disable-next-line no-console
-        console.error('adding widget error', response.error)
-      }
+      const updatedWidgets = get().widgets.map((widget) => {
+        if (widget.id === widgetId) {
+          return { ...widget, active: true }
+        }
+        return widget
+      })
+
+      get().updateWidgets(updatedWidgets)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('adding widget error', error)
