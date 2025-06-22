@@ -61,10 +61,10 @@
     --accent-foreground: 0 0% 98%; /* in hex: #ffffff */
     --destructive: 0 62.8% 30.6%; /* in hex: #dc2626 */
     --destructive-foreground: 0 0% 98%; /* in hex: #ffffff */
-    --border: 240 3.7% 15.9%; /* in hex: #1e293b */ 
+    --border: 240 3.7% 15.9%; /* in hex: #1e293b */
     --input: 240 3.7% 15.9%; /* in hex: #1e293b */
     --ring: 240 4.9% 83.9%; /* in hex: #3b82f6 */
-    --radius: 6px; 
+    --radius: 6px;
     --chart-1: 220 70% 50%; /* in hex: #3b82f6 */
     --chart-2: 160 60% 45%; /* in hex: #10b981 */
     --chart-3: 30 80% 55%; /* in hex: #f59e0b */

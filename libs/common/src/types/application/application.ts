@@ -1,3 +1,5 @@
+import { IDashboardWidgetItem } from "../dashboard";
+
 export enum ETheme {
   LIGHT = "light",
   DARK = "dark",
@@ -22,6 +24,8 @@ export interface IApplication {
 
   themes?: ITheme[];
   languages?: ILanguage[];
+
+  widgets: IDashboardWidgetItem[];
 }
 
 export interface IApplicationUpdate {

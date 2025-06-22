@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import {
   ETheme,
   IApplicationUpdate,
+  IDashboardWidgetItem,
   IGeoLocation,
   IpcServiceLog,
   IServiceStatus
@@ -22,6 +23,7 @@ interface ILanguage {
 }
 
 interface IApplicationStore {
+  widgets: IDashboardWidgetItem[]
   theme: ETheme
   language: string
   geolocation: IGeoLocation | null
@@ -50,9 +52,14 @@ interface IApplicationStore {
   subscribeToUpdateStatus: () => void
   unsubscribeFromUpdateStatus: () => void
   subscribeToUpdateProgress: (callback: (progress: number) => void) => void
+
+  // Widgets
+  updateWidgets: (widgets: IDashboardWidgetItem[]) => void
+  addWidget: (widgetId: string) => Promise<void>
 }
 
 export const useApplicationStore = create<IApplicationStore>((set, get) => ({
+  widgets: [],
   theme: ETheme.SYSTEM,
   language: 'en',
   geolocation: null,
@@ -78,9 +85,9 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
       const system = await ipcClient.invoke('application:initial')
 
       if (system.data) {
-        const { theme, language, geolocation } = system.data
+        const { theme, language, geolocation, widgets } = system.data
 
-        set({ theme, language, geolocation })
+        set({ theme, language, geolocation, widgets })
         get().setHtmlTheme(theme)
       }
 
@@ -92,6 +99,32 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('getting initial system data error', error)
+    }
+  },
+
+  updateWidgets: (widgets: IDashboardWidgetItem[]) => {
+    set({ widgets })
+    ipcClient.invoke('application:setAppSettings', {
+      language: get().language,
+      theme: get().theme,
+      widgets
+    })
+  },
+
+  addWidget: async (widgetId: string) => {
+    try {
+      const response = await ipcClient.invoke('application:addWidget', widgetId)
+
+      if (response.data) {
+        const updatedWidgets = [...get().widgets, response.data]
+        get().updateWidgets(updatedWidgets)
+      } else if (response.error) {
+        // eslint-disable-next-line no-console
+        console.error('adding widget error', response.error)
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('adding widget error', error)
     }
   },
 
@@ -143,9 +176,11 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   setTheme: async (theme: ETheme) => {
     try {
       set({ theme })
+
       await ipcClient.invoke('application:setAppSettings', {
         language: get().language,
-        theme
+        theme,
+        widgets: get().widgets
       })
 
       get().setHtmlTheme(theme)
@@ -193,11 +228,12 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
 
   setLanguage: async (language: string) => {
     try {
-      set({ language }) // eslint-disable-next-line no-console
-      console.log('setting user language', language)
+      set({ language })
+
       await ipcClient.invoke('application:setAppSettings', {
         language,
-        theme: get().theme
+        theme: get().theme,
+        widgets: get().widgets
       })
     } catch (error) {
       // eslint-disable-next-line no-console

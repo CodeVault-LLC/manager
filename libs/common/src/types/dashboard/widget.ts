@@ -1,6 +1,13 @@
-export interface IDashboardWidget<T = any> {
-  name: string;
-  description: string;
-  status?: "beta" | "stable";
-  data?: IDashboardWidget<T>;
+export interface IDashboardWidgetItem {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  static?: boolean;
+  settings?: Record<string, any>;
+
+  active: boolean;
+  data?: any;
 }

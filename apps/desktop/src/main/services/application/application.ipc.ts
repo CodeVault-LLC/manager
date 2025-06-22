@@ -12,6 +12,7 @@ import {
 } from '@manager/common/src'
 import { ProcessService } from '../../lib/process'
 import { SessionStorage } from '../../lib/session'
+import { DashboardService } from './dashboard.service'
 
 /**
  * Register all IPC handlers related to application settings
@@ -24,21 +25,16 @@ export const registerApplicationIPC = () => {
     try {
       const theme = (await ConfStorage.get('theme')) ?? ETheme.LIGHT
       const language = (await ConfStorage.get('language')) ?? 'en'
+      const widgets = await DashboardService.getUserDashboard()
 
       const geolocation =
         await ProcessService.getInstance().runTask<IGeoLocation>(
           'getGeoLocation'
         )
 
-      log.info(
-        `System initial data: theme=${theme}, language=${language}, geolocation=${JSON.stringify(
-          geolocation
-        )}`
-      )
-
       SessionStorage.getInstance().setItem('geolocation', geolocation)
 
-      return { data: { theme, language, geolocation } }
+      return { data: { theme, language, geolocation, widgets } }
     } catch (error: any) {
       log.error(
         `Error while getting system initial data: ${error.message}`,
@@ -63,6 +59,7 @@ export const registerApplicationIPC = () => {
       try {
         await ConfStorage.set('theme', application.theme)
         await ConfStorage.set('language', application.language)
+        await DashboardService.saveUserDashboard(application.widgets)
 
         return { data: true }
       } catch (error: any) {
@@ -102,6 +99,21 @@ export const registerApplicationIPC = () => {
       }
     }
   )
+
+  ipcMain.handle('application:addWidget', async (_, widgetId: string) => {
+    try {
+      const widget = await DashboardService.addWidget(widgetId)
+      return { data: widget }
+    } catch (error: any) {
+      log.error(`Error while adding widget: ${error.message}`, error)
+      return {
+        error: {
+          code: EErrorCodes.FORBIDDEN,
+          message: 'error.forbidden'
+        }
+      }
+    }
+  })
 
   ipcMain.handle('application:serviceStatus', async () => {
     const services = await manager.getServiceStatus()

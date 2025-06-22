@@ -19,11 +19,6 @@ const msnApi = axios.create({
 
 msnApi.interceptors.response.use(
   (response) => {
-    log.debug('MSN API response', {
-      status: response.status,
-      statusText: response.statusText,
-      data: response.data
-    })
     return response
   },
   (error) => {

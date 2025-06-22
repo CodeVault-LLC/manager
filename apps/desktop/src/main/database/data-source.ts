@@ -1,7 +1,7 @@
 import path from 'node:path'
 
 import { createClient } from '@libsql/client'
-import { drizzle } from 'drizzle-orm/libsql';
+import { drizzle } from 'drizzle-orm/libsql'
 import { migrate } from 'drizzle-orm/libsql/migrator'
 import { app } from 'electron'
 

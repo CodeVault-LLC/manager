@@ -12,3 +12,4 @@ export * from './sports/sport-games.schema'
 export * from './extensions.model'
 
 export * from './notes/notes.schema'
+export * from './dashboard/widget.schema'

@@ -14,7 +14,7 @@ import {
   ISession,
   IConvertedImageData,
   IConvertedImageResponse,
-  IDashboardWidget,
+  IDashboardWidgetItem,
   ISystemHardware,
   ISystemStatistics,
   IpcServiceLog,
@@ -69,6 +69,7 @@ export interface IpcHandlers {
       theme: ETheme;
       language: string;
       geolocation: IGeoLocation;
+      widgets: IDashboardWidgetItem[];
     }>
   >;
   "application:updateAction": (
@@ -84,6 +85,9 @@ export interface IpcHandlers {
   "application:setAppSettings": (
     application: IApplication
   ) => Promise<TCommunicationResponse<boolean>>;
+  "application:addWidget": (
+    widgetId: string
+  ) => Promise<TCommunicationResponse<IDashboardWidgetItem>>;
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
   "system:getSystemInfo": () => Promise<TCommunicationResponse<ISystem>>;
@@ -108,13 +112,6 @@ export interface IpcHandlers {
   "extensions:getAll": (
     marketplace: boolean
   ) => Promise<TCommunicationResponse<IExtension[]>>;
-
-  "dashboard:widgets": () => Promise<
-    TCommunicationResponse<IDashboardWidget[]>
-  >;
-  "dashboard:widget": (
-    widget_name: string
-  ) => Promise<TCommunicationResponse<IDashboardWidget>>;
 
   "msn:news": () => Promise<TCommunicationResponse<INews[]>>;
   "msn:sport": ({

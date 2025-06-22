@@ -1,7 +1,6 @@
 import { EErrorCodes, EPageTypes } from '@manager/common/src'
 import { NetworkError } from '@renderer/core/components/errors/network-error'
 import { Loader } from '@renderer/core/components/loader/loading-spinner'
-import { useDashboardStore } from '@renderer/core/store/dashboard.store'
 import { useErrorStore } from '@renderer/core/store/error.store'
 import { useUserStore } from '@renderer/core/store/user.store'
 import { useNavigate } from '@tanstack/react-router'
@@ -23,7 +22,6 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
     currentUser,
     fetchCurrentUser
   } = useUserStore()
-  const { fetchWidgets } = useDashboardStore()
   const { getError } = useErrorStore()
 
   const getWorkspaceRedirectionUrl = (): string => {
@@ -60,19 +58,13 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = (props) => {
       void navigate({ to: '/login' })
       return
     }
-
-    // After user is available and no errors, fetch widgets
-    if (currentUser?.id) {
-      fetchWidgets()
-    }
   }, [
     currentUser,
     isUserLoading,
     navigate,
     pageType,
     getError,
-    fetchCurrentUser,
-    fetchWidgets
+    fetchCurrentUser
   ])
 
   // Handle network error view separately

@@ -7,7 +7,6 @@ import { runMigrations } from './database/data-source'
 import { startGrpc } from './grpc/bootstrap'
 import { manager } from './grpc/service-manager'
 import { registerApplicationIPC } from './services/application/application.ipc'
-import { loadDashboardServices } from './services/dashboard.service'
 import { registerDeveloperIPC } from './services/developer/developer.ipc'
 import { registerExtensionIPC } from './services/extensions'
 import { registerIntegrations } from './services/integrations'
@@ -240,7 +239,6 @@ function registerIpc() {
 
   registerIntegrations()
   void registerNotesIPC()
-  loadDashboardServices()
 
   registerDeveloperIPC()
 
