@@ -3,6 +3,11 @@ import { db } from '../../database/data-source'
 import { notes } from '../../database/models/schema'
 
 import { faker } from '@faker-js/faker'
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+import { ConfStorage } from '../../store'
+
+const ALGO = 'aes-256-gcm'
+const IV_LENGTH = 12
 
 export const notesServices = {
   getAllNotes: async () => {
@@ -32,8 +37,26 @@ export const notesServices = {
         }
       }
 
+      const key = (await ConfStorage.getSecret('notes-encryption-key')) || ''
+
+      const payload = Buffer.from(note.content as string, 'base64')
+      const iv = payload.subarray(0, IV_LENGTH)
+      const tag = payload.subarray(IV_LENGTH, IV_LENGTH + 16)
+      const encrypted = payload.subarray(IV_LENGTH + 16)
+
+      const decipher = createDecipheriv(ALGO, key, iv)
+      decipher.setAuthTag(tag)
+
+      const decrypted = Buffer.concat([
+        decipher.update(encrypted),
+        decipher.final()
+      ])
+
       return {
-        data: note
+        data: {
+          ...note,
+          content: JSON.parse(decrypted.toString('utf8'))
+        }
       }
     } catch (error) {
       log.error('Error fetching note by ID', error)
@@ -46,13 +69,25 @@ export const notesServices = {
   createNote: async () => {
     try {
       const randomTitle = faker.lorem.sentence(3)
-      const content = `<p>${faker.lorem.paragraph(2)}</p>`
+      const content = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null},"content":[{"type":"text","text":""}]}]}`
+      const key = (await ConfStorage.getSecret('notes-encryption-key')) || ''
+
+      const iv = randomBytes(IV_LENGTH)
+      const cipher = createCipheriv(ALGO, key, iv)
+
+      const encrypted = Buffer.concat([
+        cipher.update(content, 'utf8'),
+        cipher.final()
+      ])
+      const tag = cipher.getAuthTag()
+
+      const payload = Buffer.concat([iv, tag, encrypted])
 
       const newNote = await db
         .insert(notes)
         .values({
           title: randomTitle,
-          content
+          content: payload.toString('base64')
         })
         .returning()
 
@@ -76,9 +111,22 @@ export const notesServices = {
         }
       }
 
+      const key = (await ConfStorage.getSecret('notes-encryption-key')) || ''
+
+      const iv = randomBytes(IV_LENGTH)
+      const cipher = createCipheriv(ALGO, key, iv)
+
+      const encrypted = Buffer.concat([
+        cipher.update(JSON.stringify(content), 'utf8'),
+        cipher.final()
+      ])
+      const tag = cipher.getAuthTag()
+
+      const payload = Buffer.concat([iv, tag, encrypted])
+
       const updatedNote = await db
         .update(notes)
-        .set({ title, content })
+        .set({ title, content: payload.toString('base64') })
         .where(eq(notes.id, id))
         .returning()
 

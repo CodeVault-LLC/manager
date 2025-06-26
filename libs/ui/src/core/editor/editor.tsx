@@ -25,6 +25,7 @@ import { FooterBar } from "./ui/footer";
 import { all, createLowlight } from "lowlight";
 import StarterKit from "@tiptap/starter-kit";
 import { FontSize } from "./extensions/FontSize";
+import Link from "@tiptap/extension-link";
 
 interface EditorProps {
   value: object | null;
@@ -55,6 +56,13 @@ export const Editor: FC<EditorProps> = ({ value, onValueChange }) => {
     TableRow,
     TableCell,
     TableHeader,
+    Link.configure({
+      protocols: ["http", "https", "mailto", "tel"],
+      openOnClick: true,
+      autolink: true,
+      linkOnPaste: true,
+      defaultProtocol: "https",
+    }),
   ];
 
   if (!value) {

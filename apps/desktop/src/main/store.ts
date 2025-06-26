@@ -21,6 +21,20 @@ export const ConfStorage = {
         JSON.stringify(defaultConfig, null, 2),
         'utf8'
       )
+
+      // Ensure the secure storage is initialized with a key
+      // This is a one-time setup to ensure the key exists
+      const existingKey = await SecureStorage.get('notes-encryption-key')
+      let existingSecret = await SecureStorage.get('notes-encryption-salt')
+      if (!existingKey || !existingSecret) {
+        if (!existingSecret) {
+          existingSecret = SecureStorage.generateSimpleKey()
+          await SecureStorage.set('notes-encryption-salt', existingSecret)
+        }
+
+        const randomKey = SecureStorage.generateRandomKey(existingSecret)
+        await SecureStorage.set('notes-encryption-key', randomKey)
+      }
     } catch (err) {
       log.error('Error initializing config storage:', err)
     }
