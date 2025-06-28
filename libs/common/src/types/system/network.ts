@@ -1,6 +1,5 @@
 export interface INetwork {
   internalIP: string;
-  externalIP: string;
   macAddress: string;
   ssid: string;
   signalStrength: number;

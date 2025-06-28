@@ -5,6 +5,7 @@ mod networking;
 mod services;
 use services::images;
 use services::file_space;
+use services::network;
 
 use std::io;
 /*
@@ -60,6 +61,8 @@ async fn main() -> io::Result<()> {
 
     use tonic::service::InterceptorLayer;
 
+    use crate::services::network;
+
     let addr: SocketAddr = "127.0.0.1:50051".parse().expect("Invalid address");
     println!("🧠 System service listening on {}", addr);
 
@@ -68,6 +71,7 @@ async fn main() -> io::Result<()> {
         .layer(InterceptorLayer::new(auth_interceptor))
         .add_service(images::get_service())
         .add_service(file_space::get_service())
+        .add_service(network::get_service())
         .serve(addr)
         .await;
 

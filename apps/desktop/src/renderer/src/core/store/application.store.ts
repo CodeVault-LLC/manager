@@ -103,26 +103,12 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   },
 
   updateWidgets: (widgets: IDashboardWidgetItem[]) => {
-    const existingWidgets = get().widgets.filter(
-      (widget) => !widgets.some((w) => w.id === widget.id)
-    )
-
-    console.log('Existing widgets:', existingWidgets)
-
-    const activeWidgets = widgets.filter((widget) => widget.active)
-
-    const combinedWidgets = [...existingWidgets, ...activeWidgets]
-
-    console.log('Updating widgets:', combinedWidgets)
-
-    set({
-      widgets: combinedWidgets
-    })
+    set({ widgets })
 
     ipcClient.invoke('application:setAppSettings', {
       language: get().language,
       theme: get().theme,
-      widgets: activeWidgets
+      widgets: widgets
     })
   },
 

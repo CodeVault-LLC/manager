@@ -7,16 +7,7 @@ import { YrCard } from '../core/components/admin-widgets/yr-card'
 import { useSystemStore } from '../core/store/system.store'
 import { useShallow } from 'zustand/react/shallow'
 import { createFileRoute } from '@tanstack/react-router'
-
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from '@manager/ui'
-
-import { Settings } from 'lucide-react'
+import { Button } from '@manager/ui'
 import { useApplicationStore } from '../core/store/application.store'
 import { WidgetManagerDialog } from '../core/components/dashboard-widget/WidgetManagerDialog'
 
@@ -48,16 +39,23 @@ export const WorkspaceManagementPage = () => {
 
   const [editorMode, setEditorMode] = useState(false)
 
-  const layout = widgets
-    .filter((widget) => widget.active)
-    .map((widget) => ({
-      i: widget.id,
-      x: widget.x || 0,
-      y: widget.y || 0,
-      w: widget.w || 2,
-      h: widget.h || 2,
-      static: widget.static || false
-    }))
+  const breakpoints = { lg: 1920, md: 992, sm: 767, xs: 480, xxs: 0 }
+  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }
+
+  const layouts = widgets.reduce(
+    (acc, widget) => {
+      if (!widget.active) return acc
+      for (const bp of Object.keys(breakpoints)) {
+        acc[bp] = acc[bp] || []
+        const bpLayout = {
+          ...(widget.layout[bp] || {})
+        }
+        acc[bp].push({ ...bpLayout, i: widget.id, static: widget.static })
+      }
+      return acc
+    },
+    {} as Record<string, any[]>
+  )
 
   const { subscribeToSystemStatistics, unsubscribeFromSystemStatistics } =
     useSystemStore(
@@ -73,37 +71,23 @@ export const WorkspaceManagementPage = () => {
     return () => unsubscribeFromSystemStatistics()
   }, [])
 
+  console.log('Widgets:', widgets)
+
   return (
     <div className="relative flex flex-col p-4 gap-4">
-      {/* Floating settings button */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              className="rounded-full shadow-lg h-12 w-12 p-0"
-              variant="secondary"
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {widgets.map((widget) => (
-              <DropdownMenuCheckboxItem
-                key={widget.id}
-                checked={widget.active}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    void addWidget(widget.id)
-                  } else {
-                    updateWidgets(widgets.filter((w) => w.id !== widget.id))
-                  }
-                }}
-              >
-                {widget.id}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <WidgetManagerDialog
+          onToggle={(id, active) => {
+            if (active) void addWidget(id)
+            else {
+              const updatedWidgets = widgets.map((widget) =>
+                widget.id === id ? { ...widget, active: false } : widget
+              )
+
+              updateWidgets(updatedWidgets)
+            }
+          }}
+        />
 
         <Button
           className="rounded-full shadow-lg h-10 px-4 text-sm"
@@ -114,29 +98,15 @@ export const WorkspaceManagementPage = () => {
         </Button>
       </div>
 
-      <WidgetManagerDialog
-        widgets={widgets.map((w) => ({
-          id: w.id,
-          name: w.id.replace(/_/g, ' ').toUpperCase(),
-          category: 'General', // or something more dynamic
-          active: true
-        }))}
-        onToggle={(id, active) => {
-          if (active) void addWidget(id)
-          else updateWidgets(widgets.filter((w) => w.id !== id))
-        }}
-      />
-
-      {/* Dashboard grid */}
       <div
         className="overflow-auto"
         style={{ maxHeight: 'calc(100vh - 100px)' }}
       >
         <ResponsiveGridLayout
           className="layout"
-          layouts={{ lg: layout }}
-          breakpoints={{ lg: 1024, md: 768, sm: 480 }}
-          cols={{ lg: 6, md: 4, sm: 2 }}
+          layouts={layouts}
+          breakpoints={breakpoints}
+          cols={cols}
           rowHeight={60}
           isDraggable={editorMode}
           isResizable={false}
@@ -145,23 +115,32 @@ export const WorkspaceManagementPage = () => {
           compactType={null}
           preventCollision={true}
           onLayoutChange={(newLayout) => {
-            const updatedWidgets = newLayout.map((item) => ({
-              id: item.i,
-              x: item.x,
-              y: item.y,
-              w: item.w,
-              h: item.h,
-              static: item.static || false
-            }))
-            updateWidgets(updatedWidgets)
-          }}
-          resizeHandles={['se']}
-          onDragStart={() => {
-            if (!editorMode) {
-              setEditorMode(true)
+            if (editorMode) {
+              const updatedWidgets = widgets.map((widget) => {
+                const newLayoutItem = newLayout.find(
+                  (item) => item.i === widget.id
+                )
+
+                if (newLayoutItem) {
+                  return {
+                    ...widget,
+                    layout: {
+                      ...widget.layout,
+                      [newLayoutItem.breakpoint]: {
+                        x: newLayoutItem.x,
+                        y: newLayoutItem.y,
+                        w: newLayoutItem.w,
+                        h: newLayoutItem.h
+                      }
+                    }
+                  }
+                }
+                return widget
+              })
+              updateWidgets(updatedWidgets)
             }
           }}
-          onResizeStart={() => {
+          onDragStart={() => {
             if (!editorMode) {
               setEditorMode(true)
             }
@@ -171,31 +150,22 @@ export const WorkspaceManagementPage = () => {
               setEditorMode(false)
             }
           }}
-          onResizeStop={(_, __, newItem) => {
-            const updatedWidgets = widgets.map((widget) =>
-              widget.id === newItem.i
-                ? {
-                    ...widget,
-                    x: newItem.x,
-                    y: newItem.y,
-                    w: newItem.w,
-                    h: newItem.h
-                  }
-                : widget
-            )
-            updateWidgets(updatedWidgets)
-          }}
         >
-          {layout.map((item) => {
-            const widgetKey = item.i
+          {widgets.map((item) => {
+            const widgetKey = item.id
             const widgetData = combinedWidgets[widgetKey]
-
             if (!widgetData) return null
+
+            const gridProps = {
+              ...item.layout.md,
+              i: item.id,
+              static: item.static
+            }
 
             return (
               <div
-                key={item.i}
-                data-grid={item}
+                key={item.id}
+                data-grid={gridProps}
                 className="border border-blue-700"
               >
                 {widgetData.component}

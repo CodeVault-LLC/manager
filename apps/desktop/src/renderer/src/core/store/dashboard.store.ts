@@ -12,6 +12,8 @@ export interface IDashboardStore {
   widgets: IDashboardWidgetItem[]
   news: INews[]
   weather: Timesery[]
+  weatherError?: string
+
   sports: ISport[]
   isLoading: boolean
 
@@ -26,6 +28,7 @@ export const useDashboardStore = create<IDashboardStore>((set) => ({
   isLoading: false,
   news: [],
   weather: [],
+  weatherError: '',
   sports: [],
 
   setWidgets: (widgets: IDashboardWidgetItem[]) => {
@@ -42,9 +45,11 @@ export const useDashboardStore = create<IDashboardStore>((set) => ({
         set({ weather: response.data })
       } else {
         toast.error('Failed to fetch weather data')
+        set({ weatherError: 'Failed to fetch weather data' })
       }
     } catch (error) {
       toast.error(`Failed to fetch weather data: ${error}`)
+      set({ weatherError: `Failed to fetch weather data: ${error}` })
     } finally {
       set({ isLoading: false })
     }

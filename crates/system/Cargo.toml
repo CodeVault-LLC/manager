@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 bytes = "1.10.1"
+futures = "0.3.31"
 ico = "0.4.0"
 image = "0.25.6"
 interprocess = "2.2.3"

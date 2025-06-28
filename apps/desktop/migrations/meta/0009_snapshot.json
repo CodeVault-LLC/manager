@@ -144,9 +144,7 @@
       "indexes": {
         "news_news_id_unique": {
           "name": "news_news_id_unique",
-          "columns": [
-            "news_id"
-          ],
+          "columns": ["news_id"],
           "isUnique": true
         }
       },
@@ -214,12 +212,8 @@
           "name": "news_thumbnail_news_id_news_id_fk",
           "tableFrom": "news_thumbnail",
           "tableTo": "news",
-          "columnsFrom": [
-            "news_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["news_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -280,12 +274,8 @@
           "name": "news_provider_news_id_news_id_fk",
           "tableFrom": "news_provider",
           "tableTo": "news",
-          "columnsFrom": [
-            "news_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["news_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -371,12 +361,8 @@
           "name": "sports_teams_league_id_sports_leagues_id_fk",
           "tableFrom": "sports_teams",
           "tableTo": "sports_leagues",
-          "columnsFrom": [
-            "league_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -437,12 +423,8 @@
           "name": "sports_game_participants_game_id_sports_games_id_fk",
           "tableFrom": "sports_game_participants",
           "tableTo": "sports_games",
-          "columnsFrom": [
-            "game_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["game_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -450,12 +432,8 @@
           "name": "sports_game_participants_team_id_sports_teams_id_fk",
           "tableFrom": "sports_game_participants",
           "tableTo": "sports_teams",
-          "columnsFrom": [
-            "team_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -530,12 +508,8 @@
           "name": "sports_games_league_id_sports_leagues_id_fk",
           "tableFrom": "sports_games",
           "tableTo": "sports_leagues",
-          "columnsFrom": [
-            "league_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -718,30 +692,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "x": {
-          "name": "x",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "y": {
-          "name": "y",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "w": {
-          "name": "w",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "h": {
-          "name": "h",
-          "type": "integer",
+        "layout": {
+          "name": "layout",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

@@ -68,3 +68,4 @@ message FileSpaceResponse {
   repeated SpecialFolder special_folders = 4; // NEW
   uint64 total_size = 5;
 }
+

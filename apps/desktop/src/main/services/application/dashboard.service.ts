@@ -3,148 +3,123 @@ import { db } from '../../database/data-source'
 import { widgets as widgetTable } from '../../database/models/schema'
 import { eq } from 'drizzle-orm'
 
-const globalWidgets: IDashboardWidgetItem[] = [
-  {
-    id: 'basic_system_statistics',
-    type: 'system',
-    w: 6,
-    h: 2,
-    x: 0,
-    y: 0,
-    static: false,
-    settings: {},
-    active: true
-  },
-  {
-    id: 'msn_news_slider',
-    type: 'news',
-    w: 6,
-    h: 2,
-    x: 0,
-    y: 5,
-    static: false,
-    settings: {},
-    active: true
-  },
-  {
-    id: 'msn_sport_featured_matches',
-    type: 'sport',
-    w: 3,
-    h: 2,
-    x: 0,
-    y: 9,
-    static: false,
-    settings: {},
-    active: true
-  },
-  {
-    id: 'yr_weather_card_small',
-    type: 'yr',
-    w: 3,
-    h: 2,
-    x: 3,
-    y: 9,
-    static: false,
-    settings: {},
-    active: true
-  }
-]
+const breakpoints = ['lg', 'md', 'sm', 'xs', 'xxs'] as const
 
-const globalMap = new Map(globalWidgets.map((w) => [w.id, w]))
+const defaultLayout = {
+  basic_system_statistics: {
+    layout: {
+      lg: { x: 0, y: 0, w: 12, h: 2 },
+      md: { x: 0, y: 0, w: 10, h: 2 },
+      sm: { x: 0, y: 0, w: 6, h: 2 },
+      xs: { x: 0, y: 0, w: 4, h: 3 },
+      xxs: { x: 0, y: 0, w: 2, h: 4 }
+    },
+    type: 'system'
+  },
+  msn_news_slider: {
+    layout: {
+      lg: { x: 0, y: 3, w: 12, h: 2 },
+      md: { x: 0, y: 3, w: 10, h: 2 },
+      sm: { x: 0, y: 3, w: 6, h: 2 },
+      xs: { x: 0, y: 3, w: 4, h: 3 },
+      xxs: { x: 0, y: 3, w: 2, h: 4 }
+    },
+    type: 'news'
+  },
+  msn_sport_featured_matches: {
+    layout: {
+      lg: { x: 0, y: 6, w: 6, h: 2 },
+      md: { x: 0, y: 6, w: 5, h: 2 },
+      sm: { x: 0, y: 6, w: 3, h: 2 },
+      xs: { x: 0, y: 6, w: 2, h: 3 },
+      xxs: { x: 0, y: 6, w: 2, h: 3 }
+    },
+    type: 'sport'
+  },
+  yr_weather_card_small: {
+    layout: {
+      lg: { x: 6, y: 6, w: 6, h: 2 },
+      md: { x: 5, y: 6, w: 5, h: 2 },
+      sm: { x: 3, y: 6, w: 3, h: 2 },
+      xs: { x: 2, y: 6, w: 2, h: 3 },
+      xxs: { x: 0, y: 9, w: 2, h: 3 }
+    },
+    type: 'yr'
+  }
+} satisfies Record<string, { layout: Record<string, any>; type: string }>
 
 export const DashboardService = {
-  getDefaultWidgets(): IDashboardWidgetItem[] {
-    return globalWidgets
-  },
-
-  async getUserDashboard(): Promise<IDashboardWidgetItem[]> {
-    const rows = await db.select().from(widgetTable)
-
-    if (rows.length === 0) {
-      return this.getDefaultWidgets()
-    }
-
-    const existingIds = new Set(rows.map((widget) => widget.id))
-    const missingWidgets = globalWidgets.filter(
-      (widget) => !existingIds.has(widget.id)
-    )
-
-    if (missingWidgets.length > 0) {
-      log.info(
-        `Adding missing global widgets: ${missingWidgets.map((w) => w.id).join(', ')}`
-      )
-      rows.push(
-        ...missingWidgets.map((widget) => ({
-          ...widget,
-          static: widget.static ?? false,
-          settings: widget.settings || {},
-          active: false // Default to inactive for new widgets
-        }))
-      )
-    }
-
-    return rows.map((widget) => ({
-      id: widget.id,
-      type: widget.type,
-      x: widget.x,
-      y: widget.y,
-      w: widget.w,
-      h: widget.h,
-      static: widget.static ?? false,
-      settings: widget.settings || {},
-      active: widget.active ?? true
+  getDefaultWidgets() {
+    return Object.entries(defaultLayout).map(([id, def]) => ({
+      id,
+      type: def.type,
+      layout: def.layout,
+      static: false,
+      settings: {},
+      active: true
     }))
   },
 
-  async saveUserDashboard(widgets: IDashboardWidgetItem[]): Promise<void> {
+  async getUserDashboard() {
+    const rows = await db.select().from(widgetTable)
+
+    if (rows.length === 0) return this.getDefaultWidgets()
+
+    const ids = new Set(rows.map((r) => r.id))
+    const missing = Object.keys(defaultLayout).filter((id) => !ids.has(id))
+
+    const extraDefaults = missing.map((id) => ({
+      id,
+      type: defaultLayout[id].type,
+      layout: defaultLayout[id].layout,
+      static: false,
+      settings: {},
+      active: true
+    }))
+
+    return [
+      ...rows.map((r) => ({
+        id: r.id,
+        type: r.type,
+        layout: r.layout,
+        static: r.static,
+        settings: r.settings,
+        active: r.active
+      })),
+      ...extraDefaults
+    ]
+  },
+
+  async saveUserDashboard(widgets: IDashboardWidgetItem[]) {
     if (!widgets.length) throw new Error('No widgets provided')
 
-    const inserts = widgets.map((widget) => {
-      const base = globalMap.get(widget.id)
-      if (!base) throw new Error(`Unknown widget id: ${widget.id}`)
+    const inserts = widgets.map((w) => ({
+      id: w.id,
+      type: w.type,
+      layout: w.layout,
+      static: w.static,
+      settings: w.settings,
+      active: w.active
+    }))
 
-      return {
-        id: widget.id,
-        type: base.type,
-        x: widget.x,
-        y: widget.y,
-        w: widget.w || base.w,
-        h: widget.h || base.h,
-        static: widget.static ?? false,
-        settings: widget.settings || {},
-        active: true
-      }
-    })
-
-    // Transaction: delete old, insert new
-    await db.transaction(async (tx) => {
-      await tx.delete(widgetTable).run()
-      await tx.insert(widgetTable).values(inserts).run()
-    })
+    await db.delete(widgetTable).run()
+    await db.insert(widgetTable).values(inserts).run()
   },
 
   async addWidget(widgetId: string): Promise<void> {
-    const existing = await this.getUserDashboard()
-    if (existing.some((w) => w.id === widgetId)) {
-      throw new Error(`Widget ${widgetId} already exists`)
-    }
-
-    const def = globalMap.get(widgetId)
-    if (!def) throw new Error(`Widget ${widgetId} not found`)
+    const widgetDef = defaultLayout[widgetId]
+    if (!widgetDef) throw new Error(`Widget ${widgetId} not found`)
 
     const newWidget: IDashboardWidgetItem = {
-      id: def.id,
-      type: def.type,
-      x: 0,
-      y: 0,
-      w: def.w,
-      h: def.h,
+      id: widgetId,
+      type: widgetDef.type,
+      layout: widgetDef.layout,
       static: false,
       settings: {},
       active: true
     }
 
-    await this.saveUserDashboard([...existing, newWidget])
+    await db.insert(widgetTable).values(newWidget).run()
   },
 
   async removeWidget(widgetId: string): Promise<void> {

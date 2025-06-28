@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package network;
+
+// Network scanning service
+service NetworkScanner {
+  rpc ScanNetwork (NetworkScanRequest) returns (NetworkScanResponse);
+}
+
+message NetworkScanRequest {
+  repeated string ip_addresses = 1; // e.g., ["192.168.1.1", "10.0.0.5"]
+  repeated uint32 ports = 2;        // If empty, use a default list or scan all
+  bool detect_services = 3;         // Do banner grabbing or guess service
+  bool full_scan = 4;               // Scan all 65535 ports (optional)
+}
+
+message PortStatus {
+  uint32 port = 1;
+  string state = 2; // open, closed, filtered
+  string service = 3; // ssh, http, etc.
+}
+
+message HostScanResult {
+  string ip = 1;
+  repeated PortStatus ports = 2;
+}
+
+message NetworkScanResponse {
+  repeated HostScanResult results = 1;
+}

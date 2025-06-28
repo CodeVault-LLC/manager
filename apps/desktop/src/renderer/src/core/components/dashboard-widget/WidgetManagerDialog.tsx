@@ -13,6 +13,7 @@ import { Plus, Trash2, Settings } from 'lucide-react'
 import { useState } from 'react'
 import { useApplicationStore } from '../../store/application.store'
 import { useShallow } from 'zustand/react/shallow'
+import { cn } from '@manager/ui/src/utils/helpers'
 
 type Props = {
   onToggle: (id: string, active: boolean) => void
@@ -35,9 +36,11 @@ export function WidgetManagerDialog({ onToggle }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Settings className="w-4 h-4 mr-2" />
-          Manage Widgets
+        <Button
+          className="rounded-full shadow-lg h-12 w-12 p-0"
+          variant="secondary"
+        >
+          <Settings className="h-5 w-5" />
         </Button>
       </DialogTrigger>
 
@@ -54,7 +57,7 @@ export function WidgetManagerDialog({ onToggle }: Props) {
         />
 
         <ScrollArea className="h-[60vh] pr-2">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {filtered.map((widget) => (
               <div
                 key={widget.id}
@@ -62,12 +65,21 @@ export function WidgetManagerDialog({ onToggle }: Props) {
                   'p-4 border rounded-lg flex flex-col items-center justify-between w-full gap-2'
                 }
               >
-                <div>
+                <div className="flex flex-row items-center justify-between w-full">
                   <h3 className="font-semibold">{widget.id}</h3>
-                  <Badge variant={widget.active ? 'success' : 'destructive'}>
+                  <Badge
+                    variant={'outline'}
+                    className={cn(
+                      'text-xs',
+                      widget.active
+                        ? 'text-green-600 border-green-600'
+                        : 'text-red-600 border-red-600'
+                    )}
+                  >
                     {widget.active ? 'Active' : 'Inactive'}
                   </Badge>
                 </div>
+
                 <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"

@@ -3,7 +3,7 @@ import { ProcessService } from '../../lib/process' // Assuming this path is corr
 import { runCommand } from '../../utils/command' // Assuming this path is correct
 import { INetworkProvider } from './network.d' // Assuming this is INetworkProvider as defined before
 import { safeJsonParse } from '../../utils/json'
-import { SessionStorage } from '../../lib/session'
+import { manager } from '../../grpc/service-manager'
 
 ProcessService.getInstance().registerTask<INetwork>(
   'getNetwork',
@@ -40,13 +40,19 @@ async function parseIpconfigAllForAdapter(
     '\\$&'
   )
 
+  console.log(`Searching for adapter: ${escapedDesc}`)
+
   // Find the section that includes this description
   const adapterRegex = new RegExp(
     `\\s*${escapedDesc}[\\s\\S]*?(?:\\n\\n|$)`,
     'i'
   )
 
+  console.log(`Using regex: ${adapterRegex}`)
+
   const match = ipconfigAllOutput.match(adapterRegex)
+
+  console.log(`Found match: ${match ? match[0] : 'none'}`)
 
   if (!match) {
     log.warn(
@@ -94,7 +100,6 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
   async (): Promise<INetwork> => {
     const defaultNetwork: INetwork = {
       internalIP: '',
-      externalIP: '',
       macAddress: '',
       ssid: '',
       signalStrength: 0,
@@ -115,6 +120,26 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
 
     const currentNetworkState = { ...defaultNetwork }
 
+    const client = manager.getClient('network', 'NetworkScanner')
+
+    const preparedRequest = {
+      ip_addresses: ['192.168.1.1'],
+      detect_services: true,
+      full_scan: true
+    }
+
+    const response = await new Promise<any>((resolve, reject) => {
+      client.ScanNetwork(preparedRequest, (err, res) => {
+        if (err || !res) {
+          log.error('gRPC call failed:', err)
+          return reject(new Error(err?.message || 'gRPC response missing'))
+        }
+        resolve(res)
+      })
+    })
+
+    log.info('gRPC call successful:', response)
+
     try {
       const netAdapterInfoJson = await runCommand(
         'Get-NetAdapter -Physical | Select-Object Name,InterfaceDescription,LinkSpeed,Status,MacAddress,Nlmtu | Where-Object Status -eq Up | Sort-Object InterfaceMetric | ConvertTo-Json',
@@ -125,7 +150,7 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         }
       )
 
-      const activeAdapters: IAdapterInfo = safeJsonParse(netAdapterInfoJson, {
+      let activeAdapters: IAdapterInfo = safeJsonParse(netAdapterInfoJson, {
         Name: 'WiFi' as IAdapterInfo['Name'],
         InterfaceDescription: '',
         LinkSpeed: '',
@@ -142,11 +167,26 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
         return defaultNetwork
       }
 
+      if (Array.isArray(activeAdapters)) {
+        // If multiple adapters, find the first one that is 'Up'
+        const upAdapters = activeAdapters.filter(
+          (adapter) => adapter.Status === 'Up'
+        )
+        if (upAdapters.length > 0) {
+          activeAdapters = upAdapters[0] // Use the first 'Up' adapter
+        } else {
+          log.warn('No active network adapters are currently "Up".')
+          return defaultNetwork
+        }
+      } else if (activeAdapters.Status !== 'Up') {
+        log.warn('No active network adapters are currently "Up".')
+        return defaultNetwork
+      }
+
       const primaryAdapter = activeAdapters
 
       const [
         ipconfigAllOutput,
-        externalIP,
         pingResult,
         firewallStatusJson,
         vpnAdaptersJson,
@@ -159,12 +199,6 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
           defaultValue: '',
           timeout: 5000
         }),
-        SessionStorage.getInstance().getItem<string>('externalIP') ||
-          runCommand('curl -s https://api.ipify.org', {
-            expectedType: 'string',
-            defaultValue: '',
-            timeout: 5000
-          }),
         runCommand('ping -n 1 8.8.8.8', {
           defaultValue: '',
           timeout: 2000
@@ -243,7 +277,6 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
       currentNetworkState.ssid = adapterDetails.ssid || ''
       currentNetworkState.mtu = primaryAdapter.Nlmtu || 1500 // Get MTU from Get-NetAdapter
       currentNetworkState.leaseTime = adapterDetails.leaseExpires || '' // Often lease expires is more useful
-      currentNetworkState.externalIP = externalIP || ''
 
       // Ping for Latency and Status (ping Google DNS)
       const latencyMatch = pingResult.match(/Average = (\d+)ms/)

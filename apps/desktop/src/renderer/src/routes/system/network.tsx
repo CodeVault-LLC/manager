@@ -30,6 +30,7 @@ import {
 import { Skeleton } from '@manager/ui/src/ui/skeleton'
 import { cn } from '../../utils/helpers'
 import { useSystemStore } from '../../core/store/system.store'
+import { useApplicationStore } from '../../core/store/application.store'
 
 export const Route = createFileRoute('/system/network')({
   component: RouteComponent
@@ -38,11 +39,18 @@ export const Route = createFileRoute('/system/network')({
 function RouteComponent() {
   const [expanded, setExpanded] = useState(false)
   const { network, getNetwork, loading } = useSystemStore()
+  const { geolocation } = useApplicationStore()
 
   useEffect(() => {
     if (!network) {
       getNetwork()
     }
+
+    const interval = setInterval(() => {
+      getNetwork()
+    }, 10000)
+
+    return () => clearInterval(interval)
   }, [getNetwork])
 
   const InfoBlock = ({
@@ -87,7 +95,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      {loading && (
+      {loading && !network && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
             <Skeleton key={i} className="h-24 rounded-xl" />
@@ -95,14 +103,7 @@ function RouteComponent() {
         </div>
       )}
 
-      {!loading && !network && (
-        <div className="text-center text-muted-foreground">
-          <p className="text-lg">No network information available</p>
-          <p className="text-sm">Please check your connection or try again.</p>
-        </div>
-      )}
-
-      {!loading && network && (
+      {network && (
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -145,7 +146,7 @@ function RouteComponent() {
               />
               <InfoBlock
                 label="External IP"
-                value={network.externalIP}
+                value={geolocation?.ip || 'N/A'}
                 icon={<Globe className="w-4 h-4 text-muted-foreground" />}
               />
               <InfoBlock
