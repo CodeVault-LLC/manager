@@ -240,7 +240,7 @@ function registerIpc() {
   registerIntegrations()
   void registerNotesIPC()
 
-  registerDeveloperIPC()
+  registerDeveloperIPC(mainWindow!)
 
   registerApplicationIPC()
   registerSystemIPC()

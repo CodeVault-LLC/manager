@@ -120,26 +120,6 @@ const getNetworkWin: INetworkProvider['getNetwork'] =
 
     const currentNetworkState = { ...defaultNetwork }
 
-    const client = manager.getClient('network', 'NetworkScanner')
-
-    const preparedRequest = {
-      ip_addresses: ['192.168.1.1'],
-      detect_services: true,
-      full_scan: true
-    }
-
-    const response = await new Promise<any>((resolve, reject) => {
-      client.ScanNetwork(preparedRequest, (err, res) => {
-        if (err || !res) {
-          log.error('gRPC call failed:', err)
-          return reject(new Error(err?.message || 'gRPC response missing'))
-        }
-        resolve(res)
-      })
-    })
-
-    log.info('gRPC call successful:', response)
-
     try {
       const netAdapterInfoJson = await runCommand(
         'Get-NetAdapter -Physical | Select-Object Name,InterfaceDescription,LinkSpeed,Status,MacAddress,Nlmtu | Where-Object Status -eq Up | Sort-Object InterfaceMetric | ConvertTo-Json',

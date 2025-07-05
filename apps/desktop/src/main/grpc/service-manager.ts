@@ -199,15 +199,24 @@ class ServiceManager {
         const method = (target as any)[prop]
         if (typeof method !== 'function') return method
 
-        return (req: any, cb: any) => {
-          const start = performance.now()
-          method.call(target, req, metadata, (err: any, res: any) => {
-            const time = performance.now() - start
-            service.responseTimes.push(time)
-            if (service.responseTimes.length > 100)
-              service.responseTimes.shift()
-            cb(err, res)
-          })
+        return (...args: any[]) => {
+          const req = args[0]
+          const cb = args[1]
+
+          // If a callback is passed, treat as unary
+          if (typeof cb === 'function') {
+            const start = performance.now()
+            method.call(target, req, metadata, (err: any, res: any) => {
+              const time = performance.now() - start
+              service.responseTimes.push(time)
+              if (service.responseTimes.length > 100)
+                service.responseTimes.shift()
+              cb(err, res)
+            })
+          } else {
+            // No callback: assume server-streaming, return the call
+            return method.call(target, req, metadata)
+          }
         }
       }
     })

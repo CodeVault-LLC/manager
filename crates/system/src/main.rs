@@ -5,7 +5,7 @@ mod networking;
 mod services;
 use services::images;
 use services::file_space;
-use services::network;
+use services::network::network::NMAP_PROBES;
 
 use std::io;
 /*
@@ -61,11 +61,14 @@ async fn main() -> io::Result<()> {
 
     use tonic::service::InterceptorLayer;
 
-    use crate::services::network;
+    use crate::services::network::{network, service_probe::init_service_probes};
 
     let addr: SocketAddr = "127.0.0.1:50051".parse().expect("Invalid address");
     println!("🧠 System service listening on {}", addr);
 
+
+    let probes = init_service_probes().await;
+    NMAP_PROBES.set(probes).unwrap();
 
     let _ = Server::builder()
         .layer(InterceptorLayer::new(auth_interceptor))

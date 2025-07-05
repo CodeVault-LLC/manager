@@ -9,3 +9,4 @@ export * from "./dashboard";
 export * from "./msn";
 export * from "./sports";
 export * from "./weather";
+export * from "./rmap";

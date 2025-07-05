@@ -4,7 +4,7 @@ package network;
 
 // Network scanning service
 service NetworkScanner {
-  rpc ScanNetwork (NetworkScanRequest) returns (NetworkScanResponse);
+  rpc ScanNetwork (NetworkScanRequest) returns (stream NetworkScanResponse);
 }
 
 message NetworkScanRequest {
@@ -14,17 +14,26 @@ message NetworkScanRequest {
   bool full_scan = 4;               // Scan all 65535 ports (optional)
 }
 
-message PortStatus {
+message RmapPort {
   uint32 port = 1;
-  string state = 2; // open, closed, filtered
-  string service = 3; // ssh, http, etc.
+  string protocol = 2;
+  string service = 3;
+  string state = 4; // open, closed, filtered
+  string version = 5; // optional
 }
 
 message HostScanResult {
-  string ip = 1;
-  repeated PortStatus ports = 2;
+  string host = 1;
+  string hostname = 2;
+  string status = 3;
+  repeated RmapPort ports = 4;
+  string os = 5;
+  string last_seen = 6;
+  string risk = 7;
 }
 
 message NetworkScanResponse {
   repeated HostScanResult results = 1;
+  string total = 2; // Total number of hosts scanned
+  string scanned = 3; // Number of hosts scanned
 }

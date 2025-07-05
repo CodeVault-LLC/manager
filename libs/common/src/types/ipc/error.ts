@@ -100,6 +100,8 @@ export enum EErrorCodes {
   ADMIN_USER_DEACTIVATED = "5190",
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
+
+  RMAP_GENERATION_ERROR = "6000",
 }
 
 export type TErrorInfo = {

@@ -22,6 +22,8 @@ import {
   IApplicationUpdate,
   IGeoLocation,
   Timesery,
+  IRmapRequest,
+  IRmapResponse,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -63,6 +65,10 @@ export interface IpcHandlers {
   "images:convert": (
     data: IConvertedImageData
   ) => Promise<TCommunicationResponse<IConvertedImageResponse>>;
+
+  "rmap:generate": (
+    data: IRmapRequest
+  ) => Promise<TCommunicationResponse<IRmapResponse[]>>;
 
   "application:initial": () => Promise<
     TCommunicationResponse<{
@@ -136,4 +142,11 @@ export interface IpcEmittedEvents {
 
   "application:updateStatus": (data: IApplicationUpdate) => void;
   "application:updateDownloadProgress": (progress: number) => void;
+
+  "rmap:progress": (data: {
+    total: number;
+    scanned: number;
+    results: IRmapResponse[];
+  }) => void;
+  "rmap:complete": (data: IRmapResponse[]) => void;
 }

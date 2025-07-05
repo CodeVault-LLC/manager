@@ -33,6 +33,7 @@ import { Route as PoliciesPrivacyRouteImport } from './routes/policies/privacy'
 import { Route as PoliciesFaqRouteImport } from './routes/policies/faq'
 import { Route as NotesIdRouteImport } from './routes/notes/$id'
 import { Route as EntertainmentMangaRouteImport } from './routes/entertainment/manga'
+import { Route as DeveloperRmapRouteImport } from './routes/developer/rmap'
 import { Route as DeveloperIconsRouteImport } from './routes/developer/icons'
 import { Route as EntertainmentMangaIndexRouteImport } from './routes/entertainment/manga/index'
 import { Route as EntertainmentMangaIdRouteImport } from './routes/entertainment/manga/$id'
@@ -157,6 +158,11 @@ const EntertainmentMangaRoute = EntertainmentMangaRouteImport.update({
   path: '/manga',
   getParentRoute: () => EntertainmentRoute,
 } as any)
+const DeveloperRmapRoute = DeveloperRmapRouteImport.update({
+  id: '/developer/rmap',
+  path: '/developer/rmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DeveloperIconsRoute = DeveloperIconsRouteImport.update({
   id: '/developer/icons',
   path: '/developer/icons',
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/system': typeof SystemRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
+  '/developer/rmap': typeof DeveloperRmapRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/status': typeof StatusRoute
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
+  '/developer/rmap': typeof DeveloperRmapRoute
   '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/system': typeof SystemRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
+  '/developer/rmap': typeof DeveloperRmapRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
   '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/system'
     | '/verify-email'
     | '/developer/icons'
+    | '/developer/rmap'
     | '/entertainment/manga'
     | '/notes/$id'
     | '/policies/faq'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/status'
     | '/verify-email'
     | '/developer/icons'
+    | '/developer/rmap'
     | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/system'
     | '/verify-email'
     | '/developer/icons'
+    | '/developer/rmap'
     | '/entertainment/manga'
     | '/notes/$id'
     | '/policies/faq'
@@ -356,6 +368,7 @@ export interface RootRouteChildren {
   SystemRoute: typeof SystemRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
   DeveloperIconsRoute: typeof DeveloperIconsRoute
+  DeveloperRmapRoute: typeof DeveloperRmapRoute
   PoliciesFaqRoute: typeof PoliciesFaqRoute
   PoliciesPrivacyRoute: typeof PoliciesPrivacyRoute
   PoliciesTermsRoute: typeof PoliciesTermsRoute
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntertainmentMangaRouteImport
       parentRoute: typeof EntertainmentRoute
     }
+    '/developer/rmap': {
+      id: '/developer/rmap'
+      path: '/developer/rmap'
+      fullPath: '/developer/rmap'
+      preLoaderRoute: typeof DeveloperRmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/developer/icons': {
       id: '/developer/icons'
       path: '/developer/icons'
@@ -640,6 +660,7 @@ const rootRouteChildren: RootRouteChildren = {
   SystemRoute: SystemRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
   DeveloperIconsRoute: DeveloperIconsRoute,
+  DeveloperRmapRoute: DeveloperRmapRoute,
   PoliciesFaqRoute: PoliciesFaqRoute,
   PoliciesPrivacyRoute: PoliciesPrivacyRoute,
   PoliciesTermsRoute: PoliciesTermsRoute,

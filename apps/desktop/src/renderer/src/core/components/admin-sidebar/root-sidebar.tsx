@@ -97,6 +97,10 @@ export const AppSidebar = (props: { className?: string }) => {
           {
             title: t('common.icons'),
             url: '/developer/icons'
+          },
+          {
+            title: t('navigation.rmap'),
+            url: '/developer/rmap'
           }
         ]
       }
