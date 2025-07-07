@@ -176,7 +176,10 @@ const getNetworkMac: INetworkProvider['getNetwork'] = async () => {
     macAddress,
     ssid, // Processed separately
     signalStrength,
-    connectionType: connectionTypeRaw as 'WiFi' | 'Ethernet' | 'Unknown',
+    connectionType:
+      connectionTypeRaw === 'WiFi' || connectionTypeRaw === 'Ethernet'
+        ? connectionTypeRaw
+        : 'WiFi',
     dns: Array.isArray(dns) ? dns : [], // Ensure DNS is an array
     gateway,
     latency,

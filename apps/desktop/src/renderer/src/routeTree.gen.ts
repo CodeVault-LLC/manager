@@ -35,6 +35,7 @@ import { Route as NotesIdRouteImport } from './routes/notes/$id'
 import { Route as EntertainmentMangaRouteImport } from './routes/entertainment/manga'
 import { Route as DeveloperRmapRouteImport } from './routes/developer/rmap'
 import { Route as DeveloperIconsRouteImport } from './routes/developer/icons'
+import { Route as EntertainmentMediaIndexRouteImport } from './routes/entertainment/media/index'
 import { Route as EntertainmentMangaIndexRouteImport } from './routes/entertainment/manga/index'
 import { Route as EntertainmentMangaIdRouteImport } from './routes/entertainment/manga/$id'
 
@@ -168,6 +169,11 @@ const DeveloperIconsRoute = DeveloperIconsRouteImport.update({
   path: '/developer/icons',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntertainmentMediaIndexRoute = EntertainmentMediaIndexRouteImport.update({
+  id: '/media/',
+  path: '/media/',
+  getParentRoute: () => EntertainmentRoute,
+} as any)
 const EntertainmentMangaIndexRoute = EntertainmentMangaIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -208,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
+  '/entertainment/media': typeof EntertainmentMediaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/system': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga': typeof EntertainmentMangaIndexRoute
+  '/entertainment/media': typeof EntertainmentMediaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
+  '/entertainment/media/': typeof EntertainmentMediaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
+    | '/entertainment/media'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/system'
     | '/entertainment/manga/$id'
     | '/entertainment/manga'
+    | '/entertainment/media'
   id:
     | '__root__'
     | '/'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
+    | '/entertainment/media/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -558,6 +570,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeveloperIconsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entertainment/media/': {
+      id: '/entertainment/media/'
+      path: '/media'
+      fullPath: '/entertainment/media'
+      preLoaderRoute: typeof EntertainmentMediaIndexRouteImport
+      parentRoute: typeof EntertainmentRoute
+    }
     '/entertainment/manga/': {
       id: '/entertainment/manga/'
       path: '/'
@@ -590,10 +609,12 @@ const EntertainmentMangaRouteWithChildren =
 
 interface EntertainmentRouteChildren {
   EntertainmentMangaRoute: typeof EntertainmentMangaRouteWithChildren
+  EntertainmentMediaIndexRoute: typeof EntertainmentMediaIndexRoute
 }
 
 const EntertainmentRouteChildren: EntertainmentRouteChildren = {
   EntertainmentMangaRoute: EntertainmentMangaRouteWithChildren,
+  EntertainmentMediaIndexRoute: EntertainmentMediaIndexRoute,
 }
 
 const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(

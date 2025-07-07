@@ -2631,6 +2631,7 @@ dependencies = [
  "rayon",
  "regex",
  "reqwest",
+ "tempfile",
  "tokio 1.45.1",
  "tokio-named-pipes",
  "tokio-stream",

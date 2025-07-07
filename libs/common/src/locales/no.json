@@ -32,7 +32,8 @@
     "notes": "Notater",
     "network": "Nettverk",
     "developer": "Utvikler",
-    "system": "System"
+    "system": "System",
+    "rmap": "Fjernkart"
   },
   "user": {
     "logout": "Logg ut",

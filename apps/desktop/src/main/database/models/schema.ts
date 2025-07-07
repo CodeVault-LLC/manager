@@ -13,3 +13,8 @@ export * from './extensions.model'
 
 export * from './notes/notes.schema'
 export * from './dashboard/widget.schema'
+
+export * from './files/files.schema'
+export * from './files/files-categories.schema'
+export * from './files/files-tags.schema'
+export * from './files/tags.schema'

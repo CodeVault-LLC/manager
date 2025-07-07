@@ -32,7 +32,8 @@
     "notes": "Notes",
     "network": "Network",
     "developer": "Developer",
-    "system": "System"
+    "system": "System",
+    "rmap": "Remote Map"
   },
   "user": {
     "logout": "Logout",

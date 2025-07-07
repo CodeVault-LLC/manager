@@ -3,7 +3,6 @@ import { ProcessService } from '../../lib/process' // Assuming this path is corr
 import { runCommand } from '../../utils/command' // Assuming this path is correct
 import { INetworkProvider } from './network.d' // Assuming this is INetworkProvider as defined before
 import { safeJsonParse } from '../../utils/json'
-import { manager } from '../../grpc/service-manager'
 
 ProcessService.getInstance().registerTask<INetwork>(
   'getNetwork',
@@ -40,19 +39,13 @@ async function parseIpconfigAllForAdapter(
     '\\$&'
   )
 
-  console.log(`Searching for adapter: ${escapedDesc}`)
-
   // Find the section that includes this description
   const adapterRegex = new RegExp(
     `\\s*${escapedDesc}[\\s\\S]*?(?:\\n\\n|$)`,
     'i'
   )
 
-  console.log(`Using regex: ${adapterRegex}`)
-
   const match = ipconfigAllOutput.match(adapterRegex)
-
-  console.log(`Found match: ${match ? match[0] : 'none'}`)
 
   if (!match) {
     log.warn(

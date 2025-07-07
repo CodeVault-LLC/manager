@@ -24,6 +24,8 @@ import {
   Timesery,
   IRmapRequest,
   IRmapResponse,
+  IMedia,
+  IMediaResponse,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -76,6 +78,7 @@ export interface IpcHandlers {
       language: string;
       geolocation: IGeoLocation;
       widgets: IDashboardWidgetItem[];
+      ffmpegPath: string;
     }>
   >;
   "application:updateAction": (
@@ -94,6 +97,15 @@ export interface IpcHandlers {
   "application:addWidget": (
     widgetId: string
   ) => Promise<TCommunicationResponse<IDashboardWidgetItem>>;
+
+  "entertainment:media:upload": (
+    filePath: string
+  ) => Promise<TCommunicationResponse<IMedia>>;
+  "entertainment:media:list": (
+    limit: number,
+    query: string,
+    filters: string[]
+  ) => Promise<TCommunicationResponse<IMediaResponse>>;
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
   "system:getSystemInfo": () => Promise<TCommunicationResponse<ISystem>>;

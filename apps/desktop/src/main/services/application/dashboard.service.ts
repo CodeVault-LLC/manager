@@ -3,9 +3,25 @@ import { db } from '../../database/data-source'
 import { widgets as widgetTable } from '../../database/models/schema'
 import { eq } from 'drizzle-orm'
 
-const breakpoints = ['lg', 'md', 'sm', 'xs', 'xxs'] as const
+//const breakpoints = ['lg', 'md', 'sm', 'xs', 'xxs'] as const
 
-const defaultLayout = {
+type BreakpointLayout = {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+export interface IDashboardWidgetLayout {
+  [key: string]: {
+    layout: Record<string, BreakpointLayout>
+    type: string
+    name: string
+    description: string
+  }
+}
+
+const defaultLayout: IDashboardWidgetLayout = {
   basic_system_statistics: {
     layout: {
       lg: { x: 0, y: 0, w: 12, h: 2 },
@@ -14,7 +30,10 @@ const defaultLayout = {
       xs: { x: 0, y: 0, w: 4, h: 3 },
       xxs: { x: 0, y: 0, w: 2, h: 4 }
     },
-    type: 'system'
+    type: 'system',
+    name: 'Basic System Statistics',
+    description:
+      'Displays basic system statistics like CPU, RAM, and Disk usage.'
   },
   msn_news_slider: {
     layout: {
@@ -24,6 +43,8 @@ const defaultLayout = {
       xs: { x: 0, y: 3, w: 4, h: 3 },
       xxs: { x: 0, y: 3, w: 2, h: 4 }
     },
+    name: 'MSN News Slider',
+    description: 'Displays a slider with the latest news from MSN.',
     type: 'news'
   },
   msn_sport_featured_matches: {
@@ -34,6 +55,8 @@ const defaultLayout = {
       xs: { x: 0, y: 6, w: 2, h: 3 },
       xxs: { x: 0, y: 6, w: 2, h: 3 }
     },
+    name: 'MSN Sport Featured Matches',
+    description: 'Displays featured sports matches from MSN.',
     type: 'sport'
   },
   yr_weather_card_small: {
@@ -44,9 +67,11 @@ const defaultLayout = {
       xs: { x: 2, y: 6, w: 2, h: 3 },
       xxs: { x: 0, y: 9, w: 2, h: 3 }
     },
+    name: 'YR Weather Card Small',
+    description: 'Displays a small weather card with current conditions.',
     type: 'yr'
   }
-} satisfies Record<string, { layout: Record<string, any>; type: string }>
+}
 
 export const DashboardService = {
   getDefaultWidgets() {
@@ -56,6 +81,8 @@ export const DashboardService = {
       layout: def.layout,
       static: false,
       settings: {},
+      name: def.name,
+      description: def.description,
       active: true
     }))
   },
@@ -73,6 +100,8 @@ export const DashboardService = {
       type: defaultLayout[id].type,
       layout: defaultLayout[id].layout,
       static: false,
+      name: defaultLayout[id].name,
+      description: defaultLayout[id].description,
       settings: {},
       active: true
     }))
@@ -82,6 +111,9 @@ export const DashboardService = {
         id: r.id,
         type: r.type,
         layout: r.layout,
+        name: defaultLayout[r.id]?.name || 'Unknown Widget',
+        description:
+          defaultLayout[r.id]?.description || 'No description available',
         static: r.static,
         settings: r.settings,
         active: r.active
@@ -98,6 +130,8 @@ export const DashboardService = {
       type: w.type,
       layout: w.layout,
       static: w.static,
+      name: w.name,
+      description: w.description,
       settings: w.settings,
       active: w.active
     }))
@@ -113,6 +147,8 @@ export const DashboardService = {
     const newWidget: IDashboardWidgetItem = {
       id: widgetId,
       type: widgetDef.type,
+      name: widgetDef.name,
+      description: widgetDef.description,
       layout: widgetDef.layout,
       static: false,
       settings: {},

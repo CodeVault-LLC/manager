@@ -13,6 +13,7 @@ import {
 import { ProcessService } from '../../lib/process'
 import { SessionStorage } from '../../lib/session'
 import { DashboardService } from './dashboard.service'
+import { entertainmentService } from '../entertainment/entertainment.service'
 
 /**
  * Register all IPC handlers related to application settings
@@ -26,6 +27,7 @@ export const registerApplicationIPC = () => {
       const theme = (await ConfStorage.get('theme')) ?? ETheme.LIGHT
       const language = (await ConfStorage.get('language')) ?? 'en'
       const widgets = await DashboardService.getUserDashboard()
+      const ffmpegPath = entertainmentService.getFfmpegPath()
 
       const geolocation =
         await ProcessService.getInstance().runTask<IGeoLocation>(
@@ -34,7 +36,7 @@ export const registerApplicationIPC = () => {
 
       SessionStorage.getInstance().setItem('geolocation', geolocation)
 
-      return { data: { theme, language, geolocation, widgets } }
+      return { data: { theme, language, geolocation, widgets, ffmpegPath } }
     } catch (error: any) {
       log.error(
         `Error while getting system initial data: ${error.message}`,

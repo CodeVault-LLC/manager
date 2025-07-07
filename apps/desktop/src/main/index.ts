@@ -1,7 +1,7 @@
 import './lib/logging/install'
 
 import { optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, net, protocol } from 'electron'
 
 import { runMigrations } from './database/data-source'
 import { startGrpc } from './grpc/bootstrap'
@@ -28,6 +28,7 @@ import { reportError } from './exception-reporting'
 import './services/network'
 import { setupAutoUpdater } from './lib/updater'
 import { registerWeatherIPC } from './services/weather'
+import { registerEntertainmentIPC } from './services/entertainment/entertainment.ipc'
 
 app.setAppLogsPath()
 enableSourceMaps()
@@ -142,11 +143,45 @@ app.on('will-finish-launching', () => {
   })
 })
 
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'local-file',
+    privileges: {
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+      stream: true,
+      corsEnabled: true
+    }
+  }
+])
+
 app.on('ready', async () => {
   try {
     if (isDuplicateInstance) {
       return
     }
+
+    protocol.handle('local-file', (request) => {
+      console.log('Handling local-file protocol:', request.url)
+
+      // Remove the protocol part and reconstruct the correct file path
+      // Example: local-file://c/Users/... => C:/Users/...
+      let filePath = request.url.replace('local-file://', '')
+
+      // On Windows, the path may start with "c/", so fix it to "C:/"
+      if (/^[a-zA-Z]\//.test(filePath)) {
+        filePath = filePath[0].toUpperCase() + ':/' + filePath.slice(2)
+      }
+
+      // Prepend file:// for net.fetch
+      const fileUrl = `file://${filePath}`
+
+      return net.fetch(fileUrl, {
+        method: request.method,
+        headers: request.headers
+      })
+    })
 
     readyTime = now() - launchTime
 
@@ -246,4 +281,13 @@ function registerIpc() {
   registerSystemIPC()
   void registerMsnIPC()
   void registerWeatherIPC()
+  void registerEntertainmentIPC()
+
+  // Register IPC handlers for dialog operations
+  ipcMain.handle(
+    'dialog:open',
+    async (_, options: Electron.OpenDialogOptions) => {
+      return await dialog.showOpenDialog(options)
+    }
+  )
 }

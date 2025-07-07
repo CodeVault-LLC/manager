@@ -1,6 +1,7 @@
 import { useI18n } from '@renderer/hooks/use-i18n'
 import {
   CheckCircleIcon,
+  FilmIcon,
   HelpCircleIcon,
   MonitorIcon,
   NotebookIcon,
@@ -45,7 +46,7 @@ export const AppSidebar = (props: { className?: string }) => {
           }
         ]
       },
-      /*{
+      {
         // Entertainment (e.g. games, movies, etc.)
         title: 'Entertainment',
         url: '/entertainment',
@@ -55,9 +56,13 @@ export const AppSidebar = (props: { className?: string }) => {
           {
             title: 'Manga',
             url: '/entertainment/manga'
+          },
+          {
+            title: 'Media',
+            url: '/entertainment/media'
           }
         ]
-      },*/
+      },
       {
         title: t('navigation.notes'),
         url: '/notes',

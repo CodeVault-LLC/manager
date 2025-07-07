@@ -23,7 +23,7 @@ export const FeaturedMatches: FC = () => {
   }
 
   return (
-    <div className="p-4 rounded-lg shadow-md">
+    <div className="rounded-lg shadow-md">
       <h2 className="text-base font-semibold mb-4">Featured Matches</h2>
 
       {sports.length === 0 && (

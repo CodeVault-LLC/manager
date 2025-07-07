@@ -98,7 +98,7 @@ export const YrCard: FC = () => {
   }, [weather])
 
   return (
-    <div className="flex flex-col gap-2 p-4 rounded-lg shadow-md w-full max-w-full sm:max-w-md md:max-w-lg">
+    <div className="flex flex-col gap-2 rounded-lg shadow-md w-full">
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-2">
           <a

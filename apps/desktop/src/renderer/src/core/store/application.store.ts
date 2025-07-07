@@ -27,6 +27,7 @@ interface IApplicationStore {
   theme: ETheme
   language: string
   geolocation: IGeoLocation | null
+  ffmpegPath: string
 
   status: IServiceStatus[]
   logs: IpcServiceLog[]
@@ -63,6 +64,7 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   theme: ETheme.SYSTEM,
   language: 'en',
   geolocation: null,
+  ffmpegPath: '',
 
   status: [],
   logs: [],
@@ -85,9 +87,10 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
       const system = await ipcClient.invoke('application:initial')
 
       if (system.data) {
-        const { theme, language, geolocation, widgets } = system.data
+        const { theme, language, geolocation, widgets, ffmpegPath } =
+          system.data
 
-        set({ theme, language, geolocation, widgets })
+        set({ theme, language, geolocation, widgets, ffmpegPath })
         get().setHtmlTheme(theme)
       }
 

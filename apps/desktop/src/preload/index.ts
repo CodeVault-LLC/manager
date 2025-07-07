@@ -37,7 +37,12 @@ if (process.contextIsolated) {
       removeAllListeners: ipcRenderer.removeAllListeners.bind(ipcRenderer),
       removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
 
-      listeners
+      listeners,
+
+      dialog: {
+        showOpenDialog: (options: Electron.OpenDialogOptions) =>
+          ipcRenderer.invoke('dialog:open', options)
+      }
     })
 
     exposeToMainWorld()

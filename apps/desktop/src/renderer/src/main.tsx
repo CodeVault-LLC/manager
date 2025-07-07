@@ -7,7 +7,13 @@ import { createRouter } from './router'
 
 declare global {
   interface Window {
-    electron: IpcRenderer
+    electron: IpcRenderer & {
+      dialog: {
+        showOpenDialog: (
+          options: Electron.OpenDialogOptions
+        ) => Promise<Electron.OpenDialogReturnValue>
+      }
+    }
     api: unknown
   }
 }

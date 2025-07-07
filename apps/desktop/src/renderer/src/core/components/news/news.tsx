@@ -33,7 +33,7 @@ export const News: FC = () => {
   const isLoading = news.length === 0
 
   return (
-    <div className="p-4 shadow-md">
+    <div className="shadow-md">
       <div ref={!isLoading ? sliderRef : undefined} className="keen-slider">
         {isLoading
           ? Array.from({ length: 3 }).map((_, index) => (

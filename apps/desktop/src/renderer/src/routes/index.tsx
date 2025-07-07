@@ -71,8 +71,6 @@ export const WorkspaceManagementPage = () => {
     return () => unsubscribeFromSystemStatistics()
   }, [])
 
-  console.log('Widgets:', widgets)
-
   return (
     <div className="relative flex flex-col p-4 gap-4">
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
@@ -163,11 +161,7 @@ export const WorkspaceManagementPage = () => {
             }
 
             return (
-              <div
-                key={item.id}
-                data-grid={gridProps}
-                className="border border-blue-700"
-              >
+              <div key={item.id} data-grid={gridProps}>
                 {widgetData.component}
               </div>
             )
