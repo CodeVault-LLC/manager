@@ -21,11 +21,12 @@ import {
   INetwork,
   IApplicationUpdate,
   IGeoLocation,
-  Timesery,
   IRmapRequest,
   IRmapResponse,
   IMedia,
   IMediaResponse,
+  IDashboardWidgetInstance,
+  ICurrentForecastTimesery,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -78,6 +79,7 @@ export interface IpcHandlers {
       language: string;
       geolocation: IGeoLocation;
       widgets: IDashboardWidgetItem[];
+      widgetInstances: IDashboardWidgetInstance[];
       ffmpegPath: string;
     }>
   >;
@@ -94,9 +96,9 @@ export interface IpcHandlers {
   "application:setAppSettings": (
     application: IApplication
   ) => Promise<TCommunicationResponse<boolean>>;
-  "application:addWidget": (
+  "application:fetchWidgetData": (
     widgetId: string
-  ) => Promise<TCommunicationResponse<IDashboardWidgetItem>>;
+  ) => Promise<TCommunicationResponse<any>>;
 
   "entertainment:media:upload": (
     filePath: string
@@ -118,7 +120,9 @@ export interface IpcHandlers {
 
   "notes:getAll": () => Promise<TCommunicationResponse<INote[]>>;
   "notes:getNote": (id: number) => Promise<TCommunicationResponse<INote>>;
-  "notes:createNote": () => Promise<TCommunicationResponse<INote>>;
+  "notes:createNote": (
+    noteType: string
+  ) => Promise<TCommunicationResponse<INote>>;
   "notes:updateNote": (
     note: Partial<INote>
   ) => Promise<TCommunicationResponse<INote>>;
@@ -144,7 +148,9 @@ export interface IpcHandlers {
     league: string;
   }) => Promise<TCommunicationResponse<any>>;
 
-  "weather:current": () => Promise<TCommunicationResponse<Timesery[]>>;
+  "weather:current": () => Promise<
+    TCommunicationResponse<ICurrentForecastTimesery[]>
+  >;
 }
 
 export interface IpcEmittedEvents {

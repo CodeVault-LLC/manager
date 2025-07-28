@@ -11,7 +11,7 @@ export interface INoteStore {
 
   getAll: () => void
   getNote: (id: number) => Promise<INote>
-  createNote: () => void
+  createNote: (noteType: string) => void
   updateNote: (note: Partial<INote>) => void
   deleteNote: (id: number) => void
 }
@@ -31,8 +31,8 @@ export const useNoteStore = create<INoteStore>((set) => ({
     set({ notes: response.data || [] })
   },
 
-  createNote: async (): Promise<void> => {
-    const response = await ipcClient.invoke('notes:createNote')
+  createNote: async (noteType: string): Promise<void> => {
+    const response = await ipcClient.invoke('notes:createNote', noteType)
 
     if (response.error) {
       toast.error(getValue('error.creatingNote'))

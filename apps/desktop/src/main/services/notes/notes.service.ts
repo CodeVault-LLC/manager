@@ -14,8 +14,14 @@ export const notesServices = {
     try {
       const notes = await db.query.notes.findMany()
 
+      const formattedNotes = notes.map((note) => ({
+        ...note,
+        createdAt: new Date(note.createdAt).toLocaleString(),
+        updatedAt: new Date(note.updatedAt).toLocaleString()
+      }))
+
       return {
-        data: notes
+        data: formattedNotes
       }
     } catch (error) {
       log.error('Error fetching notes', error)
@@ -55,7 +61,9 @@ export const notesServices = {
       return {
         data: {
           ...note,
-          content: JSON.parse(decrypted.toString('utf8'))
+          content: JSON.parse(decrypted.toString('utf8')),
+          createdAt: new Date(note.createdAt).toLocaleString(),
+          updatedAt: new Date(note.updatedAt).toLocaleString()
         }
       }
     } catch (error) {
@@ -87,7 +95,9 @@ export const notesServices = {
         .insert(notes)
         .values({
           title: randomTitle,
-          content: payload.toString('base64')
+          content: payload.toString('base64'),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         })
         .returning()
 
@@ -126,7 +136,11 @@ export const notesServices = {
 
       const updatedNote = await db
         .update(notes)
-        .set({ title, content: payload.toString('base64') })
+        .set({
+          title,
+          content: payload.toString('base64'),
+          updatedAt: new Date().toISOString()
+        })
         .where(eq(notes.id, id))
         .returning()
 

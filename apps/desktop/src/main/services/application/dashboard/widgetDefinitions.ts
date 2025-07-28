@@ -1,6 +1,7 @@
 import { WidgetRequirement, WidgetSetting } from '@manager/common/src'
+import { weatherWidgetDefinitions } from './weatherDefinitions'
 
-type FullWidgetDefinition = {
+export type FullWidgetDefinition = {
   id: string
   name: string
   description: string
@@ -9,9 +10,29 @@ type FullWidgetDefinition = {
   settingsSchema: Record<string, WidgetSetting>
   requirements: WidgetRequirement[] | null
   locales: string[] | null
+  iconUrl?: string // URL to the widget icon
+  source?: string // URL or identifier for the widget source (e.g., API endpoint)
+
+  // Functions to fetch data or perform actions
+  /**
+   * Fetches data for the widget.
+   * @returns A promise that resolves to the data fetched by the widget.
+   * This can be used to fetch data from an API or perform any asynchronous operation.
+   */
+  fetchData?: (settings?: Record<string, any>) => Promise<any>
+
+  /**
+   * Validates the settings provided by the user.
+   * @param settings The settings object to validate.
+   * @returns A boolean indicating whether the settings are valid.
+   */
+  validateSettings?: (settings: Record<string, any>) => boolean
 }
 
-export const defaultWidgetDefinitions: FullWidgetDefinition[] = [
+/**
+ * Default widgets is a widget list with the following field layout, which is going to be the default used layout when starting the application for first time.
+ */
+export const defaultWidgets: FullWidgetDefinition[] = [
   {
     id: 'basic_system_statistics',
     name: 'Basic System Statistics',
@@ -65,20 +86,5 @@ export const defaultWidgetDefinitions: FullWidgetDefinition[] = [
     requirements: null,
     locales: null
   },
-  {
-    id: 'yr_weather_card_small',
-    name: 'YR Weather Card Small',
-    description: 'Displays a small weather card with current conditions.',
-    type: 'yr',
-    layout: {
-      lg: { x: 6, y: 6, w: 5, h: 5.1 },
-      md: { x: 5, y: 6, w: 5, h: 5.1 },
-      sm: { x: 3, y: 6, w: 3, h: 5.1 },
-      xs: { x: 2, y: 6, w: 2, h: 5.1 },
-      xxs: { x: 0, y: 9, w: 2, h: 5.1 }
-    },
-    settingsSchema: {},
-    requirements: [{ type: 'region', country: 'NO' }],
-    locales: null
-  }
+  ...weatherWidgetDefinitions
 ]

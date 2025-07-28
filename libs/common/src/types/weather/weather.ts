@@ -1,25 +1,25 @@
-export interface IWeather {
+export interface ICurrentForecast {
   type: string;
-  geometry: Geometry;
-  properties: Properties;
+  geometry: ICurrentForecastGeometry;
+  properties: ICurrentForecastProperties;
 }
 
-export interface Geometry {
+export interface ICurrentForecastGeometry {
   type: string;
   coordinates: number[];
 }
 
-export interface Properties {
-  meta: Meta;
-  timeseries: Timesery[];
+export interface ICurrentForecastProperties {
+  meta: ICurrentForecastMeta;
+  timeseries: ICurrentForecastTimesery[];
 }
 
-export interface Meta {
+export interface ICurrentForecastMeta {
   updated_at: Date;
-  units: Units;
+  units: ICurrentForecastUnits;
 }
 
-export interface Units {
+export interface ICurrentForecastUnits {
   air_pressure_at_sea_level: string;
   air_temperature: string;
   cloud_area_fraction: string;
@@ -29,23 +29,23 @@ export interface Units {
   wind_speed: string;
 }
 
-export interface Timesery {
+export interface ICurrentForecastTimesery {
   time: Date;
-  data: Data;
+  data: ICurrentForecastData;
 }
 
-export interface Data {
-  instant: Instant;
-  next_12_hours?: Next12_Hours;
-  next_1_hours?: NextHours;
-  next_6_hours?: NextHours;
+export interface ICurrentForecastData {
+  instant: ICurrentForecastInstant;
+  next_12_hours?: ICurrentForecastNext12_Hours;
+  next_1_hours?: ICurrentForecastNextHours;
+  next_6_hours?: ICurrentForecastNextHours;
 }
 
-export interface Instant {
-  details: InstantDetails;
+export interface ICurrentForecastInstant {
+  details: ICurrentForecastInstantDetails;
 }
 
-export interface InstantDetails {
+export interface ICurrentForecastInstantDetails {
   air_pressure_at_sea_level: number;
   air_temperature: number;
   cloud_area_fraction: number;
@@ -54,34 +54,22 @@ export interface InstantDetails {
   wind_speed: number;
 }
 
-export interface Next12_Hours {
-  summary: Summary;
-  details: Next12_HoursDetails;
+export interface ICurrentForecastNext12_Hours {
+  summary: ICurrentForecastSummary;
+  details: ICurrentForecastNext12_HoursDetails;
 }
 
-export interface Next12_HoursDetails {}
+export type ICurrentForecastNext12_HoursDetails = object;
 
-export interface Summary {
-  symbol_code: SymbolCode;
+export interface ICurrentForecastSummary {
+  symbol_code: string; // e.g., "clearsky_day", "partlycloudy_night"
 }
 
-export enum SymbolCode {
-  ClearskyDay = "clearsky_day",
-  ClearskyNight = "clearsky_night",
-  Cloudy = "cloudy",
-  FairDay = "fair_day",
-  FairNight = "fair_night",
-  Lightrain = "lightrain",
-  PartlycloudyDay = "partlycloudy_day",
-  PartlycloudyNight = "partlycloudy_night",
-  Rain = "rain",
+export interface ICurrentForecastNextHours {
+  summary: ICurrentForecastSummary;
+  details: ICurrentForecastNextHoursDetails;
 }
 
-export interface NextHours {
-  summary: Summary;
-  details: Next1_HoursDetails;
-}
-
-export interface Next1_HoursDetails {
+export interface ICurrentForecastNextHoursDetails {
   precipitation_amount: number;
 }

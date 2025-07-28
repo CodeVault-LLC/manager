@@ -3,113 +3,65 @@ import { Responsive, WidthProvider } from 'react-grid-layout'
 import { News } from '@renderer/core/components/news'
 import { FeaturedMatches } from '@renderer/core/components/sports/featured-matches'
 import { SystemWidget } from '@renderer/core/components/system/system-widget'
-import { YrCard } from '../core/components/admin-widgets/yr-card'
 import { useSystemStore } from '../core/store/system.store'
 import { useShallow } from 'zustand/react/shallow'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@manager/ui'
 import { useApplicationStore } from '../core/store/application.store'
 import { WidgetManagerDialog } from '../core/components/dashboard-widget/widget-manager-dialog'
+import {
+  IDashboardWidgetInstance,
+  IDashboardWidgetItem,
+  WidgetSetting
+} from '@manager/common/src'
+import { WeatherCurrentConditionsWidget } from '../core/components/weather-current-conditions-widget/weather-current-conditions'
+import { Weather7DayForecastWidget } from '../core/components/weather_forecast_7_day/weather_forecast_7_day'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
-const combinedWidgets = {
+const combinedWidgets: Record<
+  string,
+  { component: (props: { widgetInstanceId: string }) => JSX.Element }
+> = {
   basic_system_statistics: {
-    component: <SystemWidget />
+    component: () => <SystemWidget />
   },
   msn_news_slider: {
-    component: <News />
+    component: () => <News />
   },
   msn_sport_featured_matches: {
-    component: <FeaturedMatches />
+    component: () => <FeaturedMatches />
   },
-  yr_weather_card_small: {
-    component: <YrCard />
+  weather_current_conditions: {
+    component: ({ widgetInstanceId }) => (
+      <WeatherCurrentConditionsWidget widgetInstanceId={widgetInstanceId} />
+    )
+  },
+  weather_forecast_7_day: {
+    component: ({ widgetInstanceId }) => (
+      <Weather7DayForecastWidget widgetInstanceId={widgetInstanceId} />
+    )
   }
 }
 
 export const WorkspaceManagementPage = () => {
-  const { widgets, addWidget, updateWidgets } = useApplicationStore(
-    useShallow((state) => ({
-      widgets: state.widgets,
-      addWidget: state.addWidget,
-      updateWidgets: state.updateWidgets
-    }))
-  )
+  const { widgets, widgetInstances, updateWidgetInstances } =
+    useApplicationStore(
+      useShallow((state) => ({
+        widgets: state.widgets,
+        widgetInstances: state.widgetInstances,
+        updateWidgetInstances: state.updateWidgetInstances
+      }))
+    )
 
   const [editorMode, setEditorMode] = useState(false)
 
   const breakpoints = { lg: 1920, md: 992, sm: 767, xs: 480, xxs: 0 }
   const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }
 
-  /*const widgets: IDashboardWidgetItem[] = [
-    {
-      id: 'basic_system_statistics',
-      type: 'system',
-      description:
-        'Displays basic system statistics like CPU, RAM, and Disk usage.',
-      layout: {
-        lg: { x: 0, y: 0, w: 12, h: 2.5 },
-        md: { x: 0, y: 0, w: 10, h: 2.5 },
-        sm: { x: 0, y: 0, w: 6, h: 2.5 },
-        xs: { x: 0, y: 0, w: 4, h: 2.5 },
-        xxs: { x: 0, y: 0, w: 2, h: 5 }
-      },
-      static: false,
-      active: true,
-      name: 'Basic System Statistics'
-    },
-    {
-      id: 'msn_news_slider',
-      type: 'news',
-      description: 'Displays a slider with the latest news from MSN.',
-      layout: {
-        lg: { x: 0, y: 3, w: 12, h: 2.8 },
-        md: { x: 0, y: 3, w: 10, h: 2.8 },
-        sm: { x: 0, y: 3, w: 6, h: 2.8 },
-        xs: { x: 0, y: 3, w: 4, h: 3 },
-        xxs: { x: 0, y: 3, w: 2, h: 4 }
-      },
-      static: false,
-      active: true,
-      name: 'MSN News Slider'
-    },
-    {
-      id: 'msn_sport_featured_matches',
-      type: 'sport',
-      description: 'Displays featured sports matches from MSN.',
-      layout: {
-        lg: { x: 0, y: 6, w: 5, h: 5.1 },
-        md: { x: 0, y: 6, w: 5, h: 5.1 },
-        sm: { x: 0, y: 6, w: 3, h: 5.1 },
-        xs: { x: 0, y: 6, w: 2, h: 5.1 },
-        xxs: { x: 0, y: 6, w: 2, h: 5.1 }
-      },
-      static: false,
-      active: true,
-      name: 'MSN Sport Featured Matches'
-    },
-    {
-      id: 'yr_weather_card_small',
-      type: 'weather',
-      description: 'Displays a small weather card from YR.',
-      layout: {
-        lg: { x: 6, y: 6, w: 5, h: 5.1 },
-        md: { x: 5, y: 6, w: 5, h: 5.1 },
-        sm: { x: 3, y: 6, w: 3, h: 5.1 },
-        xs: { x: 2, y: 6, w: 2, h: 5.1 },
-        xxs: { x: 0, y: 9, w: 2, h: 5.1 }
-      },
-      static: false,
-      active: true,
-      name: 'YR Weather Card Small'
-    }
-  ]*/
-
   // Generate layouts object
-  const layouts = widgets.reduce(
+  const layouts = widgetInstances.reduce(
     (acc, widget) => {
-      if (!widget.active) return acc
       for (const bp of Object.keys(breakpoints)) {
         const layout = widget.layout?.[bp]
         if (
@@ -145,25 +97,60 @@ export const WorkspaceManagementPage = () => {
     return () => unsubscribeFromSystemStatistics()
   }, [])
 
+  function hasDefault(
+    setting: WidgetSetting
+  ): setting is WidgetSetting & { default: any } {
+    return 'default' in setting
+  }
+
   return (
     <div className="relative flex flex-col p-4 gap-4">
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
         <WidgetManagerDialog
-          onToggle={(id, active) => {
-            if (active) void addWidget(id)
-            else {
-              const updatedWidgets = widgets.map((widget) =>
-                widget.id === id ? { ...widget, active: false } : widget
-              )
-              updateWidgets(updatedWidgets)
+          widgets={widgets}
+          widgetInstances={widgetInstances}
+          onDisableWidgetInstance={(id) => {
+            const updatedWidgets = widgetInstances.filter(
+              (widget) => widget.id !== id
+            )
+
+            updateWidgetInstances(updatedWidgets)
+          }}
+          onAddWidgetInstance={(widget: IDashboardWidgetItem) => {
+            const widgetId = crypto.randomUUID()
+
+            const defaultSettings: Record<string, any> = {}
+
+            for (const [key, setting] of Object.entries(
+              widget.settingsSchema
+            )) {
+              if (hasDefault(setting)) {
+                defaultSettings[key] = setting.default
+              }
             }
+
+            const newWidgetInstance: IDashboardWidgetInstance = {
+              id: widgetId,
+              definitionId: widget.id,
+              layout: widget.defaultLayout || {},
+              settings: defaultSettings,
+              static: false,
+              data: null // Placeholder for future data fetching
+            }
+
+            const updatedWidgetInstances = [
+              ...widgetInstances,
+              newWidgetInstance
+            ]
+
+            updateWidgetInstances(updatedWidgetInstances)
           }}
           onUpdateSettings={(id, settings) => {
-            const updatedWidgets = widgets.map((widget) =>
+            const updatedWidgetInstances = widgetInstances.map((widget) =>
               widget.id === id ? { ...widget, settings } : widget
             )
 
-            updateWidgets(updatedWidgets)
+            updateWidgetInstances(updatedWidgetInstances)
           }}
         />
         <Button
@@ -193,10 +180,9 @@ export const WorkspaceManagementPage = () => {
           preventCollision={true}
           onBreakpointChange={() => {}}
           onLayoutChange={(_, layoutsChanged) => {
-            console.log('Layout changed:', layoutsChanged)
             if (!editorMode) return
 
-            const updatedWidgets = Object.keys(layoutsChanged).reduce(
+            const updatedWidgetInstances = Object.keys(layoutsChanged).reduce(
               (acc, bp) => {
                 layoutsChanged[bp].forEach((item) => {
                   const widget = acc.find((w) => w.id === item.i)
@@ -214,16 +200,15 @@ export const WorkspaceManagementPage = () => {
                 })
                 return acc
               },
-              [...widgets]
+              [...widgetInstances]
             )
 
-            updateWidgets(updatedWidgets)
+            updateWidgetInstances(updatedWidgetInstances)
           }}
         >
-          {widgets.map((item) => {
-            const widgetData = combinedWidgets[item.id]
+          {widgetInstances.map((item) => {
+            const widgetData = combinedWidgets[item.definitionId]
             if (!widgetData) return null
-            if (!item.active) return null
 
             return (
               <div
@@ -232,7 +217,9 @@ export const WorkspaceManagementPage = () => {
                   editorMode ? 'ring-2 ring-blue-500' : ''
                 }`}
               >
-                {widgetData.component}
+                {widgetData.component({
+                  widgetInstanceId: item.id
+                })}
               </div>
             )
           })}

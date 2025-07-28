@@ -46,6 +46,7 @@ export function WidgetSettingsForm({
               <Switch
                 checked={!!value}
                 onCheckedChange={(val) => handleChange(key, val)}
+                defaultChecked={setting.default ?? false}
               />
             )}
 
@@ -55,6 +56,7 @@ export function WidgetSettingsForm({
                 placeholder={setting.placeholder}
                 value={value}
                 onChange={(e) => handleChange(key, e.target.value)}
+                defaultValue={setting.default ?? ''}
               />
             )}
 
@@ -65,6 +67,7 @@ export function WidgetSettingsForm({
                 max={setting.max}
                 value={value}
                 onChange={(e) => handleChange(key, Number(e.target.value))}
+                defaultValue={setting.default ?? ''}
               />
             )}
 
@@ -72,6 +75,7 @@ export function WidgetSettingsForm({
               <Select
                 value={value}
                 onValueChange={(val) => handleChange(key, val)}
+                defaultValue={setting.default ?? ''}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select an option" />
@@ -96,6 +100,7 @@ export function WidgetSettingsForm({
                     e.target.value.split(',').map((v) => v.trim())
                   )
                 }
+                defaultValue={(setting.default || []).join(', ')}
               />
             )}
 
@@ -104,6 +109,7 @@ export function WidgetSettingsForm({
                 type="date"
                 value={value}
                 onChange={(e) => handleChange(key, e.target.value)}
+                defaultValue={setting.default ?? ''}
               />
             )}
 
@@ -112,6 +118,7 @@ export function WidgetSettingsForm({
                 type="datetime-local"
                 value={value}
                 onChange={(e) => handleChange(key, e.target.value)}
+                defaultValue={setting.default ?? ''}
               />
             )}
           </div>

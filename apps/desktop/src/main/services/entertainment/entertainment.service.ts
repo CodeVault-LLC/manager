@@ -1,7 +1,7 @@
 import { db } from '../../database/data-source'
 import { files } from '../../database/models/schema'
 import { IMedia } from '@manager/common/src'
-import { and, desc, ilike, SQL, sql } from 'drizzle-orm'
+import { and, desc, SQL, sql } from 'drizzle-orm'
 import fs from 'node:fs'
 
 import ffmpegPath from 'ffmpeg-static-electron'
@@ -15,11 +15,6 @@ ffmpeg.setFfmpegPath(
   (ffmpegPath.path ?? '').replace('app.asar', 'app.asar.unpacked')
 )
 ffmpeg.setFfprobePath(ffprobePath.path.replace('app.asar', 'app.asar.unpacked'))
-
-log.debug('FFmpeg Path:', {
-  ffmpegPath: ffmpegPath.path,
-  ffprobePath: ffprobePath.path
-})
 
 export const entertainmentService = {
   uploadMedia: async (media: IMedia): Promise<void> => {
@@ -44,7 +39,7 @@ export const entertainmentService = {
   getAllMedia: async (
     limit: number,
     searchQuery: string,
-    filters: string[]
+    _: string[]
   ): Promise<IMedia[]> => {
     // Build conditions
     const conditions: SQL<unknown>[] = []
@@ -73,8 +68,6 @@ export const entertainmentService = {
       }
     }*/
 
-    console.log('Conditions:', conditions)
-
     const query = db
       .select()
       .from(files)
@@ -99,10 +92,7 @@ export const entertainmentService = {
     }))
   },
 
-  getMediaCount: async (
-    searchQuery: string,
-    filters: string[]
-  ): Promise<number> => {
+  getMediaCount: async (searchQuery: string, _: string[]): Promise<number> => {
     // Build conditions
     const conditions: SQL<unknown>[] = []
 
@@ -224,7 +214,6 @@ export const entertainmentService = {
       return ''
     }
 
-    log.info(`FFmpeg path: ${fileFound}`)
     return fileFound
   }
 }

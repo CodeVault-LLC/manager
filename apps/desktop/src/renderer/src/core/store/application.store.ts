@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import {
   ETheme,
   IApplicationUpdate,
+  IDashboardWidgetInstance,
   IDashboardWidgetItem,
   IGeoLocation,
   IpcServiceLog,
@@ -24,6 +25,8 @@ interface ILanguage {
 
 interface IApplicationStore {
   widgets: IDashboardWidgetItem[]
+  widgetInstances: IDashboardWidgetInstance[]
+
   theme: ETheme
   language: string
   geolocation: IGeoLocation | null
@@ -55,12 +58,20 @@ interface IApplicationStore {
   subscribeToUpdateProgress: (callback: (progress: number) => void) => void
 
   // Widgets
-  updateWidgets: (widgets: IDashboardWidgetItem[]) => void
-  addWidget: (widgetId: string) => Promise<void>
+  updateWidgetInstances: (widgetInstances: IDashboardWidgetInstance[]) => void
+  getWidgetInstanceData: <T = unknown>(widgetId: string) => T | null
+  fetchWidgetInstanceData: <T = unknown>(widgetId: string) => Promise<T | null>
+  isWidgetInstanceDataLoading: (widgetId: string) => boolean
+  getWidgetInstanceSetttingBykey: <T = unknown>(
+    widgetId: string,
+    key: string
+  ) => T | null
 }
 
 export const useApplicationStore = create<IApplicationStore>((set, get) => ({
   widgets: [],
+  widgetInstances: [],
+
   theme: ETheme.SYSTEM,
   language: 'en',
   geolocation: null,
@@ -87,10 +98,23 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
       const system = await ipcClient.invoke('application:initial')
 
       if (system.data) {
-        const { theme, language, geolocation, widgets, ffmpegPath } =
-          system.data
+        const {
+          theme,
+          language,
+          geolocation,
+          widgets,
+          widgetInstances,
+          ffmpegPath
+        } = system.data
 
-        set({ theme, language, geolocation, widgets, ffmpegPath })
+        set({
+          theme,
+          language,
+          geolocation,
+          widgets,
+          widgetInstances,
+          ffmpegPath
+        })
         get().setHtmlTheme(theme)
       }
 
@@ -105,32 +129,67 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
     }
   },
 
-  updateWidgets: (widgets: IDashboardWidgetItem[]) => {
-    set({ widgets })
+  updateWidgetInstances: (widgetInstances: IDashboardWidgetInstance[]) => {
+    set({ widgetInstances })
 
     ipcClient.invoke('application:setAppSettings', {
       language: get().language,
       theme: get().theme,
-      widgets: widgets
+      widgetInstances: widgetInstances,
+      widgets: get().widgets
     })
   },
 
-  addWidget: async (widgetId: string) => {
-    try {
-      await ipcClient.invoke('application:addWidget', widgetId)
+  getWidgetInstanceData: <T = unknown>(widgetId: string): T | null => {
+    const widget = get().widgetInstances.find((w) => w.id === widgetId)
+    return (widget?.data as T) ?? null
+  },
 
-      const updatedWidgets = get().widgets.map((widget) => {
-        if (widget.id === widgetId) {
-          return { ...widget, active: true }
-        }
-        return widget
-      })
-
-      get().updateWidgets(updatedWidgets)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('adding widget error', error)
+  fetchWidgetInstanceData: async <T = unknown>(
+    widgetId: string
+  ): Promise<T | null> => {
+    const widgetInstance = get().widgetInstances.find((w) => w.id === widgetId)
+    if (!widgetInstance) {
+      return null
     }
+
+    if (widgetInstance.isLoading) {
+      return null
+    }
+
+    widgetInstance.isLoading = true
+
+    const response = await ipcClient.invoke(
+      'application:fetchWidgetData',
+      widgetId
+    )
+
+    if (response.error) {
+      return null
+    }
+
+    set((state) => ({
+      widgetInstances: state.widgetInstances.map((wi) =>
+        wi.id === widgetId ? { ...wi, data: response.data } : wi
+      )
+    }))
+
+    widgetInstance.isLoading = false
+
+    return response.data as T
+  },
+
+  isWidgetInstanceDataLoading: (widgetId: string): boolean => {
+    const widget = get().widgetInstances.find((w) => w.id === widgetId)
+    return widget ? !!widget.isLoading : false
+  },
+
+  getWidgetInstanceSetttingBykey: <T = unknown>(
+    widgetId: string,
+    key: string
+  ): T | null => {
+    const widget = get().widgetInstances.find((w) => w.id === widgetId)
+    return widget?.settings[key] ?? null
   },
 
   doUpdateAction: async (data: boolean) => {
@@ -184,6 +243,7 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
 
       await ipcClient.invoke('application:setAppSettings', {
         language: get().language,
+        widgetInstances: get().widgetInstances,
         theme,
         widgets: get().widgets
       })
@@ -237,6 +297,7 @@ export const useApplicationStore = create<IApplicationStore>((set, get) => ({
 
       await ipcClient.invoke('application:setAppSettings', {
         language,
+        widgetInstances: get().widgetInstances,
         theme: get().theme,
         widgets: get().widgets
       })

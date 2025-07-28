@@ -1,24 +1,55 @@
-import { IDashboardWidgetItem } from '@manager/common/src'
-import { db } from '../../database/data-source'
 import {
-  widgets as widgetTable,
-  widgetDefinitions as defTable
-} from '../../database/models/schema'
+  IDashboardWidgetInstance,
+  IDashboardWidgetItem
+} from '@manager/common/src'
+import { db } from '../../database/data-source'
 import { eq } from 'drizzle-orm'
-import { seedWidgetsAndDefinitionsIfEmpty } from './dashboard/seed'
+import { seedWidgetInstancesIfEmpty } from './dashboard/seed'
+import { defaultWidgets } from './dashboard/widgetDefinitions'
+import { widgetInstance } from '../../database/models/schema'
 
 export const DashboardService = {
-  async getDefaultWidgets(): Promise<IDashboardWidgetItem[]> {
+  getDefaultWidgets(): IDashboardWidgetItem[] {
+    return defaultWidgets.map((def) => ({
+      id: def.id,
+      type: def.type,
+      name: def.name,
+      description: def.description,
+      settingsSchema: def.settingsSchema,
+      locales: def.locales ?? [],
+      defaultLayout: def.layout,
+      requirements: def.requirements ?? [],
+      iconUrl: def.iconUrl ?? '',
+      source: def.source ?? ''
+    }))
+  },
+
+  async getWidgetInstances(): Promise<IDashboardWidgetInstance[]> {
+    await seedWidgetInstancesIfEmpty()
+
+    const widgetInstanceRows = await db.select().from(widgetInstance)
+
+    return widgetInstanceRows.map((w) => ({
+      id: w.id,
+      definitionId: w.definitionId,
+      layout: w.layout,
+      static: w.static,
+      settings: w.settings ?? {}
+    }))
+  },
+
+  /*async getDefaultWidgets(): Promise<IDashboardWidgetItem[]> {
     await seedWidgetsAndDefinitionsIfEmpty()
 
     const defs = await db.select().from(defTable)
 
     return defs.map((def) => ({
       id: def.id,
+      definitionId: def.id,
       type: def.type,
       name: def.name,
       description: def.description,
-      layout: {}, // will be overridden by user
+      layout: {},
       static: false,
 
       settings: {},
@@ -29,121 +60,71 @@ export const DashboardService = {
 
       active: true
     }))
-  },
+  },*/
 
-  async getUserDashboard(): Promise<IDashboardWidgetItem[]> {
-    await seedWidgetsAndDefinitionsIfEmpty()
+  async saveUserDashboard(
+    widgetInstances: IDashboardWidgetInstance[]
+  ): Promise<void> {
+    if (!widgetInstances.length) throw new Error('No widget instances provided')
 
-    const [widgetRows, defRows] = await Promise.all([
-      db.select().from(widgetTable),
-      db.select().from(defTable)
-    ])
+    await db.delete(widgetInstance).run()
 
-    const defMap = Object.fromEntries(defRows.map((def) => [def.id, def]))
-
-    const existingWidgets: IDashboardWidgetItem[] = widgetRows.map((w) => {
-      const def = defMap[w.definitionId]
-
-      return {
-        id: w.id,
-        type: def?.type ?? 'unknown',
-        name: def?.name ?? 'Unknown',
-        description: def?.description ?? 'No description available',
-        layout: w.layout,
-        static: w.static,
-
-        settings: w.settings ?? {},
-        locales: def?.locales ?? [],
-        settingsSchema: def?.settingsSchema ?? {},
-        requirements: def?.requirements ?? [],
-
-        active: w.active,
-        data: undefined
-      }
-    })
-
-    const widgetIds = new Set(widgetRows.map((w) => w.definitionId))
-    const missingDefs = defRows.filter((def) => !widgetIds.has(def.id))
-
-    const extraDefaults: IDashboardWidgetItem[] = missingDefs.map((def) => ({
-      id: def.id,
-      type: def.type,
-      name: def.name,
-      description: def.description,
-      layout: {}, // default layout could come from somewhere else later
-      static: false,
-
-      settings: {},
-      settingsSchema: def.settingsSchema,
-      locales: def.locales ?? [],
-      requirements: def.requirements ?? [],
-
-      active: true
-    }))
-
-    return [...existingWidgets, ...extraDefaults]
-  },
-
-  async saveUserDashboard(widgets: IDashboardWidgetItem[]): Promise<void> {
-    if (!widgets.length) throw new Error('No widgets provided')
-
-    await db.delete(widgetTable).run()
-
-    const inserts = widgets.map((w) => ({
+    const inserts = widgetInstances.map((w) => ({
       id: w.id,
-      definitionId: w.id,
+      definitionId: w.definitionId,
       layout: w.layout,
-      static: w.static ?? false,
-      settings: w.settings ?? {},
-      active: w.active ?? true
+      static: w.static,
+      settings: w.settings
     }))
 
-    await db.insert(widgetTable).values(inserts).run()
+    await db.insert(widgetInstance).values(inserts).run()
   },
 
-  async addWidget(widgetId: string): Promise<void> {
-    const [existing, def] = await Promise.all([
-      db.select().from(widgetTable).where(eq(widgetTable.id, widgetId)),
-      db
-        .select()
-        .from(defTable)
-        .where(eq(defTable.id, widgetId))
-        .then((res) => res[0])
-    ])
-
-    if (existing.length > 0) return // skip duplicates
-    if (!def) throw new Error(`Widget definition ${widgetId} not found`)
-
-    await db
-      .insert(widgetTable)
-      .values({
-        id: def.id,
-        definitionId: def.id,
-        layout: {}, // default empty, can be enhanced
-        static: false,
-        settings: {},
-        active: true
-      })
-      .run()
-  },
-
-  async removeWidget(widgetId: string): Promise<void> {
+  async removeWidget(widgetInstanceId: string): Promise<void> {
     const existing = await db
       .select()
-      .from(widgetTable)
-      .where(eq(widgetTable.id, widgetId))
+      .from(widgetInstance)
+      .where(eq(widgetInstance.id, widgetInstanceId))
 
     if (existing.length === 0) return // nothing to remove
-    if (existing[0].definitionId !== widgetId) {
+    if (existing[0].definitionId !== widgetInstanceId) {
       throw new Error(
-        `Widget ${widgetId} does not match its definition ID ${existing[0].definitionId}`
+        `Widget ${widgetInstanceId} does not match its definition ID ${existing[0].definitionId}`
       )
     }
 
     await db
-      .update(widgetTable)
-      .set({ active: false })
-      .where(eq(widgetTable.id, widgetId))
+      .delete(widgetInstance)
+      .where(eq(widgetInstance.id, widgetInstanceId))
       .run()
+  },
+
+  async getWidgetInstanceData(
+    widgetId: string
+  ): Promise<IDashboardWidgetInstance | null> {
+    const instances = await this.getWidgetInstances()
+    return instances.find((w) => w.id === widgetId) || null
+  },
+
+  async fetchWidgetData(
+    widgetInstance: IDashboardWidgetInstance
+  ): Promise<any> {
+    // Every widget should implement its own data fetching logic, call that.
+    // Find the real widget definition by ID
+    const widgetDefinitions = defaultWidgets.filter(
+      (w) => w.id === widgetInstance.definitionId
+    )
+
+    // Call the widget data fetching method, with the instance settings
+    if (widgetDefinitions.length === 0) {
+      throw new Error(
+        `Widget definition not found for ID: ${widgetInstance.definitionId}`
+      )
+    }
+
+    const widgetDef = widgetDefinitions[0]
+    return widgetDef.fetchData
+      ? widgetDef.fetchData(widgetInstance.settings)
+      : null
   }
 }

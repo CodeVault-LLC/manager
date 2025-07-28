@@ -1,36 +1,44 @@
+import { WidgetSetting } from '@manager/common/src'
 import { db } from '../../../database/data-source'
-import { widgetDefinitions, widgets } from '../../../database/models/schema'
-import { defaultWidgetDefinitions } from './widgetDefinitions'
+import {
+  widgetInstance,
+  WidgetInstanceType
+} from '../../../database/models/schema'
+import { generateUUID } from '../../../lib/uuid'
+import { defaultWidgets } from './widgetDefinitions'
 
-export async function seedWidgetsAndDefinitionsIfEmpty() {
-  const existing = await db.select().from(widgetDefinitions).limit(1)
+function hasDefault(
+  setting: WidgetSetting
+): setting is WidgetSetting & { default: any } {
+  return 'default' in setting
+}
+
+export async function seedWidgetInstancesIfEmpty() {
+  const existing = await db.select().from(widgetInstance).limit(1)
   if (existing.length > 0) {
-    log.debug('Widget definitions already exist, skipping seed')
+    log.debug('Widget instances already exist, skipping seed')
     return
   }
 
-  const defsToInsert = defaultWidgetDefinitions.map((def) => ({
-    id: def.id,
-    name: def.name,
-    description: def.description,
-    type: def.type,
-    settingsSchema: def.settingsSchema,
-    requirements: def.requirements ?? [],
-    locales: def.locales ?? []
-  }))
+  const instancesToInsert: WidgetInstanceType[] = defaultWidgets.map((def) => {
+    const defaultSettings: Record<string, any> = {}
 
-  await db.insert(widgetDefinitions).values(defsToInsert).run()
-  log.info(`Seeded ${defsToInsert.length} widget definitions`)
+    for (const [key, setting] of Object.entries(def.settingsSchema)) {
+      if (hasDefault(setting)) {
+        defaultSettings[key] = setting.default
+      }
+    }
 
-  const widgetsToInsert = defaultWidgetDefinitions.map((def) => ({
-    id: `${def.id}`,
-    definitionId: def.id,
-    layout: def.layout,
-    static: false,
-    settings: {},
-    active: true
-  }))
+    return {
+      id: generateUUID(),
+      definitionId: def.id,
+      layout: def.layout,
+      static: false,
+      settings: defaultSettings,
+      active: true
+    }
+  })
 
-  await db.insert(widgets).values(widgetsToInsert).run()
-  log.info(`Seeded ${widgetsToInsert.length} default widgets`)
+  await db.insert(widgetInstance).values(instancesToInsert).run()
+  log.info(`Seeded ${instancesToInsert.length} widget instances`)
 }

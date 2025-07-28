@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useNoteStore } from '../../core/store/note.store'
 import { useEffect } from 'react'
-import { Plus, FileText, MoreVertical } from 'lucide-react'
+import { FileText, MoreVertical } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { nb } from 'date-fns/locale'
 import {
@@ -16,6 +16,7 @@ import {
   CardContent,
   CardTitle
 } from '@manager/ui'
+import { NoteCreateDialog } from '../../core/pages/notes/note-create-dialog'
 
 export const Route = createFileRoute('/notes/')({
   component: RouteComponent
@@ -30,8 +31,8 @@ function RouteComponent() {
     }
   }, [])
 
-  const handleCreateNote = async () => {
-    await createNote()
+  const handleCreateNote = async (noteType: string) => {
+    await createNote(noteType)
     getAll()
   }
 
@@ -48,10 +49,7 @@ function RouteComponent() {
         <div className="flex gap-2">
           {/* Search and Sort Placeholder */}
           <Input placeholder="Search notes..." className="w-64" />
-          <Button onClick={handleCreateNote}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Note
-          </Button>
+          <NoteCreateDialog handleCreateNote={handleCreateNote} />
         </div>
       </div>
 

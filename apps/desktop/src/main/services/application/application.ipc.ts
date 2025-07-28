@@ -26,8 +26,10 @@ export const registerApplicationIPC = () => {
     try {
       const theme = (await ConfStorage.get('theme')) ?? ETheme.LIGHT
       const language = (await ConfStorage.get('language')) ?? 'en'
-      const widgets = await DashboardService.getUserDashboard()
       const ffmpegPath = entertainmentService.getFfmpegPath()
+
+      const widgets = DashboardService.getDefaultWidgets()
+      const widgetInstances = await DashboardService.getWidgetInstances()
 
       const geolocation =
         await ProcessService.getInstance().runTask<IGeoLocation>(
@@ -36,7 +38,16 @@ export const registerApplicationIPC = () => {
 
       SessionStorage.getInstance().setItem('geolocation', geolocation)
 
-      return { data: { theme, language, geolocation, widgets, ffmpegPath } }
+      return {
+        data: {
+          theme,
+          language,
+          geolocation,
+          widgets,
+          widgetInstances,
+          ffmpegPath
+        }
+      }
     } catch (error: any) {
       log.error(
         `Error while getting system initial data: ${error.message}`,
@@ -61,11 +72,43 @@ export const registerApplicationIPC = () => {
       try {
         await ConfStorage.set('theme', application.theme)
         await ConfStorage.set('language', application.language)
-        await DashboardService.saveUserDashboard(application.widgets)
+        await DashboardService.saveUserDashboard(application.widgetInstances)
 
         return { data: true }
       } catch (error: any) {
         log.error(`Error while setting system data: ${error.message}`, error)
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'application:fetchWidgetData',
+    async (_, widgetId: string): Promise<TCommunicationResponse<any>> => {
+      try {
+        const widgetInstance =
+          await DashboardService.getWidgetInstanceData(widgetId)
+
+        if (!widgetInstance) {
+          return {
+            error: {
+              code: EErrorCodes.BAD_REQUEST,
+              message: 'error.widget_instance_not_found'
+            }
+          }
+        }
+
+        const data = await DashboardService.fetchWidgetData(widgetInstance)
+
+        return { data }
+      } catch (error: any) {
+        log.error(`Error while fetching widget data: ${error.message}`, error)
 
         return {
           error: {
@@ -101,21 +144,6 @@ export const registerApplicationIPC = () => {
       }
     }
   )
-
-  ipcMain.handle('application:addWidget', async (_, widgetId: string) => {
-    try {
-      const widget = await DashboardService.addWidget(widgetId)
-      return { data: widget }
-    } catch (error: any) {
-      log.error(`Error while adding widget: ${error.message}`, error)
-      return {
-        error: {
-          code: EErrorCodes.FORBIDDEN,
-          message: 'error.forbidden'
-        }
-      }
-    }
-  })
 
   ipcMain.handle('application:serviceStatus', async () => {
     const services = await manager.getServiceStatus()

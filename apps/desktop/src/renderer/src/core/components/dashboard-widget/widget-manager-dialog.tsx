@@ -6,43 +6,40 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  Separator
+  Input
 } from '@manager/ui'
 import { ScrollArea } from '@manager/ui/src/ui/scroll-area'
 import { Plus, Trash2, Settings } from 'lucide-react'
 import { useState } from 'react'
-import { useApplicationStore } from '../../store/application.store'
-import { useShallow } from 'zustand/react/shallow'
-import { cn } from '@manager/ui/src/utils/helpers'
 import { WidgetSettingsForm } from './widget-settings-form'
+import {
+  IDashboardWidgetInstance,
+  IDashboardWidgetItem
+} from '@manager/common/src'
 
 type Props = {
-  onToggle: (id: string, active: boolean) => void
+  widgets: IDashboardWidgetItem[]
+  widgetInstances: IDashboardWidgetInstance[]
   onUpdateSettings?: (id: string, settings: Record<string, any>) => void
+  onDisableWidgetInstance: (id: string) => void
+  onAddWidgetInstance: (widget: IDashboardWidgetItem) => void
 }
 
-export function WidgetManagerDialog({ onToggle, onUpdateSettings }: Props) {
-  const { widgets } = useApplicationStore(
-    useShallow((state) => ({
-      widgets: state.widgets
-    }))
-  )
-
+export function WidgetManagerDialog({
+  widgets,
+  widgetInstances,
+  onAddWidgetInstance,
+  onDisableWidgetInstance,
+  onUpdateSettings
+}: Props) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [settingsOpen, setSettingsOpen] = useState<string | null>(null)
   const [settingsDraft, setSettingsDraft] = useState('')
 
-  const filtered = widgets.filter(
-    (widget) =>
-      widget.name?.toLowerCase().includes(search.toLowerCase()) ||
-      widget.id.toLowerCase().includes(search.toLowerCase())
-  )
-
-  const handleOpenSettings = (widgetId: string, currentSettings: any) => {
-    setSettingsOpen(widgetId)
-    setSettingsDraft(JSON.stringify(currentSettings ?? {}, null, 2))
+  const handleOpenSettings = (instance: IDashboardWidgetInstance) => {
+    setSettingsOpen(instance.id)
+    setSettingsDraft(JSON.stringify(instance.settings ?? {}, null, 2))
   }
 
   const handleSaveSettings = () => {
@@ -51,12 +48,18 @@ export function WidgetManagerDialog({ onToggle, onUpdateSettings }: Props) {
     try {
       const parsed = JSON.parse(settingsDraft)
       onUpdateSettings?.(settingsOpen, parsed)
-      setSettingsOpen(null)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       alert('Invalid JSON in settings')
+    } finally {
+      setSettingsOpen(null)
+      setSettingsDraft('')
     }
   }
+
+  const filteredWidgets = widgets.filter((w) =>
+    `${w.name} ${w.id}`.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -69,7 +72,7 @@ export function WidgetManagerDialog({ onToggle, onUpdateSettings }: Props) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-5xl overflow-auto max-h-[80vh]">
         <DialogHeader>
           <DialogTitle>Manage Dashboard Widgets</DialogTitle>
         </DialogHeader>
@@ -81,79 +84,120 @@ export function WidgetManagerDialog({ onToggle, onUpdateSettings }: Props) {
           className="my-4"
         />
 
-        <ScrollArea className="h-[60vh] pr-2">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-            {filtered.map((widget) => (
-              <div
-                key={widget.id}
-                className="p-4 border rounded-xl shadow-sm flex flex-col justify-between gap-3 bg-background hover:shadow-md transition"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">{widget.name}</h3>
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        'text-xs',
-                        widget.active
-                          ? 'text-green-600 border-green-600'
-                          : 'text-red-600 border-red-600'
-                      )}
-                    >
-                      {widget.active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </div>
-
-                  <p className="text-muted-foreground text-sm">
-                    {widget.description || 'No description provided.'}
+        <h4 className="text-sm font-semibold text-muted-foreground mb-1">
+          Add New Widget
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          {filteredWidgets.map((def) => (
+            <div
+              key={def.id}
+              className="p-4 border rounded-xl shadow-sm bg-muted hover:bg-muted/70 transition"
+            >
+              <div className="flex items-start gap-4">
+                {def.iconUrl && (
+                  <img
+                    src={def.iconUrl}
+                    alt={`${def.name} icon`}
+                    className="h-10 w-10 rounded"
+                  />
+                )}
+                <div className="flex flex-col flex-1">
+                  <div className="font-medium text-sm">{def.name}</div>
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    {def.description}
                   </p>
-
-                  <Badge
-                    variant="secondary"
-                    className="text-xs mt-1 capitalize w-fit"
-                  >
-                    {widget.type || 'unknown'}
-                  </Badge>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-end space-x-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      handleOpenSettings(widget.id, widget.settings)
-                    }
-                    disabled={
-                      !widget.settingsSchema ||
-                      !Object.keys(widget.settingsSchema).length
-                    }
-                  >
-                    <Settings className="w-4 h-4 mr-1" />
-                    Settings
-                  </Button>
-
-                  <Button
-                    variant={widget.active ? 'destructive' : 'default'}
-                    size="sm"
-                    onClick={() => onToggle(widget.id, !widget.active)}
-                  >
-                    {widget.active ? (
-                      <>
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Remove
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add
-                      </>
-                    )}
-                  </Button>
+                  {def.source && (
+                    <span className="text-[10px] text-muted-foreground mt-1">
+                      Source: {def.source}
+                    </span>
+                  )}
                 </div>
               </div>
-            ))}
+
+              <div className="mt-4 flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onAddWidgetInstance(def)}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <h4 className="text-sm font-semibold text-muted-foreground mb-1">
+          Active Widget Instances
+        </h4>
+        <ScrollArea className="h-[50vh] pr-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {widgetInstances.map((instance) => {
+              const def = widgets.find((w) => w.id === instance.definitionId)
+              if (!def) {
+                onDisableWidgetInstance(instance.id)
+
+                return null
+              }
+
+              return (
+                <div
+                  key={instance.id}
+                  className="p-4 border rounded-xl shadow bg-background flex flex-col gap-2"
+                >
+                  <div className="flex items-center gap-3">
+                    {def.iconUrl && (
+                      <img
+                        src={def.iconUrl}
+                        alt=""
+                        className="w-8 h-8 rounded-sm"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold">{def.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {instance.id}
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    {def.description}
+                  </p>
+
+                  <div className="flex justify-between items-center mt-2">
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] capitalize"
+                    >
+                      {def.type || 'Unknown'}
+                    </Badge>
+
+                    <div className="flex gap-2">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleOpenSettings(instance)}
+                        disabled={
+                          !def.settingsSchema ||
+                          !Object.keys(def.settingsSchema).length
+                        }
+                      >
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onDisableWidgetInstance(instance.id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </ScrollArea>
       </DialogContent>
@@ -168,11 +212,16 @@ export function WidgetManagerDialog({ onToggle, onUpdateSettings }: Props) {
             <ScrollArea className="max-h-[65vh] pr-2">
               <WidgetSettingsForm
                 schema={
-                  widgets.find((w) => w.id === settingsOpen)?.settingsSchema ??
-                  {}
+                  widgets.find(
+                    (w) =>
+                      w.id ===
+                      widgetInstances.find((w) => w.id === settingsOpen)
+                        ?.definitionId
+                  )?.settingsSchema ?? {}
                 }
                 initialSettings={
-                  widgets.find((w) => w.id === settingsOpen)?.settings ?? {}
+                  widgetInstances.find((w) => w.id === settingsOpen)
+                    ?.settings ?? {}
                 }
                 onChange={(updated) =>
                   setSettingsDraft(JSON.stringify(updated))
