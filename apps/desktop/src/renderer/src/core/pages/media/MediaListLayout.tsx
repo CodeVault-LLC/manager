@@ -1,26 +1,36 @@
 import { IMedia } from '@manager/common/src'
 import {
   Badge,
-  Button,
   Card,
   CardContent,
   Dialog,
   DialogContent,
   DialogTrigger
 } from '@manager/ui'
-import { Download, Heart, ImageIcon, Play, Share2, Video } from 'lucide-react'
-import { FC } from 'react'
-import { VideoPlayer } from '../../components/player/video-player'
+import { ImageIcon, Play, Video } from 'lucide-react'
+import { FC, useState } from 'react'
+import { MediaDialog } from './MediaDialog'
+import { ipcClient } from '../../../utils/ipcClient'
 
 type MediaListLayoutProps = {
   media: IMedia[]
 }
 
 export const MediaListLayout: FC<MediaListLayoutProps> = (props) => {
+  const [dialogClosed, setDialogClosed] = useState(false)
+
+  const removeMedia = (id: string) => {
+    void ipcClient.invoke('entertainment:media:delete', id).catch(() => {})
+  }
+
   return (
     <div className="space-y-2">
       {props.media.map((item) => (
-        <Dialog key={item.id}>
+        <Dialog
+          key={item.id}
+          onOpenChange={() => setDialogClosed(false)}
+          open={!dialogClosed}
+        >
           <DialogTrigger asChild>
             <Card className="cursor-pointer transition-colors hover:bg-muted/50">
               <CardContent className="p-4">
@@ -69,47 +79,11 @@ export const MediaListLayout: FC<MediaListLayoutProps> = (props) => {
           </DialogTrigger>
 
           <DialogContent className="max-w-4xl w-full h-[70vh] p-0">
-            <div className="relative h-full flex flex-col">
-              <div className="flex-1 flex items-center justify-center bg-black">
-                {item.mime.startsWith('video/') ? (
-                  <VideoPlayer
-                    src={'local-file://' + item.path}
-                    name={item.name}
-                  />
-                ) : (
-                  <img
-                    src={'local-file://' + item.path}
-                    alt={item.name}
-                    className="max-h-full max-w-full object-contain"
-                  />
-                )}
-              </div>
-
-              <div className="p-4 bg-background border-t">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="font-semibold text-lg">{item.name}</h2>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                      <span>{item.size}</span>
-                      {item.dimensions && <span>{item.dimensions}</span>}
-                      {item.length && <span>{item.length}</span>}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <MediaDialog
+              item={item}
+              deleteMedia={removeMedia}
+              closeDialog={() => setDialogClosed(true)}
+            />
           </DialogContent>
         </Dialog>
       ))}

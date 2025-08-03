@@ -108,6 +108,9 @@ export interface IpcHandlers {
     query: string,
     filters: string[]
   ) => Promise<TCommunicationResponse<IMediaResponse>>;
+  "entertainment:media:delete": (
+    id: string
+  ) => Promise<TCommunicationResponse<boolean>>;
 
   "system:getHardware": () => Promise<TCommunicationResponse<ISystemHardware>>;
   "system:getSystemInfo": () => Promise<TCommunicationResponse<ISystem>>;

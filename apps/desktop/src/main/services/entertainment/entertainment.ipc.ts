@@ -115,4 +115,34 @@ export const registerEntertainmentIPC = async () => {
       }
     }
   )
+
+  ipcMain.handle(
+    'entertainment:media:delete',
+    async (_, id: string): Promise<TCommunicationResponse<boolean>> => {
+      try {
+        const mediaFile = await entertainmentService.getMediaById(id)
+        if (!mediaFile) {
+          return {
+            error: {
+              code: EErrorCodes.FILE_NOT_FOUND,
+              message: 'File was not found'
+            }
+          }
+        }
+
+        await entertainmentService.removeMediaById(id)
+
+        return { data: true }
+      } catch (error) {
+        log.error('Failed to upload media', error)
+
+        return {
+          error: {
+            code: EErrorCodes.FORBIDDEN,
+            message: 'error.forbidden'
+          }
+        }
+      }
+    }
+  )
 }

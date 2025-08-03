@@ -1,7 +1,7 @@
 import { db } from '../../database/data-source'
 import { files } from '../../database/models/schema'
 import { IMedia } from '@manager/common/src'
-import { and, desc, SQL, sql } from 'drizzle-orm'
+import { and, desc, eq, SQL, sql } from 'drizzle-orm'
 import fs from 'node:fs'
 
 import ffmpegPath from 'ffmpeg-static-electron'
@@ -33,6 +33,32 @@ export const entertainmentService = {
     } catch (error) {
       log.error('Failed to upload media', error)
       throw new Error('Failed to upload media')
+    }
+  },
+
+  getMediaById: async (mediaId: string): Promise<IMedia | null> => {
+    try {
+      const media = await db.query.files.findFirst({
+        where: eq(files.id, mediaId)
+      })
+
+      if (!media) {
+        return null
+      }
+
+      return {
+        id: media.id,
+        mime: media.mime,
+        name: media.name,
+        size: media.size,
+        dimensions: media.dimensions ?? '',
+        length: media.length ?? 0,
+        path: media.path,
+        thumbnail: media.thumbnail ?? ''
+      }
+    } catch (error) {
+      log.error('Failed to retrieve media by id', error)
+      throw new Error('Failed to retrieve media by id')
     }
   },
 
@@ -215,5 +241,34 @@ export const entertainmentService = {
     }
 
     return fileFound
+  },
+
+  removeMediaById: async (mediaId: string): Promise<void> => {
+    try {
+      const media = await entertainmentService.getMediaById(mediaId)
+      if (!media) {
+        log.warn(`Media with ID ${mediaId} not found`)
+        return
+      }
+
+      // Remove the media file from the filesystem
+      if (media.path && fs.existsSync(media.path)) {
+        fs.unlinkSync(media.path)
+        log.info(`Media file removed from filesystem: ${media.path}`)
+      }
+
+      // Remove the thumbnail if it exists
+      if (media.thumbnail && fs.existsSync(media.thumbnail)) {
+        fs.unlinkSync(media.thumbnail)
+        log.info(`Thumbnail removed from filesystem: ${media.thumbnail}`)
+      }
+
+      // Remove the media entry from the database
+      await db.delete(files).where(eq(files.id, mediaId))
+      log.info(`Media entry removed from database: ${mediaId}`)
+    } catch (error) {
+      log.error('Failed to remove media by id', error)
+      throw new Error('Failed to remove media by id')
+    }
   }
 }

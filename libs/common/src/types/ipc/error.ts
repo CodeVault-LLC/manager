@@ -26,6 +26,8 @@ export enum EErrorAlertType {
 }
 
 export enum EErrorCodes {
+  FILE_NOT_FOUND = "4001",
+
   FORBIDDEN = "4030",
   UNAUTHORIZED = "4035",
 

@@ -1,3 +1,4 @@
+export * from "./src/ui/alert-dialog";
 export * from "./src/ui/alert";
 export * from "./src/ui/avatar";
 export * from "./src/ui/checkbox";
