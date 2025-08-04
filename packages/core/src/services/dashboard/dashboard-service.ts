@@ -8,7 +8,9 @@ import { defaultWidgets } from "./widget-definitions";
 import { widgetInstance } from "@manager/data/models/schema";
 
 /**
- * Handles widgets,
+ * DashboardService class for managing dashboard widgets and instances.
+ * This service provides methods to retrieve, save, and manipulate dashboard widgets
+ * and their instances, ensuring a consistent interface for dashboard operations.
  */
 export class DashboardService {
   private static instance: DashboardService;

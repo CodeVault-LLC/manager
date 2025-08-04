@@ -26,7 +26,6 @@ import {
   IMedia,
   IMediaResponse,
   IDashboardWidgetInstance,
-  ICurrentForecastTimesery,
 } from "../index";
 
 export type TCommunicationResponse<TData> =
@@ -150,10 +149,6 @@ export interface IpcHandlers {
     sport: string;
     league: string;
   }) => Promise<TCommunicationResponse<any>>;
-
-  "weather:current": () => Promise<
-    TCommunicationResponse<ICurrentForecastTimesery[]>
-  >;
 }
 
 export interface IpcEmittedEvents {
