@@ -8,7 +8,7 @@ import {
   DialogTrigger
 } from '@manager/ui'
 import { FC, useState } from 'react'
-import { IMedia } from '@manager/common/src'
+import { IMedia } from '@manager/common'
 import { formatSize, formatTime } from '../../../utils/helpers'
 import { MediaDialog } from './MediaDialog'
 

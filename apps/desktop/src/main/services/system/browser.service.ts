@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import os from 'node:os'
-import { IBrowser } from '@manager/common/src'
+import { IBrowser } from '@manager/common'
 
 const username = os.userInfo().username
 

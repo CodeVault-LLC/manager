@@ -9,11 +9,11 @@ import {
   IGeoLocation,
   IpcServiceLog,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 import { ProcessService } from '../../lib/process'
-import { SessionStorage } from '../../lib/session'
-import { DashboardService } from './dashboard.service'
 import { entertainmentService } from '../entertainment/entertainment.service'
+import { SessionStorage } from '@manager/data'
+import { DashboardService } from '@manager/core'
 
 /**
  * Register all IPC handlers related to application settings
@@ -28,8 +28,9 @@ export const registerApplicationIPC = () => {
       const language = (await ConfStorage.get('language')) ?? 'en'
       const ffmpegPath = entertainmentService.getFfmpegPath()
 
-      const widgets = DashboardService.getDefaultWidgets()
-      const widgetInstances = await DashboardService.getWidgetInstances()
+      const widgets = DashboardService.getInstance().getDefaultWidgets()
+      const widgetInstances =
+        await DashboardService.getInstance().getWidgetInstances()
 
       const geolocation =
         await ProcessService.getInstance().runTask<IGeoLocation>(
@@ -72,7 +73,9 @@ export const registerApplicationIPC = () => {
       try {
         await ConfStorage.set('theme', application.theme)
         await ConfStorage.set('language', application.language)
-        await DashboardService.saveUserDashboard(application.widgetInstances)
+        await DashboardService.getInstance().saveUserDashboard(
+          application.widgetInstances
+        )
 
         return { data: true }
       } catch (error: any) {
@@ -93,7 +96,7 @@ export const registerApplicationIPC = () => {
     async (_, widgetId: string): Promise<TCommunicationResponse<any>> => {
       try {
         const widgetInstance =
-          await DashboardService.getWidgetInstanceData(widgetId)
+          await DashboardService.getInstance().getWidgetInstanceData(widgetId)
 
         if (!widgetInstance) {
           return {
@@ -104,7 +107,8 @@ export const registerApplicationIPC = () => {
           }
         }
 
-        const data = await DashboardService.fetchWidgetData(widgetInstance)
+        const data =
+          await DashboardService.getInstance().fetchWidgetData(widgetInstance)
 
         return { data }
       } catch (error: any) {

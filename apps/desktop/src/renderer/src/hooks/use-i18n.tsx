@@ -1,7 +1,4 @@
-import {
-  TranslationKeys,
-  Translations
-} from '@manager/common/src/types/i18n/i18n'
+import { TranslationKeys, Translations } from '@manager/common/types/i18n/i18n'
 import { useApplicationStore } from '@renderer/core/store/application.store'
 import { useEffect, useState } from 'react'
 

@@ -6,7 +6,7 @@ import { and, eq } from 'drizzle-orm';
 import { GoogleService } from '../google/google.service';
 import { randomInt } from 'node:crypto';
 
-import { IGoogleUserLite } from '@manager/common/src';
+import { IGoogleUserLite } from '@manager/common';
 
 export const UserService = {
   sanitizeUser(user: User, google: GoogleAccount | null) {

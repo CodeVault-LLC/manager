@@ -1,6 +1,6 @@
-import { IExtension } from '@manager/common/src'
+import { IExtension } from '@manager/common'
 import { api } from '../api.service'
-import { db } from '@main/database/data-source'
+import { DataService } from '@manager/data'
 
 export const extensionService = {
   fetchAllExtensions: async () => {
@@ -15,6 +15,8 @@ export const extensionService = {
 
   getInstalledExtensions: async () => {
     try {
+      const db = DataService.getInstance().getDatabase()
+
       const installedExtensions = await db.query.extensions.findMany()
 
       return installedExtensions

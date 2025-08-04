@@ -1,10 +1,8 @@
-import { eq } from 'drizzle-orm'
-import { db } from '../../database/data-source'
-import { notes } from '../../database/models/schema'
-
 import { faker } from '@faker-js/faker'
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 import { ConfStorage } from '../../store'
+import { DataService } from '@manager/data'
+import { notes } from '@manager/data/models/schema'
 
 const ALGO = 'aes-256-gcm'
 const IV_LENGTH = 12
@@ -12,6 +10,8 @@ const IV_LENGTH = 12
 export const notesServices = {
   getAllNotes: async () => {
     try {
+      const db = DataService.getInstance().getDatabase()
+
       const notes = await db.query.notes.findMany()
 
       const formattedNotes = notes.map((note) => ({
@@ -33,6 +33,9 @@ export const notesServices = {
 
   getNoteById: async (id: number) => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
+
       const note = await db.query.notes.findFirst({
         where: eq(notes.id, id)
       })
@@ -76,6 +79,8 @@ export const notesServices = {
 
   createNote: async () => {
     try {
+      const db = DataService.getInstance().getDatabase()
+
       const randomTitle = faker.lorem.sentence(3)
       const content = `{"type":"doc","content":[{"type":"paragraph","attrs":{"textAlign":null},"content":[{"type":"text","text":""}]}]}`
       const key = (await ConfStorage.getSecret('notes-encryption-key')) || ''
@@ -115,6 +120,9 @@ export const notesServices = {
 
   writeNote: async (id: number, title: string, content: string) => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
+
       if (!id || !title || !content) {
         return {
           error: 'Invalid input data'
@@ -168,6 +176,9 @@ export const notesServices = {
           error: 'Invalid note ID'
         }
       }
+
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
 
       const deletedNote = await db
         .delete(notes)

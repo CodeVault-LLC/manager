@@ -1,4 +1,4 @@
-import { EErrorCodes, TErrorInfo } from '@manager/common/src'
+import { EErrorCodes, TErrorInfo } from '@manager/common'
 import { create } from 'zustand'
 
 export interface IErrorStore {

@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { desc, eq, lt } from 'drizzle-orm'
-import { db } from '@main/database/data-source'
-import { news, newsProvider, newsThumbnail } from '@main/database/models/schema'
-import { MsnNewsResponse } from '@manager/common/src'
+import { MsnNewsResponse } from '@manager/common'
+import { DataService } from '@manager/data'
+import { news, newsProvider, newsThumbnail } from '@manager/data/models/schema'
 
 const msnApi = axios.create({
   baseURL: 'https://api.msn.com/news/',
@@ -45,6 +44,9 @@ export const msnNewsServices = {
       if (response.status !== 200) {
         throw new Error('Error fetching news from MSN API')
       }
+
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
 
       for (const card of response.data.sections[0].cards) {
         const existingNews = await db.query.news.findFirst({
@@ -101,6 +103,9 @@ export const msnNewsServices = {
 
   getLatestNews: async (limit = 15) => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { desc } = DataService.getInstance().getDatabaseSQL()
+
       const newsResult = await db.query.news.findMany({
         with: {
           provider: true,
@@ -122,6 +127,9 @@ export const msnNewsServices = {
 
   cleanupOldNews: async (olderThanMs: number) => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { lt } = DataService.getInstance().getDatabaseSQL()
+
       await db.transaction(async (tx) => {
         await tx
           .delete(news)

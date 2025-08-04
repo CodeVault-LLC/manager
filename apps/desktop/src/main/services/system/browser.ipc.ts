@@ -1,19 +1,16 @@
-import { eq } from 'drizzle-orm'
 import { ipcMain } from 'electron'
 import { browserList, browserServices } from './browser.service'
-import { db } from '@main/database/data-source'
-import { browsers } from '@main/database/models/browser.model'
-import {
-  EErrorCodes,
-  IBrowser,
-  TCommunicationResponse
-} from '@manager/common/src'
+import { EErrorCodes, IBrowser, TCommunicationResponse } from '@manager/common'
+import { DataService } from '@manager/data'
+import { browsers } from '@manager/data/models/browser.model'
 
 export const registerBrowserIPC = async () => {
   ipcMain.handle(
     'browser:initial',
     async (): Promise<TCommunicationResponse<IBrowser[]>> => {
       try {
+        const db = DataService.getInstance().getDatabase()
+
         const browsers = await db.query.browsers.findMany()
         const filteredBrowsers: IBrowser[] = browserList.map((browser) => {
           const browserStored = browsers.find((b) => b.browserId === browser.id)
@@ -54,6 +51,9 @@ export const registerBrowserIPC = async () => {
     'browser:refresh',
     async (): Promise<TCommunicationResponse<IBrowser[]>> => {
       try {
+        const db = DataService.getInstance().getDatabase()
+        const { eq } = DataService.getInstance().getDatabaseSQL()
+
         await Promise.all(
           browserList.map(async (browser) => {
             const isInstalled = browserServices.isBrowserInstalled(

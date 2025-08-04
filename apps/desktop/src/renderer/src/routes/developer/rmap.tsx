@@ -67,7 +67,7 @@ import {
 import { useState } from 'react'
 import { Label } from 'recharts'
 import { useRmap } from '../../core/pages/rmap/useRmap'
-import { ERmapType } from '@manager/common/src'
+import { ERmapType } from '@manager/common'
 
 export const Route = createFileRoute('/developer/rmap')({
   component: RouteComponent

@@ -6,16 +6,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input
+  Input,
+  ScrollArea
 } from '@manager/ui'
-import { ScrollArea } from '@manager/ui/src/ui/scroll-area'
 import { Plus, Trash2, Settings } from 'lucide-react'
 import { useState } from 'react'
 import { WidgetSettingsForm } from './widget-settings-form'
-import {
-  IDashboardWidgetInstance,
-  IDashboardWidgetItem
-} from '@manager/common/src'
+import { IDashboardWidgetInstance, IDashboardWidgetItem } from '@manager/common'
 
 type Props = {
   widgets: IDashboardWidgetItem[]

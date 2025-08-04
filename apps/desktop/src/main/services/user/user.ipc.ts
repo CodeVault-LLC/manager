@@ -5,7 +5,7 @@ import {
   ISession,
   IUser,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 
 /**
  * Register all IPC handlers related to user management

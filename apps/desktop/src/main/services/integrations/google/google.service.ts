@@ -1,4 +1,4 @@
-import { EErrorCodes } from '@manager/common/src'
+import { EErrorCodes } from '@manager/common'
 import { ipcMain } from 'electron'
 
 export const googleServices = {

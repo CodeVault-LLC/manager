@@ -1,4 +1,4 @@
-import { ERmapType, IRmapRequest, IRmapResponse } from '@manager/common/src'
+import { ERmapType, IRmapRequest, IRmapResponse } from '@manager/common'
 import { useState } from 'react'
 import { ipcClient } from '../../../utils/ipcClient'
 

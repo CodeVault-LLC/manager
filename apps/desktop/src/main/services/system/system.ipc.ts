@@ -5,7 +5,7 @@ import {
   ISystem,
   ISystemHardware,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 import { registerBrowserIPC } from './browser.ipc'
 import { systemServices } from './system.service'
 import { ProcessService } from '../../lib/process'

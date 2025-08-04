@@ -15,7 +15,7 @@ import {
   Badge,
   Button
 } from '@manager/ui'
-import { ISession } from '@manager/common/src'
+import { ISession } from '@manager/common'
 
 const RouteComponent = () => {
   const { t } = useI18n()

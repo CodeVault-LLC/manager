@@ -4,4 +4,5 @@ packages:
   - "packages/**"
   - "libs/ui/**"
   - "libs/eslint/**"
+  - "packages/data/**"
 hoist: false

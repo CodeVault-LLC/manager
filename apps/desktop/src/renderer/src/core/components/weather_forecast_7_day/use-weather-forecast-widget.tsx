@@ -1,10 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useDashboardStore } from '../../store/dashboard.store'
 import { useApplicationStore } from '../../store/application.store'
-import {
-  I7DayForecastTimesery,
-  IOpenStreetMapReverse
-} from '@manager/common/src'
+import { I7DayForecastTimesery, IOpenStreetMapReverse } from '@manager/common'
 
 type WeatherData = {
   location: Partial<IOpenStreetMapReverse>

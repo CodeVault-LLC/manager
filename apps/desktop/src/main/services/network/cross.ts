@@ -1,4 +1,4 @@
-import { IGeoLocation } from '@manager/common/src'
+import { IGeoLocation } from '@manager/common'
 import { INetworkProvider } from './network'
 import { ProcessService } from '../../lib/process'
 

@@ -2,7 +2,7 @@ import { API_BASE_URL } from '@shared/constants'
 import axios from 'axios'
 import { app } from 'electron'
 import { getSystemVersion } from '../utils/system.helper'
-import { EErrorCodes, TCommunicationResponse } from '@manager/common/src'
+import { EErrorCodes, TCommunicationResponse } from '@manager/common'
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

@@ -13,7 +13,7 @@ import {
   IDashboardWidgetInstance,
   IDashboardWidgetItem,
   WidgetSetting
-} from '@manager/common/src'
+} from '@manager/common'
 import { WeatherCurrentConditionsWidget } from '../core/components/weather-current-conditions-widget/weather-current-conditions'
 import { Weather7DayForecastWidget } from '../core/components/weather_forecast_7_day/weather_forecast_7_day'
 

@@ -1,13 +1,12 @@
 import axios from 'axios'
-import { eq, desc, and } from 'drizzle-orm'
-import { db } from '@main/database/data-source'
+import { MsnSportResponse } from '@manager/common'
+import { DataService } from '@manager/data'
 import {
   sportsLeagues,
-  sportsTeams,
   sportGames,
+  sportsTeams,
   sportGameParticipants
-} from '@main/database/models/schema'
-import { MsnSportResponse } from '@manager/common/src'
+} from '@manager/data/models/schema'
 
 const msnApi = axios.create({
   baseURL: 'https://api.msn.com/sports/',
@@ -44,6 +43,9 @@ export const msnSportServices = {
       if (response.status !== 200) {
         throw new Error('Invalid response from MSN API')
       }
+
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
 
       const schedules = response.data.value[0].schedules
 
@@ -119,6 +121,9 @@ export const msnSportServices = {
 
   getLatestGames: async ({ limit, offset, sport, league }) => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { eq, desc, and } = DataService.getInstance().getDatabaseSQL()
+
       const games = await db.query.sportGames.findMany({
         orderBy: [desc(sportGames.startDateTime)],
         limit,

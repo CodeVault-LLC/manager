@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { extensionService } from './extension.service'
-import { EErrorCodes } from '@manager/common/src'
+import { EErrorCodes } from '@manager/common'
 
 /**
  * Register all IPC handlers related to extensions

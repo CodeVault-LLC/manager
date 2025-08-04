@@ -26,7 +26,7 @@ import {
   Eye,
   Download
 } from 'lucide-react'
-import { EServiceStatus, EServiceType } from '@manager/common/src'
+import { EServiceStatus, EServiceType } from '@manager/common'
 import { cn } from '@manager/ui/src/utils/helpers'
 
 export const Route = createFileRoute('/status')({

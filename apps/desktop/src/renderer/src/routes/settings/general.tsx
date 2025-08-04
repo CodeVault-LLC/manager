@@ -16,7 +16,7 @@ import {
   AlertTitle,
   AlertDescription
 } from '@manager/ui'
-import { ETheme } from '@manager/common/src'
+import { ETheme } from '@manager/common'
 
 const RouteComponent = () => {
   const { t } = useI18n()

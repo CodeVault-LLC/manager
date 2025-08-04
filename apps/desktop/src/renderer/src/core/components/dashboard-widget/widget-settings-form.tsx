@@ -1,5 +1,3 @@
-import { Switch } from '@manager/ui/src/ui/switch'
-import { Label } from '@manager/ui/src/ui/label'
 import { useEffect, useState } from 'react'
 import {
   Select,
@@ -7,9 +5,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@manager/ui/src/ui/select'
-import { WidgetSetting } from '@manager/common/src'
-import { Input, Textarea } from '@manager/ui'
+} from '@manager/ui/ui/select'
+import { WidgetSetting } from '@manager/common'
+import { Input, Textarea, Label, Switch } from '@manager/ui'
 
 type Props = {
   schema: Record<string, WidgetSetting>

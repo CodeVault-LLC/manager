@@ -21,7 +21,7 @@ import {
 } from '@manager/ui'
 import { MediaListLayout } from '../../../core/pages/media/MediaListLayout'
 import { MediaGridLayout } from '../../../core/pages/media/MediaGridLayout'
-import { IMedia } from '@manager/common/src'
+import { IMedia } from '@manager/common'
 import { ipcClient } from '../../../utils/ipcClient'
 import { useApplicationStore } from '../../../core/store/application.store'
 import { useDebounce } from '../../../hooks/use-debounce'

@@ -9,7 +9,7 @@ import {
   IGeoLocation,
   IpcServiceLog,
   IServiceStatus
-} from '@manager/common/src'
+} from '@manager/common'
 
 interface ITheme {
   id: ETheme

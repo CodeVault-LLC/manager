@@ -1,6 +1,6 @@
 import { db } from '@/data-source.js';
 import { Note, notes } from '@/models/user/notes.model';
-import { TNotePage } from '@manager/common/src';
+import { TNotePage } from '@manager/common';
 import { eq } from 'drizzle-orm';
 
 export const NotesService = {

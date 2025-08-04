@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { VideoPlayer } from '../../components/player/video-player' // Assuming a better player component
-import { IMedia } from '@manager/common/src'
+import { IMedia } from '@manager/common'
 import {
   AlertDialog,
   AlertDialogAction,

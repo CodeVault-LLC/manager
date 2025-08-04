@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { SessionStorage } from '../../lib/session'
-import { IGeoLocation, IWeather } from '@manager/common/src'
+import { SessionStorage } from '@manager/data'
+import { IGeoLocation, IWeather } from '@manager/common'
 
 const yrApi = axios.create({
   baseURL: 'https://api.met.no/weatherapi/locationforecast/2.0/',

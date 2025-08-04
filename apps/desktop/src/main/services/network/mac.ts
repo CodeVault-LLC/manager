@@ -1,4 +1,4 @@
-import { INetwork } from '@manager/common/src'
+import { INetwork } from '@manager/common'
 import { ProcessService } from '../../lib/process'
 import { runCommand } from '../../utils/command'
 import { INetworkProvider } from './network'

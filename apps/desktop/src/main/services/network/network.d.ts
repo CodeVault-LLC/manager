@@ -1,4 +1,4 @@
-import { INetwork, IGeoLocation } from '@manager/common/src'
+import { INetwork, IGeoLocation } from '@manager/common'
 
 export interface INetworkProvider {
   /**

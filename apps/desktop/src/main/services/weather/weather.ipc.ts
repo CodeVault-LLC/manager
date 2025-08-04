@@ -1,9 +1,5 @@
 import { ipcMain } from 'electron'
-import {
-  EErrorCodes,
-  TCommunicationResponse,
-  Timesery
-} from '@manager/common/src'
+import { EErrorCodes, TCommunicationResponse, Timesery } from '@manager/common'
 import { weatherServices } from './weather.service'
 
 export const registerWeatherIPC = async () => {

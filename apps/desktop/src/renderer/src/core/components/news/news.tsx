@@ -4,8 +4,7 @@ import { useApplicationStore } from '@renderer/core/store/application.store'
 import { useDashboardStore } from '@renderer/core/store/dashboard.store'
 import { useKeenSlider } from 'keen-slider/react'
 import { FC, useEffect } from 'react'
-import { Badge } from '@manager/ui'
-import { Skeleton } from '@manager/ui/src/ui/skeleton'
+import { Badge,Skeleton } from '@manager/ui'
 
 export const News: FC = () => {
   const { news, fetchNews } = useDashboardStore()

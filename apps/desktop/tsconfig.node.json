@@ -11,6 +11,10 @@
     "../../libs/**/*.d.ts",
     "../../libs/**/*.ts",
     "../../libs/**/*.tsx", "app-info.ts", "package-info.ts", "dist-info.ts",
+
+    "../../packages/**/*.d.ts",
+    "../../packages/**/*.ts",
+    "../../packages/**/*.tsx",
   ],
   "compilerOptions": {
     "composite": true,
@@ -19,7 +23,19 @@
     "paths": {
       "@main/*": ["./src/main/*"],
       "@shared/*": ["../../packages/shared/*"],
-      "@manager/*": ["../../libs/*"]
+      "@manager/*": ["../../packages/*"],
+
+      "@manager/common": ["../../libs/common/src/index.ts"],
+      "@manager/common/*": ["../../libs/common/src/*"],
+
+      "@manager/ui": ["../../libs/ui/src/index.ts"],
+      "@manager/ui/*": ["../../libs/ui/src/*"],
+
+      "@manager/data": ["../../packages/data/src/index.ts"],
+      "@manager/data/*": ["../../packages/data/src/*"],
+
+      "@manager/core": ["../../packages/core/src/index.ts"],
+      "@manager/core/*": ["../../packages/core/src/*"]
   },
     "moduleResolution": "Bundler",
     "module": "ESNext",

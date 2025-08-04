@@ -1,4 +1,4 @@
-import { EErrorCodes, EPageTypes } from '@manager/common/src'
+import { EErrorCodes, EPageTypes } from '@manager/common'
 import { NetworkError } from '@renderer/core/components/errors/network-error'
 import { Loader } from '@renderer/core/components/loader/loading-spinner'
 import { useErrorStore } from '@renderer/core/store/error.store'

@@ -8,7 +8,7 @@ import {
   IMedia,
   IMediaResponse,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 import { entertainmentService } from './entertainment.service'
 
 export const registerEntertainmentIPC = async () => {

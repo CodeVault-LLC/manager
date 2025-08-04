@@ -14,7 +14,7 @@ import { eq } from 'drizzle-orm';
 import https from 'node:https';
 import { z } from 'zod';
 import { Response } from 'express';
-import { IGoogleUserLite, IUserInfoResponse } from '@manager/common/src';
+import { IGoogleUserLite, IUserInfoResponse } from '@manager/common';
 
 export let googleOauth2Client: OAuth2Client = {} as OAuth2Client;
 

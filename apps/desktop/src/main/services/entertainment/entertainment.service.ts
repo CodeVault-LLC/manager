@@ -1,7 +1,4 @@
-import { db } from '../../database/data-source'
-import { files } from '../../database/models/schema'
-import { IMedia } from '@manager/common/src'
-import { and, desc, eq, SQL, sql } from 'drizzle-orm'
+import { IMedia } from '@manager/common'
 import fs from 'node:fs'
 
 import ffmpegPath from 'ffmpeg-static-electron'
@@ -11,6 +8,10 @@ import ffmpeg from 'fluent-ffmpeg'
 import path from 'node:path'
 import { ffmpegExec } from '../../lib/ffmpeg/ffmpeg'
 
+import { DataService } from '@manager/data'
+import { files } from '@manager/data/models/schema'
+import { SQL } from '@manager/data/types'
+
 ffmpeg.setFfmpegPath(
   (ffmpegPath.path ?? '').replace('app.asar', 'app.asar.unpacked')
 )
@@ -19,6 +20,8 @@ ffmpeg.setFfprobePath(ffprobePath.path.replace('app.asar', 'app.asar.unpacked'))
 export const entertainmentService = {
   uploadMedia: async (media: IMedia): Promise<void> => {
     try {
+      const db = DataService.getInstance().getDatabase()
+
       await db.insert(files).values({
         id: media.id,
         name: media.name,
@@ -38,6 +41,9 @@ export const entertainmentService = {
 
   getMediaById: async (mediaId: string): Promise<IMedia | null> => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
+
       const media = await db.query.files.findFirst({
         where: eq(files.id, mediaId)
       })
@@ -67,8 +73,10 @@ export const entertainmentService = {
     searchQuery: string,
     _: string[]
   ): Promise<IMedia[]> => {
-    // Build conditions
-    const conditions: SQL<unknown>[] = []
+    const db = DataService.getInstance().getDatabase()
+    const { and, desc, sql } = DataService.getInstance().getDatabaseSQL()
+
+    const conditions: SQL[] = []
 
     // Search by name (case-insensitive, partial match)
     if (searchQuery) {
@@ -119,8 +127,10 @@ export const entertainmentService = {
   },
 
   getMediaCount: async (searchQuery: string, _: string[]): Promise<number> => {
-    // Build conditions
-    const conditions: SQL<unknown>[] = []
+    const db = DataService.getInstance().getDatabase()
+    const { and, sql } = DataService.getInstance().getDatabaseSQL()
+
+    const conditions: SQL[] = []
 
     // Search by name (case-insensitive, partial match)
     if (searchQuery) {
@@ -245,6 +255,9 @@ export const entertainmentService = {
 
   removeMediaById: async (mediaId: string): Promise<void> => {
     try {
+      const db = DataService.getInstance().getDatabase()
+      const { eq } = DataService.getInstance().getDatabaseSQL()
+
       const media = await entertainmentService.getMediaById(mediaId)
       if (!media) {
         log.warn(`Media with ID ${mediaId} not found`)

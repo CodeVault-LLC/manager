@@ -14,15 +14,15 @@ import {
   Clock,
   FilePlus
 } from 'lucide-react'
-import { useDebounce } from '@manager/ui/src/hooks/use-debounce'
-import { Editor } from '@manager/ui/src/core/editor/editor'
-import { Skeleton } from '@manager/ui/src/ui/skeleton'
 import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  Skeleton,
+  useDebounce,
+  Editor
 } from '@manager/ui'
 
 export const Route = createFileRoute('/notes/$id')({

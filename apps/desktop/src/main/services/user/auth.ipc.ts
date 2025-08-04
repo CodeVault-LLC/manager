@@ -6,7 +6,7 @@ import {
   EErrorCodes,
   IRegistrationData,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 
 /**
  * Register all IPC handlers related to authentication

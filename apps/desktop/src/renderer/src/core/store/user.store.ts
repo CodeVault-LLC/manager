@@ -10,7 +10,7 @@ import {
   IRegistrationData,
   ISession,
   IUser
-} from '@manager/common/src'
+} from '@manager/common'
 
 export interface IUserStore {
   isLoading: boolean

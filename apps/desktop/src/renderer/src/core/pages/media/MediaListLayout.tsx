@@ -1,4 +1,4 @@
-import { IMedia } from '@manager/common/src'
+import { IMedia } from '@manager/common'
 import {
   Badge,
   Card,

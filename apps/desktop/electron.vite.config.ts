@@ -15,7 +15,9 @@ export default defineConfig({
       alias: {
         '@main': path.resolve('src/main'),
         '@shared': path.resolve(__dirname, '../../packages/shared'),
-        '@manager': path.resolve(__dirname, '../../libs/')
+        '@manager/data': path.resolve(__dirname, '../../packages/data/src'),
+        '@manager/core': path.resolve(__dirname, '../../packages/core/src'),
+        '@manager/common': path.resolve(__dirname, '../../libs/common/src')
       }
     },
     define: {
@@ -31,7 +33,9 @@ export default defineConfig({
     plugins: [],
     resolve: {
       alias: {
-        '@manager': path.resolve(__dirname, '../../libs/')
+        '@manager/data': path.resolve(__dirname, '../../packages/data/src'),
+        '@manager/core': path.resolve(__dirname, '../../packages/core/src'),
+        '@manager/common': path.resolve(__dirname, '../../libs/common/src')
       }
     },
     build: {
@@ -50,7 +54,10 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': path.resolve('src/renderer/src'),
-        '@manager': path.resolve(__dirname, '../../libs/'),
+        '@manager/data': path.resolve(__dirname, '../../packages/data/src'),
+        '@manager/core': path.resolve(__dirname, '../../packages/core/src'),
+        '@manager/ui': path.resolve(__dirname, '../../libs/ui/src'),
+        '@manager/common': path.resolve(__dirname, '../../libs/common/src'),
         '@shared': path.resolve(__dirname, '../../packages/shared')
       }
     },

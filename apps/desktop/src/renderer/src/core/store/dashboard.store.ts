@@ -1,9 +1,4 @@
-import {
-  IDashboardWidgetItem,
-  INews,
-  ISport,
-  Timesery
-} from '@manager/common/src'
+import { IDashboardWidgetItem, INews, ISport, Timesery } from '@manager/common'
 import { ipcClient } from '@renderer/utils/ipcClient'
 import { toast } from 'sonner'
 import { create } from 'zustand'

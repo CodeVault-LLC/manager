@@ -30,7 +30,7 @@ import {
 
 import { Loader } from '../loader/loading-spinner'
 import { useErrorStore } from '../../store/error.store'
-import { EErrorCodes } from '@manager/common/src'
+import { EErrorCodes } from '@manager/common'
 
 export const NavUser = () => {
   const { t } = useI18n()

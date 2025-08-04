@@ -1,4 +1,4 @@
-import { IAdapterInfo, INetwork } from '@manager/common/src' // Adjust this path as per your project structure
+import { IAdapterInfo, INetwork } from '@manager/common' // Adjust this path as per your project structure
 import { ProcessService } from '../../lib/process' // Assuming this path is correct
 import { runCommand } from '../../utils/command' // Assuming this path is correct
 import { INetworkProvider } from './network.d' // Assuming this is INetworkProvider as defined before

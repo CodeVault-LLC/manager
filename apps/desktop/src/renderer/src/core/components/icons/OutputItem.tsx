@@ -11,7 +11,7 @@ import {
   Switch,
   Label
 } from '@manager/ui'
-import { IOutput } from '@manager/common/src'
+import { IOutput } from '@manager/common'
 
 interface Props {
   output: IOutput

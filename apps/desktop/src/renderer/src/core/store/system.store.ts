@@ -9,7 +9,7 @@ import {
   ISystem,
   ISystemHardware,
   ISystemStatistics
-} from '@manager/common/src'
+} from '@manager/common'
 
 import { getValue } from '../../hooks/use-i18n'
 

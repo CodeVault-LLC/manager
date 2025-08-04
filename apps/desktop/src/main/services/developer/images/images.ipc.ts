@@ -7,7 +7,7 @@ import {
   IConvertedImageData,
   IConvertedImageResponse,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 
 export const registerImageIPC = async () => {
   ipcMain.handle(

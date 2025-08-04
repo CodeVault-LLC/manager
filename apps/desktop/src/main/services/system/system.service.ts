@@ -1,5 +1,5 @@
 import si from 'systeminformation'
-import { ISystem, ISystemHardware } from '@manager/common/src'
+import { ISystem, ISystemHardware } from '@manager/common'
 import { runPowerShellScript } from '../../utils/powershell'
 import path from 'node:path'
 import { runAppleScript } from '../../utils/applescript'

@@ -13,7 +13,7 @@ import {
   EServiceType,
   IpcServiceLog,
   IServiceStatus
-} from '@manager/common/src'
+} from '@manager/common'
 
 type TypedServiceClient = Record<string, (...args: any[]) => Promise<any>>
 

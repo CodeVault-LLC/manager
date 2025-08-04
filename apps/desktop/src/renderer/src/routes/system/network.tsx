@@ -25,9 +25,9 @@ import {
   Separator,
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
+  Skeleton
 } from '@manager/ui'
-import { Skeleton } from '@manager/ui/src/ui/skeleton'
 import { cn } from '../../utils/helpers'
 import { useSystemStore } from '../../core/store/system.store'
 import { useApplicationStore } from '../../core/store/application.store'

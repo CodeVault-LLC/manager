@@ -1,5 +1,5 @@
 import { IpcRendererListener } from '@electron-toolkit/preload'
-import { IpcEmittedEvents, IpcHandlers } from '@manager/common/src'
+import { IpcEmittedEvents, IpcHandlers } from '@manager/common'
 
 export const ipcClient = {
   // Wrapper for invoking IPC methods

@@ -4,7 +4,7 @@ import { useApplicationStore } from '../../store/application.store'
 import {
   ICurrentForecastTimesery,
   IOpenStreetMapReverse
-} from '@manager/common/src'
+} from '@manager/common'
 
 type WeatherData = {
   location: Partial<IOpenStreetMapReverse>

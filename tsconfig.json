@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["packages/shared/*"],
+
+      "@manager/common": ["libs/common/src/index.ts"],
+      "@manager/common/*": ["libs/common/src/*"],
+
+      "@manager/data": ["packages/data/src/index.ts"],
+      "@manager/data/*": ["packages/data/src/*"],
+
+      "@manager/core": ["packages/core/src/index.ts"],
+      "@manager/core/*": ["packages/core/src/*"]
+    },
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"]
+  }
+}

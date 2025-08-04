@@ -5,7 +5,7 @@ import {
   IRmapRequest,
   IRmapResponse,
   TCommunicationResponse
-} from '@manager/common/src'
+} from '@manager/common'
 import { AppWindow } from '../../../app-window'
 
 export const registerRmapIPC = async (mainWindow: AppWindow) => {

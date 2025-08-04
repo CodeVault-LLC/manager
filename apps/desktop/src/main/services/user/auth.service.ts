@@ -1,4 +1,4 @@
-import { IRegistrationData } from '@manager/common/src'
+import { IRegistrationData } from '@manager/common'
 
 export const authServices = {
   prepareAuthRegistrationFormData: (data: IRegistrationData): FormData => {

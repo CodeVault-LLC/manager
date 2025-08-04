@@ -3,7 +3,7 @@ import { powerMonitor } from 'electron'
 import si from 'systeminformation'
 import { getNetworkUsage } from '../utils/system.helper'
 import { getAppState, setAppState } from '@main/states/app-state'
-import { ISystemStatistics } from '@manager/common/src'
+import { ISystemStatistics } from '@manager/common'
 import { AppWindow } from '../app-window'
 
 export const loadSystemSockets = (mainWindow: AppWindow) => {

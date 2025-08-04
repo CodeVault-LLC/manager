@@ -3,7 +3,6 @@ import './lib/logging/install'
 import { optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, dialog, ipcMain, net, protocol } from 'electron'
 
-import { runMigrations } from './database/data-source'
 import { startGrpc } from './grpc/bootstrap'
 import { manager } from './grpc/service-manager'
 import { registerApplicationIPC } from './services/application/application.ipc'
@@ -29,6 +28,9 @@ import './services/network'
 import { setupAutoUpdater } from './lib/updater'
 import { registerWeatherIPC } from './services/weather'
 import { registerEntertainmentIPC } from './services/entertainment/entertainment.ipc'
+
+import { DataService } from '@manager/data'
+import path from 'node:path'
 
 app.setAppLogsPath()
 enableSourceMaps()
@@ -163,13 +165,8 @@ app.on('ready', async () => {
     }
 
     protocol.handle('local-file', (request) => {
-      console.log('Handling local-file protocol:', request.url)
-
-      // Remove the protocol part and reconstruct the correct file path
-      // Example: local-file://c/Users/... => C:/Users/...
       let filePath = request.url.replace('local-file://', '')
 
-      // On Windows, the path may start with "c/", so fix it to "C:/"
       if (/^[a-zA-Z]\//.test(filePath)) {
         filePath = filePath[0].toUpperCase() + ':/' + filePath.slice(2)
       }
@@ -190,8 +187,9 @@ app.on('ready', async () => {
     })
 
     await ConfStorage.init()
-    await runMigrations().catch((error) => {
-      log.error('Error running migrations:', error)
+    new DataService({
+      migrations_folder: path.join(__dirname, '../../migrations'),
+      storage_file: path.join(app.getPath('userData'), 'storage.sql')
     })
 
     createWindow()
