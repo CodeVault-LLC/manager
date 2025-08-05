@@ -14,13 +14,14 @@ import { ipcClient } from '../../../utils/ipcClient'
 
 type MediaListLayoutProps = {
   media: IMedia[]
+  onDelete: (id: string) => Promise<void>
 }
 
 export const MediaListLayout: FC<MediaListLayoutProps> = (props) => {
   const [dialogClosed, setDialogClosed] = useState(false)
 
-  const removeMedia = (id: string) => {
-    void ipcClient.invoke('entertainment:media:delete', id).catch(() => {})
+  const removeMedia = async (id: string) => {
+    await ipcClient.invoke('entertainment:media:delete', id).catch(() => {})
   }
 
   return (
@@ -79,11 +80,7 @@ export const MediaListLayout: FC<MediaListLayoutProps> = (props) => {
           </DialogTrigger>
 
           <DialogContent className="max-w-4xl w-full h-[70vh] p-0">
-            <MediaDialog
-              item={item}
-              deleteMedia={removeMedia}
-              closeDialog={() => setDialogClosed(true)}
-            />
+            <MediaDialog item={item} deleteMedia={removeMedia} />
           </DialogContent>
         </Dialog>
       ))}

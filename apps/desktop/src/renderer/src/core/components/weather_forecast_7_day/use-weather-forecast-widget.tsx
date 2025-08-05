@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useDashboardStore } from '../../store/dashboard.store'
 import { useApplicationStore } from '../../store/application.store'
 import { I7DayForecastTimesery, IOpenStreetMapReverse } from '@manager/common'
 
@@ -9,7 +8,6 @@ type WeatherData = {
 }
 
 export function useWeatherForecastWidget(widgetInstanceId: string) {
-  const { weatherError } = useDashboardStore()
   const {
     getWidgetInstanceData,
     fetchWidgetInstanceData,
@@ -86,7 +84,6 @@ export function useWeatherForecastWidget(widgetInstanceId: string) {
 
   return {
     loading,
-    weatherError,
     location:
       weatherData.location.address?.city ??
       weatherData.location.address?.village ??

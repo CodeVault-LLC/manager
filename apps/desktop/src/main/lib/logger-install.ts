@@ -1,5 +1,5 @@
-import { log } from '../../logger'
-import { formatLogMessage } from './format-log-message'
+import { log } from '@manager/core'
+import { formatLogMessage } from '@manager/core/logging/format-log-message'
 
 const g = global as any
 

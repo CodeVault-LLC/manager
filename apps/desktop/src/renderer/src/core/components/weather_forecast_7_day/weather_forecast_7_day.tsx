@@ -18,7 +18,7 @@ type Props = {
 }
 
 export const Weather7DayForecastWidget: FC<Props> = ({ widgetInstanceId }) => {
-  const { loading, weatherError, location, dailyForecasts, formatTemp } =
+  const { loading, location, dailyForecasts, formatTemp } =
     useWeatherForecastWidget(widgetInstanceId)
 
   if (loading) {
@@ -29,13 +29,14 @@ export const Weather7DayForecastWidget: FC<Props> = ({ widgetInstanceId }) => {
     )
   }
 
+  /*
   if (weatherError) {
     return (
       <div className="p-4 text-red-600 bg-red-100 rounded-md text-center">
         Feil ved henting av 7-dagers værdata: {weatherError}
       </div>
     )
-  }
+  }*/
 
   return (
     <div className="rounded-lg shadow-md w-full p-2">

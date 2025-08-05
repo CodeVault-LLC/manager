@@ -1,7 +1,7 @@
 import { app, dialog } from 'electron'
 import { setCrashMenu } from './menu'
 import { CrashWindow } from './crash-window'
-import { formatError } from './lib/logging/format-error'
+import { formatError } from '@manager/core/logging/format-error'
 
 let hasReportedUncaughtException = false
 

@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useDashboardStore } from '../../store/dashboard.store'
 import { useApplicationStore } from '../../store/application.store'
 import {
   ICurrentForecastTimesery,
@@ -12,7 +11,6 @@ type WeatherData = {
 }
 
 export function useWeatherWidget(widgetInstanceId: string) {
-  const { weatherError } = useDashboardStore()
   const {
     getWidgetInstanceData,
     fetchWidgetInstanceData,
@@ -112,7 +110,6 @@ export function useWeatherWidget(widgetInstanceId: string) {
   }
 
   return {
-    weatherError,
     weatherData,
     loading,
     lastUpdated,

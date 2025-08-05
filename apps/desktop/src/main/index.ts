@@ -1,4 +1,4 @@
-import './lib/logging/install'
+import './lib/logger-install'
 
 import { optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, dialog, ipcMain, net, protocol } from 'electron'

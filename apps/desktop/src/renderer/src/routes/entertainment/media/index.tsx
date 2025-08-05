@@ -36,7 +36,7 @@ function MediaViewer() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
-  const [filter, setFilter] = useState<string[]>(['image', 'video'])
+  const [filter] = useState<string[]>(['image', 'video'])
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   const { ffmpegPath } = useApplicationStore()

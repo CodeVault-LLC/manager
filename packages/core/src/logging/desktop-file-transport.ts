@@ -5,7 +5,7 @@ import TransportStream, { TransportStreamOptions } from 'winston-transport'
 import { EOL } from 'os'
 import { readdir, unlink } from 'fs/promises'
 import { promisify } from 'util'
-import escapeRegExp from './lib/regex'
+import escapeRegExp from '../utils/regex'
 
 type DesktopFileTransportOptions = TransportStreamOptions & {
   readonly logDirectory: string

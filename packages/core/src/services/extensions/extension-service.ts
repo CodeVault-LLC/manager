@@ -52,6 +52,9 @@ export class ExtensionService {
   async updateExtension(extensionId: number): Promise<IExtension> {
     try {
       // Request a download stream from the server and store it in the path
+      const response = await api.put<IExtension>(
+        `/extensions/${extensionId}/update${this.extensionPath}`
+      );
 
       return response.data;
     } catch (error) {

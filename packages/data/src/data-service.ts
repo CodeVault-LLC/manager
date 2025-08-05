@@ -19,7 +19,7 @@ interface DataServiceProps {
 
 export class DataService {
   private static instance: DataService;
-  private isLoading: boolean;
+  private isLoading: boolean = false;
 
   private storageFile: string;
   private migrationsFolder: string;

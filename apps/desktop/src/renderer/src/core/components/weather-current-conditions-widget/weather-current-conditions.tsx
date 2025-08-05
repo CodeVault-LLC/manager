@@ -15,7 +15,6 @@ export const WeatherCurrentConditionsWidget: FC<
 > = ({ widgetInstanceId }) => {
   const {
     loading,
-    weatherError,
     weatherData,
     closestWeatherTime,
     groupedForecast,
@@ -32,13 +31,14 @@ export const WeatherCurrentConditionsWidget: FC<
     )
   }
 
+  /*
   if (weatherError) {
     return (
       <div className="p-4 text-center text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900 rounded-md">
         Feil ved henting av værdata: {weatherError}
       </div>
     )
-  }
+  }*/
 
   const location =
     weatherData.location.address?.city ??
