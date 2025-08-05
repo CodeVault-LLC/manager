@@ -4,7 +4,10 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "database:generate": "drizzle-kit generate",
+    "database:push": "drizzle-kit push",
+    "database:reset": "drizzle-kit reset",
+    "database:migrate": "drizzle-kit migrate"
   },
   "type": "module",
   "keywords": [],

@@ -28,7 +28,7 @@ import './services/network'
 import { setupAutoUpdater } from './lib/updater'
 import { registerEntertainmentIPC } from './services/entertainment/entertainment.ipc'
 
-import { DataService } from '@manager/data'
+import { CacheService, DataService, SessionStorage } from '@manager/data'
 import path from 'node:path'
 
 app.setAppLogsPath()
@@ -185,11 +185,15 @@ app.on('ready', async () => {
       optimizer.watchWindowShortcuts(window)
     })
 
+    // Init storage
     await ConfStorage.init()
-    new DataService({
+    new CacheService()
+    void SessionStorage.getInstance()
+    const dataService = new DataService({
       migrations_folder: path.join(__dirname, '../../migrations'),
       storage_file: path.join(app.getPath('userData'), 'storage.sql')
     })
+    await dataService.runMigrations()
 
     createWindow()
 

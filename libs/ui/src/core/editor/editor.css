@@ -189,3 +189,11 @@
 .tiptap pre .hljs-strong {
   font-weight: 700;
 }
+
+.tiptap .language-issue {
+  text-decoration: underline;
+  text-decoration-color: #dc2626; /* Destructive color */
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}

@@ -25,7 +25,9 @@ export * from "./ui/progress";
 export * from "./ui/checkbox";
 export * from "./ui/sonner";
 export * from "./ui/table";
+export * from "./ui/input-otp";
 
 export * from "./hooks/use-debounce";
+export * from "./utils/helpers";
 
 export * from "./core/editor/editor";

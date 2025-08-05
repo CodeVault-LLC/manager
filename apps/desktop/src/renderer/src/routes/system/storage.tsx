@@ -12,10 +12,10 @@ import {
   AlertDescription,
   Tooltip,
   TooltipTrigger,
-  TooltipContent
+  TooltipContent,
+  Skeleton,
+  ScrollArea
 } from '@manager/ui'
-import { ScrollArea } from '@manager/ui/src/ui/scroll-area'
-import { Skeleton } from '@manager/ui/src/ui/skeleton'
 import { Clock, Folder, Package } from 'lucide-react'
 
 const COLORS = [

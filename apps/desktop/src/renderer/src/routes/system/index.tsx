@@ -8,10 +8,10 @@ import {
   Separator,
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
+  ScrollArea,
+  Skeleton
 } from '@manager/ui'
-import { Skeleton } from '@manager/ui/src/ui/skeleton'
-import { ScrollArea } from '@manager/ui/src/ui/scroll-area'
 import {
   Cpu,
   Monitor,

@@ -26,6 +26,7 @@ import { all, createLowlight } from "lowlight";
 import StarterKit from "@tiptap/starter-kit";
 import { FontSize } from "./extensions/FontSize";
 import Link from "@tiptap/extension-link";
+import { LanguageChecker, LanguageIssue } from "./extensions/Grammar";
 
 interface EditorProps {
   value: object | null;
@@ -63,6 +64,12 @@ export const Editor: FC<EditorProps> = ({ value, onValueChange }) => {
       linkOnPaste: true,
       defaultProtocol: "https",
     }),
+    LanguageChecker.configure({
+      enabled: true,
+      checkOnUpdate: true,
+      checkTypes: ["grammar", "typography"],
+    }),
+    LanguageIssue,
   ];
 
   if (!value) {

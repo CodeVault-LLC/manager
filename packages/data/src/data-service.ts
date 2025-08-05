@@ -36,8 +36,6 @@ export class DataService {
     this.storageFile = props.storage_file;
     this.migrationsFolder = props.migrations_folder;
 
-    void this.runMigrations();
-
     const client = createClient({ url: `file:${this.storageFile}` });
     this.db = drizzle(client, { schema });
 
@@ -51,7 +49,7 @@ export class DataService {
     return DataService.instance;
   }
 
-  private async runMigrations() {
+  async runMigrations() {
     this.isLoading = true;
 
     await migrate(this.db, {

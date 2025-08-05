@@ -10,7 +10,8 @@ import {
   CardHeader,
   CardTitle,
   Button,
-  Progress
+  Progress,
+  cn
 } from '@manager/ui'
 
 import {
@@ -27,7 +28,6 @@ import {
   Download
 } from 'lucide-react'
 import { EServiceStatus, EServiceType } from '@manager/common'
-import { cn } from '@manager/ui/src/utils/helpers'
 
 export const Route = createFileRoute('/status')({
   component: RouteComponent

@@ -8,6 +8,9 @@ export class CacheService {
         "CacheService is a singleton and cannot be instantiated multiple times."
       );
     }
+
+    console.log("Initializing CacheService");
+    CacheService.instance = this;
   }
 
   static getInstance(): CacheService {
