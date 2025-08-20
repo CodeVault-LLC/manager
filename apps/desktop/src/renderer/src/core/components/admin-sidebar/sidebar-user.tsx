@@ -28,37 +28,11 @@ import {
   AvatarImage
 } from '@manager/ui'
 
-import { Loader } from '../loader/loading-spinner'
-import { useErrorStore } from '../../store/error.store'
-import { EErrorCodes } from '@manager/common'
-
 export const NavUser = () => {
   const { t } = useI18n()
   const { isMobile } = useSidebar()
   const { currentUser, signOut } = useUserStore()
-  const { getError } = useErrorStore()
   const navgiate = useNavigate()
-
-  const displayUserLoading = (
-    <SidebarMenuButton
-      size="lg"
-      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-    >
-      <Avatar className="h-8 w-8 rounded-lg">
-        <AvatarImage src="" alt="Loading..." />
-        <AvatarFallback className="rounded-lg bg-gray-300" />
-      </Avatar>
-      <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate font-semibold">
-          <Loader type="text" className="mr-2" length={100} />
-        </span>
-        <span className="truncate text-xs mt-1">
-          <Loader className="mr-2" type="text" length={150} />
-        </span>
-      </div>
-      <ChevronsUpDown className="ml-auto size-4" />
-    </SidebarMenuButton>
-  )
 
   const displayUserNotLoggedIn = (
     <SidebarMenuButton
@@ -87,11 +61,7 @@ export const NavUser = () => {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          {!currentUser && getError(EErrorCodes.NETWORK_ERROR) ? (
-            <DropdownMenuTrigger asChild disabled>
-              {displayUserLoading}
-            </DropdownMenuTrigger>
-          ) : !currentUser ? (
+          {!currentUser ? (
             <DropdownMenuTrigger asChild>
               {displayUserNotLoggedIn}
             </DropdownMenuTrigger>

@@ -144,7 +144,7 @@ export const UserEditFields: FC<UserEditFieldsProps> = (props) => {
               onBlur={handleBlur}
             />
 
-            {!currentUser?.verified_email && (
+            {!currentUser?.verified_email && isUserLoggedIn && (
               <Alert variant={'warning'} className="w-full">
                 <MailCheckIcon size={16} />
 

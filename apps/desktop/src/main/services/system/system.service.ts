@@ -1,8 +1,5 @@
 import si from 'systeminformation'
 import { ISystem, ISystemHardware } from '@manager/common'
-import { runPowerShellScript } from '../../utils/powershell'
-import path from 'node:path'
-import { runAppleScript } from '../../utils/applescript'
 import { manager } from '../../grpc/service-manager'
 
 export const systemServices = {
@@ -75,7 +72,7 @@ export const systemServices = {
   },
 
   getSystemInfo: async (): Promise<ISystem> => {
-    const isWindows = process.platform === 'win32'
+    /*const isWindows = process.platform === 'win32'
     const isMac = process.platform === 'darwin'
 
     if (isWindows) {
@@ -94,6 +91,53 @@ export const systemServices = {
       const data = await runAppleScript<ISystem>(scriptPath)
 
       return data
+    }*/
+    const [disk, graphics, cpu, mem, osInfo, users] = await Promise.all([
+      si.fsSize(),
+      si.graphics(),
+      si.cpu(),
+      si.mem(),
+      si.osInfo(),
+      si.users()
+    ])
+
+    const storageTotal = disk.reduce((acc, d) => acc + d.size, 0)
+    const storageUsed = disk.reduce((acc, d) => acc + d.used, 0)
+    const storageFree = storageTotal - storageUsed
+    const percentUsed = storageUsed / storageTotal
+
+    const gpu = graphics.controllers[0] || {
+      vendor: 'Unknown',
+      model: 'Unknown',
+      vram: 0
+    }
+
+    const username =
+      users[0]?.user || process.env.USER || process.env.USERNAME || 'Unknown'
+    const computername = osInfo.hostname || 'Unknown'
+
+    return {
+      storage: {
+        total: storageTotal,
+        used: storageUsed,
+        free: storageFree,
+        percent_used: percentUsed
+      },
+      graphics: {
+        manufacturer: gpu.vendor,
+        model: gpu.model,
+        memory: gpu.vram
+      },
+      processor: {
+        manufacturer: cpu.manufacturer,
+        brand: cpu.brand,
+        speed: cpu.speed, // in GHz
+        cores: cpu.cores,
+        threads: cpu.processors || cpu.cores // sometimes hyperthreading info isn't explicit
+      },
+      ram: mem.total,
+      username,
+      computername
     }
 
     log.warn('getSystemInfo is not implemented for this platform.')

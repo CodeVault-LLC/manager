@@ -1,4 +1,5 @@
 import axios from "axios";
+import { net } from "electron";
 
 const httpClient = axios.create({
   timeout: 10000,
@@ -8,9 +9,10 @@ const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use((config) => {
-  if (!navigator.onLine) {
+  if (!net.isOnline()) {
     return Promise.reject(new Error("No internet connection"));
   }
+
   return config;
 });
 

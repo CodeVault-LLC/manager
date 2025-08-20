@@ -23,7 +23,7 @@ msnApi.interceptors.response.use(
   },
   (error) => {
     log.error('Error fetching news from MSN API', {
-      error: error.message
+      error
     })
     return Promise.reject(error)
   }

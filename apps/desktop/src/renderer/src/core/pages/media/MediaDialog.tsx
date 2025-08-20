@@ -34,10 +34,12 @@ export const MediaDialog: FC<MediaDialogProps> = ({ item, deleteMedia }) => {
   }
 
   return (
-    <div className="relative flex h-[80vh] flex-col">
+    <div className="relative flex max-h-[80vh] flex-col">
       <div className="flex flex-1 items-center justify-center bg-black">
         {item.mime.startsWith('video/') ? (
-          <VideoPlayer src={`local-file://${item.path}`} />
+          <div className="w-full max-w-4xl">
+            <VideoPlayer src={`local-file://${item.path}`} />
+          </div>
         ) : (
           <img
             src={`local-file://${item.path}`}
