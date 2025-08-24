@@ -142,7 +142,11 @@
       "memoryUsage": "Memory Usage",
       "diskUsage": "Disk Usage",
       "networkUsage": "Network Usage",
-      "uptime": "Uptime"
+      "uptime": "Uptime",
+      "storage": "Storage",
+      "gpu": "GPU",
+      "ram": "RAM",
+      "processor": "Processor"
     },
     "uptime": {
       "runningForLongTime": "System has been running for a long time",

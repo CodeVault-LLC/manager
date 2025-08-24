@@ -2,8 +2,25 @@ export interface ISystem {
   storage: ISystemStorage;
   graphics: ISystemGraphics;
   processor: ISystemProcessor;
-  ram: number;
-
+  ram: {
+    total: number;
+    free: number;
+    used: number;
+  };
+  memoryLayout: {
+    size: number;
+    bank: string;
+    type: string;
+    ecc?: boolean | null;
+    clockSpeed: number | null;
+    formFactor: string;
+    manufacturer?: string;
+    partNum: string;
+    serialNum: string;
+    voltageConfigured: number | null;
+    voltageMin: number | null;
+    voltageMax: number | null;
+  }[];
   username: string;
   computername: string;
 }

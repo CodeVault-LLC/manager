@@ -3,6 +3,7 @@
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
-    "lib": ["dom", "es2016"]
+    "lib": ["dom", "es2016"],
+    "esModuleInterop": true
   }
 }

@@ -142,7 +142,11 @@
       "memoryUsage": "Minnebruk",
       "diskUsage": "Diskbruk",
       "networkUsage": "Nettverksbruk",
-      "uptime": "Oppetid"
+      "uptime": "Oppetid",
+      "storage": "Lagring",
+      "gpu": "GPU",
+      "ram": "RAM",
+      "processor": "Prosessor"
     },
     "uptime": {
       "runningForLongTime": "Systemet har vært i drift i lang tid",

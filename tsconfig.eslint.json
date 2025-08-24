@@ -17,6 +17,12 @@
     "allowJs": true
   },
   "files": ["tailwind.config.js"],
-  "include": ["**/*.ts", "**/*.tsx", "packages/data/**/*"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "packages/data/**/*",
+    "src/renderer/src/**/*",
+    "src/renderer/src/**/*.tsx"
+  ],
   "exclude": ["**/build", "**/dist", "out/*", "**/assets", "tailwind.config.js"]
 }

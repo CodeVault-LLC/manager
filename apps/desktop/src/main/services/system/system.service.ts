@@ -92,14 +92,16 @@ export const systemServices = {
 
       return data
     }*/
-    const [disk, graphics, cpu, mem, osInfo, users] = await Promise.all([
-      si.fsSize(),
-      si.graphics(),
-      si.cpu(),
-      si.mem(),
-      si.osInfo(),
-      si.users()
-    ])
+    const [disk, graphics, cpu, mem, memLayout, osInfo, users] =
+      await Promise.all([
+        si.fsSize(),
+        si.graphics(),
+        si.cpu(),
+        si.mem(),
+        si.memLayout(),
+        si.osInfo(),
+        si.users()
+      ])
 
     const storageTotal = disk.reduce((acc, d) => acc + d.size, 0)
     const storageUsed = disk.reduce((acc, d) => acc + d.used, 0)
@@ -133,9 +135,14 @@ export const systemServices = {
         brand: cpu.brand,
         speed: cpu.speed, // in GHz
         cores: cpu.cores,
-        threads: cpu.processors || cpu.cores // sometimes hyperthreading info isn't explicit
+        threads: cpu.processors || cpu.cores
       },
-      ram: mem.total,
+      ram: {
+        total: mem.total,
+        free: mem.free,
+        used: mem.used
+      },
+      memoryLayout: memLayout,
       username,
       computername
     }

@@ -13,10 +13,10 @@ importers:
         version: 2.5.2
       '@electron-toolkit/preload':
         specifier: ^3.0.2
-        version: 3.0.2(electron@37.2.5)
+        version: 3.0.2(electron@37.3.1)
       '@electron-toolkit/utils':
         specifier: ^4.0.0
-        version: 4.0.0(electron@37.2.5)
+        version: 4.0.0(electron@37.3.1)
       '@eslint/js':
         specifier: ^9.27.0
         version: 9.29.0
@@ -99,8 +99,8 @@ importers:
         specifier: ^7.9.0
         version: 7.9.0
       lucide-react:
-        specifier: ^0.476.0
-        version: 0.476.0(react@18.3.1)
+        specifier: ^0.541.0
+        version: 0.541.0(react@18.3.1)
       memoize-one:
         specifier: ^6.0.0
         version: 6.0.0
@@ -223,8 +223,8 @@ importers:
         specifier: ^0.30.6
         version: 0.30.6
       electron:
-        specifier: ^37.2.5
-        version: 37.2.5
+        specifier: ^37.3.1
+        version: 37.3.1
       electron-builder:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8)
@@ -2717,8 +2717,8 @@ packages:
     resolution: {integrity: sha512-1mNTwCfkolXl3kMf50yW3vE2lZj0y92P/HYWFBrb+v2S/pCka5mdwN3cagKm458A7NjndSwijynXgcLWRodsVg==}
     engines: {node: '>=8.0.0'}
 
-  electron@37.2.5:
-    resolution: {integrity: sha512-719ZqEp43rj6xDJMICm4CIXl8keFFgvVNO9Ix6OtjNjrh9HtYlP/1WiYeRohnXj06aLyGx5NCzrHbG7j3BxO9w==}
+  electron@37.3.1:
+    resolution: {integrity: sha512-7DhktRLqhe6OJh/Bo75bTI0puUYEmIwSzMinocgO63mx3MVjtIn2tYMzLmAleNIlud2htkjpsMG2zT4PiTCloA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -3935,8 +3935,8 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
 
-  lucide-react@0.476.0:
-    resolution: {integrity: sha512-x6cLTk8gahdUPje0hSgLN1/MgiJH+Xl90Xoxy9bkPAsMPOUiyRSKR4JCDPGVCEpyqnZXH3exFWNItcvra9WzUQ==}
+  lucide-react@0.541.0:
+    resolution: {integrity: sha512-s0Vircsu5WaGv2KoJZ5+SoxiAJ3UXV5KqEM3eIFDHaHkcLIFdIWgXtZ412+Gh02UsdS7Was+jvEpBvPCWQISlg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -6062,17 +6062,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electron-toolkit/preload@3.0.2(electron@37.2.5)':
+  '@electron-toolkit/preload@3.0.2(electron@37.3.1)':
     dependencies:
-      electron: 37.2.5
+      electron: 37.3.1
 
   '@electron-toolkit/tsconfig@1.0.1(@types/node@22.15.32)':
     dependencies:
       '@types/node': 22.15.32
 
-  '@electron-toolkit/utils@4.0.0(electron@37.2.5)':
+  '@electron-toolkit/utils@4.0.0(electron@37.3.1)':
     dependencies:
-      electron: 37.2.5
+      electron: 37.3.1
 
   '@electron/asar@3.4.1':
     dependencies:
@@ -8327,7 +8327,7 @@ snapshots:
       jsonfile: 4.0.0
       mkdirp: 0.5.6
 
-  electron@37.2.5:
+  electron@37.3.1:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.15.32
@@ -9799,7 +9799,7 @@ snapshots:
 
   lru-cache@7.18.3: {}
 
-  lucide-react@0.476.0(react@18.3.1):
+  lucide-react@0.541.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 

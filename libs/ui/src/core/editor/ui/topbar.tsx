@@ -14,6 +14,7 @@ import {
   Redo2,
   Code,
   Highlighter,
+  TypeIcon,
 } from "lucide-react";
 import {
   Select,
@@ -24,6 +25,7 @@ import {
 } from "../../../ui/select";
 import { Button } from "../../../ui/button";
 import { Card, CardContent } from "../../../ui/card";
+import { Separator } from "../../../ui/separator";
 
 export const Topbar: FC = () => {
   const { editor } = useCurrentEditor();
@@ -61,6 +63,22 @@ export const Topbar: FC = () => {
   return (
     <Card className="border-b rounded-none shadow-none w-full bg-background">
       <CardContent className="flex flex-wrap items-center justify-start gap-4 py-3 px-4">
+        {/* Undo / Redo */}
+        <div className="flex items-center gap-1">
+          <IconButton
+            icon={<Undo2 />}
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().undo()}
+          />
+          <IconButton
+            icon={<Redo2 />}
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().redo()}
+          />
+
+          <Separator orientation="vertical" className="h-6" />
+        </div>
+
         {/* Font family */}
         <Select
           value={fontFamily}
@@ -70,6 +88,7 @@ export const Topbar: FC = () => {
           }}
         >
           <SelectTrigger className="w-[160px]">
+            <TypeIcon className="size-4" />
             <SelectValue placeholder="Font Family" />
           </SelectTrigger>
           <SelectContent>
@@ -196,20 +215,6 @@ export const Topbar: FC = () => {
             icon={<AlignRight />}
             onClick={() => editor.chain().focus().setTextAlign("right").run()}
             active={editor.isActive({ textAlign: "right" })}
-          />
-        </div>
-
-        {/* Undo / Redo */}
-        <div className="flex items-center gap-1 ml-auto">
-          <IconButton
-            icon={<Undo2 />}
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-          />
-          <IconButton
-            icon={<Redo2 />}
-            onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
           />
         </div>
       </CardContent>

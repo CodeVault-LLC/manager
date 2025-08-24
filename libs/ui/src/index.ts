@@ -26,6 +26,8 @@ export * from "./ui/checkbox";
 export * from "./ui/sonner";
 export * from "./ui/table";
 export * from "./ui/input-otp";
+export * from "./ui/typography";
+export * from "./ui/accordion";
 
 export * from "./hooks/use-debounce";
 export * from "./utils/helpers";
