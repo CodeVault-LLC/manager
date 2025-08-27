@@ -44,20 +44,20 @@ export const Typography: React.FC<TypographyProps> = ({
       : "p");
 
   const baseStyles =
-    "font-[Segoe_UI,SegoeUI,Segoe UI Web,Segoe UI Symbol,-apple-system,BlinkMacSystemFont,Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif] text-gray-900";
+    "font-[Segoe_UI,SegoeUI,Segoe UI Web,Segoe UI Symbol,-apple-system,BlinkMacSystemFont,Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif] text-gray-900 dark:text-gray-100";
 
   const variantStyles: Record<string, string> = {
-    h1: "text-4xl font-bold leading-tight",
-    h2: "text-3xl font-semibold leading-snug",
-    h3: "text-2xl font-semibold leading-snug",
-    h4: "text-xl font-medium leading-snug",
-    h5: "text-lg font-medium leading-snug",
-    h6: "text-base font-medium leading-snug",
+    h1: "text-4xl font-bold leading-tight dark:text-white",
+    h2: "text-3xl font-semibold leading-snug dark:text-white",
+    h3: "text-2xl font-semibold leading-snug dark:text-white",
+    h4: "text-xl font-medium leading-snug dark:text-white",
+    h5: "text-lg font-medium leading-snug dark:text-white",
+    h6: "text-base font-medium leading-snug dark:text-white",
     body: "text-base font-normal leading-relaxed",
-    caption: "text-sm text-gray-700 leading-normal",
-    small: "text-xs text-gray-700 leading-normal",
-    strong: "font-semibold text-base text-gray-900",
-    span: "text-sm text-gray-900 leading-normal",
+    caption: "text-sm text-gray-700 dark:text-gray-100 leading-normal",
+    small: "text-xs text-gray-700 dark:text-gray-100 leading-normal",
+    strong: "font-semibold text-base text-gray-900 dark:text-white",
+    span: "text-sm text-gray-900 dark:text-gray-200 leading-normal",
   };
 
   return (

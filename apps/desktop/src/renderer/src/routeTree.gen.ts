@@ -24,6 +24,7 @@ import { Route as SystemStorageRouteImport } from './routes/system/storage'
 import { Route as SystemNetworkRouteImport } from './routes/system/network'
 import { Route as SystemHardwareRouteImport } from './routes/system/hardware'
 import { Route as SystemBrowsersRouteImport } from './routes/system/browsers'
+import { Route as SettingsUserRouteImport } from './routes/settings/user'
 import { Route as SettingsSecurityRouteImport } from './routes/settings/security'
 import { Route as SettingsGeneralRouteImport } from './routes/settings/general'
 import { Route as SettingsExtensionsRouteImport } from './routes/settings/extensions'
@@ -113,6 +114,11 @@ const SystemBrowsersRoute = SystemBrowsersRouteImport.update({
   id: '/browsers',
   path: '/browsers',
   getParentRoute: () => SystemRoute,
+} as any)
+const SettingsUserRoute = SettingsUserRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsSecurityRoute = SettingsSecurityRouteImport.update({
   id: '/security',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/settings/extensions': typeof SettingsExtensionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/settings/user': typeof SettingsUserRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
   '/system/network': typeof SystemNetworkRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/settings/extensions': typeof SettingsExtensionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/settings/user': typeof SettingsUserRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
   '/system/network': typeof SystemNetworkRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/settings/extensions': typeof SettingsExtensionsRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/security': typeof SettingsSecurityRoute
+  '/settings/user': typeof SettingsUserRoute
   '/system/browsers': typeof SystemBrowsersRoute
   '/system/hardware': typeof SystemHardwareRoute
   '/system/network': typeof SystemNetworkRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/settings/extensions'
     | '/settings/general'
     | '/settings/security'
+    | '/settings/user'
     | '/system/browsers'
     | '/system/hardware'
     | '/system/network'
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/settings/extensions'
     | '/settings/general'
     | '/settings/security'
+    | '/settings/user'
     | '/system/browsers'
     | '/system/hardware'
     | '/system/network'
@@ -358,6 +369,7 @@ export interface FileRouteTypes {
     | '/settings/extensions'
     | '/settings/general'
     | '/settings/security'
+    | '/settings/user'
     | '/system/browsers'
     | '/system/hardware'
     | '/system/network'
@@ -492,6 +504,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/system/browsers'
       preLoaderRoute: typeof SystemBrowsersRouteImport
       parentRoute: typeof SystemRoute
+    }
+    '/settings/user': {
+      id: '/settings/user'
+      path: '/user'
+      fullPath: '/settings/user'
+      preLoaderRoute: typeof SettingsUserRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/settings/security': {
       id: '/settings/security'
@@ -638,6 +657,7 @@ interface SettingsRouteChildren {
   SettingsExtensionsRoute: typeof SettingsExtensionsRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsSecurityRoute: typeof SettingsSecurityRoute
+  SettingsUserRoute: typeof SettingsUserRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
@@ -645,6 +665,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsExtensionsRoute: SettingsExtensionsRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsSecurityRoute: SettingsSecurityRoute,
+  SettingsUserRoute: SettingsUserRoute,
 }
 
 const SettingsRouteWithChildren = SettingsRoute._addFileChildren(

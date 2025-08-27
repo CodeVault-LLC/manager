@@ -55,10 +55,7 @@ function RouteComponent() {
             <div className="flex flex-col">
               <div className="flex flex-row items-center gap-2">
                 <DatabaseIcon className="size-4" />
-                <Typography
-                  variant="small"
-                  className="uppercase tracking-wide text-muted-foreground"
-                >
+                <Typography variant="small" className="uppercase tracking-wide">
                   {t('system.statistics.storage')}
                 </Typography>
               </div>
@@ -69,10 +66,7 @@ function RouteComponent() {
                       {formatStorageLabel(system?.storage.total)}
                     </Typography>
 
-                    <Typography
-                      variant="small"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="small">
                       {formatStorageLabel(system?.storage.used)} of{' '}
                       {formatStorageLabel(system?.storage.total)} used
                     </Typography>
@@ -91,10 +85,7 @@ function RouteComponent() {
             <div className="flex flex-col">
               <div className="flex flex-row items-center gap-2">
                 <GpuIcon className="size-4" />
-                <Typography
-                  variant="small"
-                  className="uppercase tracking-wide text-muted-foreground"
-                >
+                <Typography variant="small" className="uppercase tracking-wide">
                   {t('system.statistics.gpu')}
                 </Typography>
               </div>
@@ -105,10 +96,7 @@ function RouteComponent() {
                       {formatStorage(system?.graphics.memory ?? 0)} GB
                     </Typography>
 
-                    <Typography
-                      variant="small"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="small">
                       {system.graphics.model}
                     </Typography>
                   </div>
@@ -126,10 +114,7 @@ function RouteComponent() {
             <div className="flex flex-col">
               <div className="flex flex-row items-center gap-2">
                 <MemoryStickIcon className="size-4" />
-                <Typography
-                  variant="small"
-                  className="uppercase tracking-wide text-muted-foreground"
-                >
+                <Typography variant="small" className="uppercase tracking-wide">
                   {t('system.statistics.ram')}
                 </Typography>
               </div>
@@ -140,10 +125,7 @@ function RouteComponent() {
                       {formatStorage(system?.ram.total, 'ram')}
                     </Typography>
 
-                    <Typography
-                      variant="small"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="small">
                       Speed: {system.memoryLayout[0].clockSpeed} MHz
                     </Typography>
                   </div>
@@ -161,10 +143,7 @@ function RouteComponent() {
             <div className="flex flex-col">
               <div className="flex flex-row items-center gap-2">
                 <CpuIcon className="size-4" />
-                <Typography
-                  variant="small"
-                  className="uppercase tracking-wide text-muted-foreground"
-                >
+                <Typography variant="small" className="uppercase tracking-wide">
                   {t('system.statistics.processor')}
                 </Typography>
               </div>
@@ -175,10 +154,7 @@ function RouteComponent() {
                       {system.processor.brand}
                     </Typography>
 
-                    <Typography
-                      variant="small"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="small">
                       {system.processor.speed} GHz
                     </Typography>
                   </div>
@@ -217,22 +193,13 @@ function RouteComponent() {
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="flex flex-col">
-                    <Typography
-                      variant="strong"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="strong">
                       {t('system.statistics.device')}
                     </Typography>
-                    <Typography
-                      variant="strong"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="strong">
                       {t('system.statistics.device.model')}: qwe
                     </Typography>
-                    <Typography
-                      variant="strong"
-                      className="text-muted-foreground"
-                    >
+                    <Typography variant="strong">
                       {t('system.statistics.device.serial')}: asd
                     </Typography>
                   </div>

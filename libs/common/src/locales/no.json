@@ -63,7 +63,8 @@
   },
   "settings": {
     "navigation": {
-      "general": "General",
+      "general": "Generelt",
+      "user": "Bruker",
       "security": "Sikkerhet & innlogging",
       "connections": "Tilkoblede apper",
       "extensions": "Utvidelser"
@@ -96,6 +97,10 @@
         "english": "Engelsk",
         "norwegian": "Norsk"
       }
+    },
+    "general": {
+      "title": "Generelt",
+      "description": "Generelle innstillinger for appen"
     }
   },
   "forms": {

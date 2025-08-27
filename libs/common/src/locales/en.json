@@ -64,9 +64,14 @@
   "settings": {
     "navigation": {
       "general": "General",
+      "user": "User",
       "security": "Security & Login",
       "connections": "Connected Apps",
       "extensions": "Extensions"
+    },
+    "general": {
+      "title": "General",
+      "description": "General settings for the application"
     },
     "profile": {
       "title": "Profile",
