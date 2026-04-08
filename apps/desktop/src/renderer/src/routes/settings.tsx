@@ -19,7 +19,7 @@ type NavItem = {
   value: string
   label: string
   link: LinkProps['to']
-  group?: string // optional grouping like Windows/macOS
+  group?: string
   icon: React.ElementType
 }
 
@@ -73,14 +73,11 @@ function RouteComponent() {
         typeof item.link === 'string' &&
         pathname.startsWith(item.link as string)
     )
-    if (match) {
-      setActive(match.value)
-    } else if (pathname === '/settings') {
+    if (match) setActive(match.value)
+    else if (pathname === '/settings')
       void navigate({ to: '/settings/general' })
-    }
   }, [pathname])
 
-  // Group items like macOS style
   const groupedItems = navItems.reduce<Record<string, NavItem[]>>(
     (acc, item) => {
       const group = item.group || 'Other'
@@ -92,38 +89,51 @@ function RouteComponent() {
   )
 
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full bg-background">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-muted/40 p-4">
-        <ScrollArea className="h-full">
+      <aside className="w-64 shrink-0 border-r bg-muted/20">
+        <ScrollArea className="h-full py-6 px-4">
+          <div className="mb-6 px-2">
+            <h2 className="text-xl font-bold tracking-tight">Settings</h2>
+          </div>
+
           {Object.entries(groupedItems).map(([group, items]) => (
             <div key={group} className="mb-6">
-              <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+              <h3 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                 {group}
               </h3>
               <nav className="space-y-1">
-                {items.map((item) => (
-                  <Link key={item.value} to={item.link}>
-                    <div
-                      className={`cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                        active === item.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                      }`}
-                    >
-                      {item.label}
-                    </div>
-                  </Link>
-                ))}
+                {items.map((item) => {
+                  const Icon = item.icon
+                  const isActive = active === item.value
+                  return (
+                    <Link key={item.value} to={item.link}>
+                      <div
+                        className={`group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                          isActive
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
+                        />
+                        {item.label}
+                      </div>
+                    </Link>
+                  )
+                })}
               </nav>
             </div>
           ))}
         </ScrollArea>
       </aside>
 
-      {/* Content */}
-      <main className="flex-1 overflow-y-auto p-8">
-        <Outlet />
+      {/* Content Container - Constrained width for readability */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-6xl p-8">
+          <Outlet />
+        </div>
       </main>
     </div>
   )

@@ -4,17 +4,10 @@ import { useUserStore } from '@renderer/core/store/user.store'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { prettifyToHumanReadableDate } from '@shared/helpers/date.helper'
 import { createFileRoute } from '@tanstack/react-router'
-import { Clock, Globe } from 'lucide-react'
+import { Clock, Globe, ShieldCheck, Laptop } from 'lucide-react'
 import { useEffect } from 'react'
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  Separator,
-  Badge,
-  Button
-} from '@manager/ui'
+import { Badge, Button, Card, Separator } from '@manager/ui'
 import { ISession } from '@manager/common'
 
 const RouteComponent = () => {
@@ -26,101 +19,116 @@ const RouteComponent = () => {
   }, [fetchAllSessions])
 
   const findSessionIcon = (session: ISession) => {
-    if (session.systemInfo.includes('Windows')) {
-      return <WindowsIcon className="size-4" />
-    } else if (session.systemInfo.includes('Linux')) {
-      return <WindowsIcon className="size-4" />
-    } else if (session.systemInfo.includes('Mac')) {
-      return <WindowsIcon className="size-4" />
-    }
-
-    return <WindowsIcon className="size-4" />
+    // Basic fallback logic updated to ensure visual distinction if brand icons fail
+    if (session.systemInfo.includes('Windows'))
+      return <WindowsIcon className="h-5 w-5" />
+    if (session.systemInfo.includes('Linux'))
+      return <Laptop className="h-5 w-5 text-muted-foreground" />
+    if (session.systemInfo.includes('Mac'))
+      return <Laptop className="h-5 w-5 text-muted-foreground" />
+    return <Globe className="h-5 w-5 text-muted-foreground" />
   }
 
   return (
-    <>
-      <h1 className="text-2xl font-bold">
-        {t('settings.navigation.security')}
-      </h1>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {/* Standardized Page Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t('settings.navigation.security')}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Manage your account security and active sessions.
+        </p>
+      </div>
 
-      <Separator className="my-4" />
+      <Separator />
 
-      <div className="flex flex-row items-center justify-between">
-        <div className="flex flex-col">
-          <h2 className="text-lg font-bold">{t('settings.sessions.title')}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t('settings.sessions.description')}
-          </p>
+      {/* Sessions Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold tracking-tight">
+              {t('settings.sessions.title')}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t('settings.sessions.description')}
+            </p>
+          </div>
+          <SessionModal />
         </div>
 
-        <SessionModal />
-      </div>
-      <div className="grid gap-4 my-4">
-        {sessions && sessions.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-2 p-4 text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex flex-row items-center gap-2">
-              <Globe className="h-4 w-4" />
-              {t('user.sessions.noSessions')}
+        <Card className="overflow-hidden shadow-sm">
+          {(!sessions || sessions.length === 0) && (
+            <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+              <ShieldCheck className="h-12 w-12 mb-4 opacity-20" />
+              <p className="text-sm font-medium">
+                {t('user.sessions.noSessions')}
+              </p>
             </div>
-          </div>
-        )}
+          )}
 
-        {sessions &&
-          sessions.map((session) => (
-            <div
-              className="flex items-center gap-8 border-gray-200 dark:border-gray-700 border-t border-b py-2"
-              key={session.id}
-            >
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-row items-center gap-2">
-                  {findSessionIcon(session)}
-
-                  <div className="text-sm font-medium text-gray-900 dark:text-white">
-                    {session.systemInfo}
+          {sessions &&
+            sessions.map((session, index) => (
+              <div
+                key={session.id}
+                className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:px-6 hover:bg-muted/30 transition-colors ${
+                  index !== sessions.length - 1 ? 'border-b' : ''
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="mt-1 rounded-md bg-muted p-2">
+                    {findSessionIcon(session)}
                   </div>
 
-                  {session.isCurrentSession && (
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Badge variant="outline" className="text-xs rounded-xl">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">
+                        {session.systemInfo}
+                      </span>
+                      {session.isCurrentSession && (
+                        <Badge
+                          variant="default"
+                          className="text-[10px] uppercase tracking-wider px-1.5 py-0"
+                        >
                           Current
                         </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {t('settings.sessions.currentTooltip')}
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1.5">
+                        <Globe className="h-3.5 w-3.5" />
+                        {session.ipAddress}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" />
+                        {prettifyToHumanReadableDate(
+                          new Date(session.lastUsedAt)
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex flex-row items-center gap-2">
-                  <Globe className="h-3 w-3" />
-                  {session.ipAddress}
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex flex-row items-center gap-2">
-                  <Clock className="h-3 w-3" />
-                  {prettifyToHumanReadableDate(new Date(session.lastUsedAt))}
-                </div>
-              </div>
-              <Button
-                variant="destructive"
-                className="ml-auto"
-                size="sm"
-                onClick={() => {
-                  if (session.isCurrentSession) {
-                    signOut()
-                  } else {
-                    deleteSession(session.id)
+
+                <Button
+                  variant={session.isCurrentSession ? 'outline' : 'destructive'}
+                  size="sm"
+                  className="w-full sm:w-auto shrink-0"
+                  onClick={() =>
+                    session.isCurrentSession
+                      ? signOut()
+                      : deleteSession(session.id)
                   }
-                }}
-              >
-                {session.isCurrentSession
-                  ? t('user.logout')
-                  : t('user.sessions.revoke')}
-              </Button>
-            </div>
-          ))}
+                >
+                  {session.isCurrentSession
+                    ? t('user.logout')
+                    : t('user.sessions.revoke')}
+                </Button>
+              </div>
+            ))}
+        </Card>
       </div>
-    </>
+    </div>
   )
 }
 

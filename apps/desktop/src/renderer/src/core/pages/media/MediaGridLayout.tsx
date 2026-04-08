@@ -1,6 +1,5 @@
 import { Play, ImageIcon, Video, Loader2 } from 'lucide-react'
 import {
-  Badge,
   Card,
   CardContent,
   Dialog,
@@ -33,33 +32,45 @@ export const MediaGridLayout: FC<MediaGridLayoutProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      {media.map((item) => (
-        <Dialog key={item.id}>
-          <DialogTrigger asChild>
-            <Card className="group cursor-pointer overflow-hidden transition-all hover:shadow-lg">
-              <CardContent className="p-0">
-                <div className="relative aspect-square overflow-hidden">
-                  {deletingId === item.id && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50">
-                      <Loader2 className="h-8 w-8 animate-spin text-white" />
-                    </div>
-                  )}
-                  <img
-                    src={
-                      item.mime.startsWith('video/')
-                        ? `local-file://${item.thumbnail}`
-                        : `local-file://${item.path}`
-                    }
-                    alt={item.name}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      {media.map((item) => {
+        const isVideo = item.mime.startsWith('video/')
 
-                  <div className="absolute top-2 left-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {item.mime.startsWith('video/') ? (
+        return (
+          <Dialog key={item.id}>
+            <DialogTrigger asChild>
+              <Card className="group cursor-pointer overflow-hidden border-transparent bg-muted/20 transition-all hover:border-primary/50 hover:shadow-md">
+                <CardContent className="p-0">
+                  {/* Thumbnail Area */}
+                  <div className="relative aspect-square overflow-hidden bg-black/5">
+                    {deletingId === item.id && (
+                      <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      </div>
+                    )}
+
+                    <img
+                      src={`local-file://${isVideo ? item.thumbnail : item.path}`}
+                      alt={item.name}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+
+                    {/* Dark gradient overlay for bottom text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+
+                    {/* Center Play Icon on Hover */}
+                    {isVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 z-10">
+                        <div className="rounded-full bg-primary p-3 shadow-lg transform scale-90 transition-transform group-hover:scale-100">
+                          <Play className="h-5 w-5 fill-primary-foreground text-primary-foreground ml-0.5" />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bottom Right Badge (Standard Media Placement) */}
+                    <div className="absolute bottom-2 right-2 z-10 flex items-center rounded bg-black/70 px-1.5 py-0.5 text-xs font-medium text-white backdrop-blur-md">
+                      {isVideo ? (
                         <>
                           <Video className="mr-1 h-3 w-3" />
                           {formatTime(item.length || 0)}
@@ -67,36 +78,37 @@ export const MediaGridLayout: FC<MediaGridLayoutProps> = ({
                       ) : (
                         <>
                           <ImageIcon className="mr-1 h-3 w-3" />
-                          {item.dimensions}
+                          {item.dimensions?.split('x')[0] || 'IMG'}
                         </>
                       )}
-                    </Badge>
+                    </div>
                   </div>
 
-                  {item.mime.startsWith('video/') && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-                      <div className="rounded-full bg-white/90 p-3">
-                        <Play className="h-6 w-6 fill-black text-black" />
-                      </div>
+                  {/* Info Area */}
+                  <div className="p-3">
+                    <h3
+                      className="truncate text-sm font-medium"
+                      title={item.name}
+                    >
+                      {item.name}
+                    </h3>
+                    <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{formatSize(item.size)}</span>
+                      <span className="uppercase">
+                        {item.mime.split('/')[1]}
+                      </span>
                     </div>
-                  )}
-                </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
 
-                <div className="p-3">
-                  <h3 className="truncate text-sm font-medium">{item.name}</h3>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {formatSize(item.size)}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </DialogTrigger>
-
-          <DialogContent className="w-full max-w-4xl p-0 rounded-xl overflow-hidden">
-            <MediaDialog item={item} deleteMedia={handleDelete} />
-          </DialogContent>
-        </Dialog>
-      ))}
+            <DialogContent className="w-full max-w-5xl p-0 overflow-hidden border-none bg-black/95">
+              <MediaDialog item={item} deleteMedia={handleDelete} />
+            </DialogContent>
+          </Dialog>
+        )
+      })}
     </div>
   )
 }

@@ -14,7 +14,6 @@ import { registerSystemIPC } from './services/system'
 import { registerAuthIPC, registerUserIPC } from './services/user'
 import { loadSystemSockets } from './sockets/system.socket'
 import { ConfStorage } from './store'
-import { registerNotesIPC } from './services/notes/notes.ipc'
 import {
   enableSourceMaps,
   withSourceMappedStack
@@ -274,7 +273,6 @@ function registerIpc() {
   void registerExtensionIPC()
 
   registerIntegrations()
-  void registerNotesIPC()
 
   registerDeveloperIPC(mainWindow!)
 

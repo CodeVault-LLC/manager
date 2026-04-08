@@ -9,13 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-  Label,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
+  Card
 } from '@manager/ui'
 import { ETheme } from '@manager/common'
+import { Palette, Globe } from 'lucide-react'
 
 const RouteComponent = () => {
   const { t } = useI18n()
@@ -23,46 +20,59 @@ const RouteComponent = () => {
     useApplicationStore()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {/* Standardized Page Header */}
       <div>
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl font-bold tracking-tight">
           {t('settings.navigation.general')}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground">
           {t('settings.general.description')}
         </p>
       </div>
 
       <Separator />
 
-      {/* Appearance Section */}
-      <Card className="rounded-2xl shadow-sm">
-        <CardHeader>
-          <CardTitle>{t('settings.appearance.title')}</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {t('settings.appearance.description')}
-          </p>
-        </CardHeader>
-        <CardContent className="flex gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="theme">{t('common.theme')}</Label>
+      {/* Settings Section: Appearance */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold tracking-tight">
+          {t('settings.appearance.title')}
+        </h2>
+
+        <Card className="overflow-hidden shadow-sm">
+          {/* Setting Row 1 */}
+          <div className="flex items-center justify-between border-b p-4 sm:px-6 hover:bg-muted/30 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Palette className="h-4 w-4 text-primary" />
+              </div>
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium">
+                  {t('common.theme')}
+                </label>
+                <p className="text-xs text-muted-foreground">
+                  {t('settings.appearance.description')}
+                </p>
+              </div>
+            </div>
+
             <Select
               value={theme}
               onValueChange={(value) => setTheme(value as ETheme)}
             >
-              <SelectTrigger className="w-[200px]" id="theme">
+              <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a theme" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {themes.map((theme) => (
-                    <SelectItem key={theme.id} value={theme.id}>
+                  {themes.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
                       <div className="flex items-center gap-2">
-                        <span>{theme.name}</span>
                         <span
                           className="size-2 rounded-full"
-                          style={{ backgroundColor: theme.previewColor }}
+                          style={{ backgroundColor: t.previewColor }}
                         />
+                        <span>{t.name}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -71,22 +81,33 @@ const RouteComponent = () => {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="language">{t('common.language')}</Label>
-            <Select
-              value={language}
-              onValueChange={(value) => setLanguage(value)}
-            >
-              <SelectTrigger className="w-[200px]" id="language">
+          {/* Setting Row 2 */}
+          <div className="flex items-center justify-between p-4 sm:px-6 hover:bg-muted/30 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Globe className="h-4 w-4 text-primary" />
+              </div>
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium">
+                  {t('common.language')}
+                </label>
+                <p className="text-xs text-muted-foreground">
+                  Select your preferred application language
+                </p>
+              </div>
+            </div>
+
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {languages.map((language) => (
-                    <SelectItem key={language.code} value={language.code}>
+                  {languages.map((l) => (
+                    <SelectItem key={l.code} value={l.code}>
                       <div className="flex items-center gap-2">
-                        <span>{language.flag}</span>
-                        {language.name}
+                        <span>{l.flag}</span>
+                        {l.name}
                       </div>
                     </SelectItem>
                   ))}
@@ -94,8 +115,8 @@ const RouteComponent = () => {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   )
 }

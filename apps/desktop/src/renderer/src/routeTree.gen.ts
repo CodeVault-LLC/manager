@@ -14,12 +14,10 @@ import { Route as SystemRouteImport } from './routes/system'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as NotesRouteImport } from './routes/notes'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EntertainmentRouteImport } from './routes/entertainment'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SystemIndexRouteImport } from './routes/system/index'
-import { Route as NotesIndexRouteImport } from './routes/notes/index'
 import { Route as SystemStorageRouteImport } from './routes/system/storage'
 import { Route as SystemNetworkRouteImport } from './routes/system/network'
 import { Route as SystemHardwareRouteImport } from './routes/system/hardware'
@@ -32,7 +30,6 @@ import { Route as SettingsConnectionsRouteImport } from './routes/settings/conne
 import { Route as PoliciesTermsRouteImport } from './routes/policies/terms'
 import { Route as PoliciesPrivacyRouteImport } from './routes/policies/privacy'
 import { Route as PoliciesFaqRouteImport } from './routes/policies/faq'
-import { Route as NotesIdRouteImport } from './routes/notes/$id'
 import { Route as EntertainmentMangaRouteImport } from './routes/entertainment/manga'
 import { Route as DeveloperRmapRouteImport } from './routes/developer/rmap'
 import { Route as DeveloperIconsRouteImport } from './routes/developer/icons'
@@ -65,11 +62,6 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotesRoute = NotesRouteImport.update({
-  id: '/notes',
-  path: '/notes',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -89,11 +81,6 @@ const SystemIndexRoute = SystemIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SystemRoute,
-} as any)
-const NotesIndexRoute = NotesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NotesRoute,
 } as any)
 const SystemStorageRoute = SystemStorageRouteImport.update({
   id: '/storage',
@@ -155,11 +142,6 @@ const PoliciesFaqRoute = PoliciesFaqRouteImport.update({
   path: '/policies/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotesIdRoute = NotesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => NotesRoute,
-} as any)
 const EntertainmentMangaRoute = EntertainmentMangaRouteImport.update({
   id: '/manga',
   path: '/manga',
@@ -195,7 +177,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
-  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
   '/status': typeof StatusRoute
@@ -204,7 +185,6 @@ export interface FileRoutesByFullPath {
   '/developer/icons': typeof DeveloperIconsRoute
   '/developer/rmap': typeof DeveloperRmapRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
-  '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -217,7 +197,6 @@ export interface FileRoutesByFullPath {
   '/system/hardware': typeof SystemHardwareRoute
   '/system/network': typeof SystemNetworkRoute
   '/system/storage': typeof SystemStorageRoute
-  '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -233,7 +212,6 @@ export interface FileRoutesByTo {
   '/verify-email': typeof VerifyEmailRoute
   '/developer/icons': typeof DeveloperIconsRoute
   '/developer/rmap': typeof DeveloperRmapRoute
-  '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -246,7 +224,6 @@ export interface FileRoutesByTo {
   '/system/hardware': typeof SystemHardwareRoute
   '/system/network': typeof SystemNetworkRoute
   '/system/storage': typeof SystemStorageRoute
-  '/notes': typeof NotesIndexRoute
   '/system': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga': typeof EntertainmentMangaIndexRoute
@@ -257,7 +234,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/entertainment': typeof EntertainmentRouteWithChildren
   '/login': typeof LoginRoute
-  '/notes': typeof NotesRouteWithChildren
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRouteWithChildren
   '/status': typeof StatusRoute
@@ -266,7 +242,6 @@ export interface FileRoutesById {
   '/developer/icons': typeof DeveloperIconsRoute
   '/developer/rmap': typeof DeveloperRmapRoute
   '/entertainment/manga': typeof EntertainmentMangaRouteWithChildren
-  '/notes/$id': typeof NotesIdRoute
   '/policies/faq': typeof PoliciesFaqRoute
   '/policies/privacy': typeof PoliciesPrivacyRoute
   '/policies/terms': typeof PoliciesTermsRoute
@@ -279,7 +254,6 @@ export interface FileRoutesById {
   '/system/hardware': typeof SystemHardwareRoute
   '/system/network': typeof SystemNetworkRoute
   '/system/storage': typeof SystemStorageRoute
-  '/notes/': typeof NotesIndexRoute
   '/system/': typeof SystemIndexRoute
   '/entertainment/manga/$id': typeof EntertainmentMangaIdRoute
   '/entertainment/manga/': typeof EntertainmentMangaIndexRoute
@@ -291,7 +265,6 @@ export interface FileRouteTypes {
     | '/'
     | '/entertainment'
     | '/login'
-    | '/notes'
     | '/register'
     | '/settings'
     | '/status'
@@ -300,7 +273,6 @@ export interface FileRouteTypes {
     | '/developer/icons'
     | '/developer/rmap'
     | '/entertainment/manga'
-    | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -313,7 +285,6 @@ export interface FileRouteTypes {
     | '/system/hardware'
     | '/system/network'
     | '/system/storage'
-    | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -329,7 +300,6 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/developer/icons'
     | '/developer/rmap'
-    | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -342,7 +312,6 @@ export interface FileRouteTypes {
     | '/system/hardware'
     | '/system/network'
     | '/system/storage'
-    | '/notes'
     | '/system'
     | '/entertainment/manga/$id'
     | '/entertainment/manga'
@@ -352,7 +321,6 @@ export interface FileRouteTypes {
     | '/'
     | '/entertainment'
     | '/login'
-    | '/notes'
     | '/register'
     | '/settings'
     | '/status'
@@ -361,7 +329,6 @@ export interface FileRouteTypes {
     | '/developer/icons'
     | '/developer/rmap'
     | '/entertainment/manga'
-    | '/notes/$id'
     | '/policies/faq'
     | '/policies/privacy'
     | '/policies/terms'
@@ -374,7 +341,6 @@ export interface FileRouteTypes {
     | '/system/hardware'
     | '/system/network'
     | '/system/storage'
-    | '/notes/'
     | '/system/'
     | '/entertainment/manga/$id'
     | '/entertainment/manga/'
@@ -385,7 +351,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EntertainmentRoute: typeof EntertainmentRouteWithChildren
   LoginRoute: typeof LoginRoute
-  NotesRoute: typeof NotesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   StatusRoute: typeof StatusRoute
@@ -435,13 +400,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/notes': {
-      id: '/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -469,13 +427,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/system/'
       preLoaderRoute: typeof SystemIndexRouteImport
       parentRoute: typeof SystemRoute
-    }
-    '/notes/': {
-      id: '/notes/'
-      path: '/'
-      fullPath: '/notes/'
-      preLoaderRoute: typeof NotesIndexRouteImport
-      parentRoute: typeof NotesRoute
     }
     '/system/storage': {
       id: '/system/storage'
@@ -561,13 +512,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliciesFaqRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/notes/$id': {
-      id: '/notes/$id'
-      path: '/$id'
-      fullPath: '/notes/$id'
-      preLoaderRoute: typeof NotesIdRouteImport
-      parentRoute: typeof NotesRoute
-    }
     '/entertainment/manga': {
       id: '/entertainment/manga'
       path: '/manga'
@@ -640,18 +584,6 @@ const EntertainmentRouteWithChildren = EntertainmentRoute._addFileChildren(
   EntertainmentRouteChildren,
 )
 
-interface NotesRouteChildren {
-  NotesIdRoute: typeof NotesIdRoute
-  NotesIndexRoute: typeof NotesIndexRoute
-}
-
-const NotesRouteChildren: NotesRouteChildren = {
-  NotesIdRoute: NotesIdRoute,
-  NotesIndexRoute: NotesIndexRoute,
-}
-
-const NotesRouteWithChildren = NotesRoute._addFileChildren(NotesRouteChildren)
-
 interface SettingsRouteChildren {
   SettingsConnectionsRoute: typeof SettingsConnectionsRoute
   SettingsExtensionsRoute: typeof SettingsExtensionsRoute
@@ -695,7 +627,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EntertainmentRoute: EntertainmentRouteWithChildren,
   LoginRoute: LoginRoute,
-  NotesRoute: NotesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRouteWithChildren,
   StatusRoute: StatusRoute,

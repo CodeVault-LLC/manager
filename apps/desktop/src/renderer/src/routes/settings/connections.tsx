@@ -1,8 +1,8 @@
-import { IntegrationList } from '@renderer/core/components/integration'
 import { useI18n } from '@renderer/hooks/use-i18n'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Separator } from '@manager/ui'
+import IntegrationsGallery from '../../core/components/integration/integration-list'
 
 export const Route = createFileRoute('/settings/connections')({
   component: RouteComponent
@@ -19,7 +19,7 @@ function RouteComponent() {
 
       <Separator className="my-4" />
 
-      <IntegrationList />
+      <IntegrationsGallery />
     </>
   )
 }

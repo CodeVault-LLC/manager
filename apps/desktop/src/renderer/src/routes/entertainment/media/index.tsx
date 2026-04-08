@@ -59,7 +59,6 @@ function MediaViewer() {
         }
       } catch (error) {
         toast.error('Failed to fetch media.')
-        // eslint-disable-next-line no-console
         console.error(error)
         setMedia([])
         setTotalMedia(0)
@@ -96,10 +95,9 @@ function MediaViewer() {
     try {
       await Promise.all(uploadPromises)
       toast.success(`${result.filePaths.length} file(s) uploaded successfully!`)
-      await fetchMedia() // Refresh the list
+      await fetchMedia()
     } catch (error) {
       toast.error('An error occurred during upload.')
-      // eslint-disable-next-line no-console
       console.error(error)
     } finally {
       setIsUploading(false)
@@ -110,14 +108,11 @@ function MediaViewer() {
     try {
       await ipcClient.invoke('entertainment:media:delete', id)
       toast.success('Media deleted successfully.')
-      // Optimistically update UI
       setMedia((prevMedia) => prevMedia.filter((item) => item.id !== id))
       setTotalMedia((prev) => prev - 1)
     } catch (error) {
       toast.error('Failed to delete media.')
-      // eslint-disable-next-line no-console
       console.error(error)
-      // Re-fetch to ensure consistency if optimistic update fails
       await fetchMedia()
     }
   }
@@ -128,111 +123,102 @@ function MediaViewer() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-primary p-2">
-                <ImageIcon className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h1 className="text-xl font-bold">MediaViewer</h1>
-            </div>
-
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <div className="relative flex-1 md:w-64">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search media..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                  aria-label="Search media"
-                />
-              </div>
-              {/* Filter buttons can be refactored into a reusable component if desired */}
-            </div>
-          </div>
-
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-                    size="icon"
-                    onClick={() => setViewMode('grid')}
-                    aria-label="Grid View"
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Grid View</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                    size="icon"
-                    onClick={() => setViewMode('list')}
-                    aria-label="List View"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>List View</TooltipContent>
-              </Tooltip>
-            </div>
-
-            <Button onClick={handleUpload} disabled={isUploading}>
-              {isUploading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Upload className="mr-2 h-4 w-4" />
-              )}
-              Upload Media
-            </Button>
-          </div>
-        </div>
-      </header>
-
+    <div className="flex h-full flex-col bg-background p-4 sm:p-6">
       {!ffmpegPath && (
-        <div className="container mx-auto px-4 pt-4">
-          <Alert variant="destructive">
-            <AlertCircleIcon className="h-4 w-4" />
-            <AlertTitle>Unable to locate FFmpeg</AlertTitle>
-            <AlertDescription>
-              FFmpeg is required for video processing. Please install it and set
-              the path in <strong>Settings &gt; Application</strong>.
-            </AlertDescription>
-          </Alert>
-        </div>
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircleIcon className="h-4 w-4" />
+          <AlertTitle>Unable to locate FFmpeg</AlertTitle>
+          <AlertDescription>
+            FFmpeg is required for video processing. Please install it and set
+            the path in <strong>Settings &gt; Application</strong>.
+          </AlertDescription>
+        </Alert>
       )}
 
-      <main className="container mx-auto px-4 py-6">
-        <div className="mb-4">
-          <p className="text-sm text-muted-foreground">
-            {isLoading ? 'Loading media...' : `${totalMedia} media items found`}
-          </p>
+      {/* Streamlined Utility Bar */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 items-center gap-4">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search media..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 bg-muted/50 border-transparent focus-visible:border-primary"
+              aria-label="Search media"
+            />
+          </div>
+          <span className="hidden text-sm font-medium text-muted-foreground sm:inline-block">
+            {isLoading ? '...' : `${totalMedia} items`}
+          </span>
         </div>
 
+        <div className="flex items-center gap-2 self-end sm:self-auto">
+          <div className="flex items-center rounded-md border bg-muted/50 p-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8 rounded-sm"
+                  onClick={() => setViewMode('grid')}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Grid View</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8 rounded-sm"
+                  onClick={() => setViewMode('list')}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>List View</TooltipContent>
+            </Tooltip>
+          </div>
+
+          <Button
+            onClick={handleUpload}
+            disabled={isUploading}
+            className="ml-2"
+          >
+            {isUploading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="mr-2 h-4 w-4" />
+            )}
+            Upload
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <main className="flex-1">
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <div className="flex h-64 items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : media.length > 0 ? (
-          <>
+          <div className="space-y-6">
             {viewMode === 'grid' ? (
               <MediaGridLayout media={media} onDelete={handleDeleteMedia} />
             ) : (
               <MediaListLayout media={media} onDelete={handleDeleteMedia} />
             )}
+
             {media.length < totalMedia && (
-              <div className="mt-6 text-center">
+              <div className="flex justify-center pb-6">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={handleLoadMore}
                   disabled={isFetchingMore}
+                  className="min-w-[120px]"
                 >
                   {isFetchingMore ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -241,20 +227,24 @@ function MediaViewer() {
                 </Button>
               </div>
             )}
-          </>
+          </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="mx-auto h-24 w-24 rounded-full bg-muted flex items-center justify-center mb-4">
-              <ImageIcon className="h-12 w-12 text-muted-foreground" />
+          <div className="flex h-64 flex-col items-center justify-center rounded-lg border border-dashed text-center">
+            <div className="mb-4 rounded-full bg-muted p-4">
+              <ImageIcon className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium mb-2">No media found</h3>
-            <p className="text-muted-foreground mb-4">
+            <h3 className="mb-1 text-lg font-medium">No media found</h3>
+            <p className="mb-4 text-sm text-muted-foreground">
               {debouncedSearchTerm
-                ? 'Try adjusting your search terms'
-                : 'Upload some images or videos to get started'}
+                ? 'Try adjusting your search terms.'
+                : 'Upload some images or videos to get started.'}
             </p>
-            <Button onClick={handleUpload} disabled={isUploading}>
-              <Upload className="h-4 w-4 mr-2" />
+            <Button
+              onClick={handleUpload}
+              disabled={isUploading}
+              variant="outline"
+            >
+              <Upload className="mr-2 h-4 w-4" />
               Upload Media
             </Button>
           </div>

@@ -64,18 +64,6 @@ export const AppSidebar = (props: { className?: string }) => {
         ]
       },
       {
-        title: t('navigation.notes'),
-        url: '/notes',
-        icon: NotebookIcon,
-        isActive: false,
-        items: [
-          {
-            title: t('common.overview'),
-            url: '/notes'
-          }
-        ]
-      },
-      {
         title: t('navigation.system'),
         url: '/system/browsers',
         icon: MonitorIcon,
