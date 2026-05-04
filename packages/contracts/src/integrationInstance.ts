@@ -11,8 +11,6 @@ const PROVIDER_SLUG_MAX_CHARS = 64;
  * fork authors retain reasonable freedom.
  */
 const PROVIDER_SLUG_PATTERN = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
-const ENVIRONMENT_VARIABLE_NAME_MAX_CHARS = 128;
-const ENVIRONMENT_VARIABLE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
 const slugSchema = TrimmedNonEmptyString.check(
   Schema.isMaxLength(PROVIDER_SLUG_MAX_CHARS),
@@ -28,3 +26,33 @@ export const IntegrationInstanceId = slugSchema.pipe(
   Schema.brand("IntegrationInstanceId"),
 );
 export type IntegrationInstanceId = typeof IntegrationInstanceId.Type;
+
+/**
+ * `IntegrationKind` — identifies one of the supported integration providers.
+ * Branded so the type system distinguishes it from arbitrary strings.
+ */
+export const IntegrationKind = Schema.Literals([
+  "github",
+  "bitbucket",
+  "google",
+  "mobilbank-sparebank",
+]);
+export type IntegrationKind = typeof IntegrationKind.Type;
+
+/** Branded OAuth access token — non-empty trimmed string. */
+export const OAuthAccessToken = TrimmedNonEmptyString.pipe(
+  Schema.brand("OAuthAccessToken"),
+);
+export type OAuthAccessToken = typeof OAuthAccessToken.Type;
+
+/** Branded OAuth refresh token — non-empty trimmed string. */
+export const OAuthRefreshToken = TrimmedNonEmptyString.pipe(
+  Schema.brand("OAuthRefreshToken"),
+);
+export type OAuthRefreshToken = typeof OAuthRefreshToken.Type;
+
+/** Branded OAuth client ID — non-empty trimmed string. */
+export const OAuthClientId = TrimmedNonEmptyString.pipe(
+  Schema.brand("OAuthClientId"),
+);
+export type OAuthClientId = typeof OAuthClientId.Type;

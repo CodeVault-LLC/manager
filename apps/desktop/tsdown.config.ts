@@ -13,7 +13,7 @@ export default defineConfig([
     dts: false,
     sourcemap: true,
     shims: false,
-    external: ["electron", "electron-updater"],
+    external: ["electron", "electron-updater", "better-sqlite3", "drizzle-orm"],
   },
   {
     entry: {

@@ -8,19 +8,26 @@
     "dev": "bun run --parallel dev:bundle dev:electron",
     "dev:bundle": "tsdown --watch",
     "dev:electron": "node scripts/dev-electron.mjs",
-    "build": "tsdown",
+    "build": "tsdown && cp -r src/db/migrations dist-electron/migrations",
     "start": "node scripts/start-electron.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "smoke-test": "node scripts/smoke-test.mjs"
+    "smoke-test": "node scripts/smoke-test.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "effect": "^3.21.2",
+    "better-sqlite3": "^12.9.0",
+    "drizzle-orm": "^0.45.2",
+    "effect": "^4.0.0-beta.45",
     "electron": "^41.5.0",
     "electron-updater": "^6.8.3"
   },
   "devDependencies": {
     "@manager/contracts": "workspace:*",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.6.0",
+    "drizzle-kit": "^0.31.10",
     "tsdown": "catalog:"
   }
 }
