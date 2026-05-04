@@ -1,10 +1,9 @@
 {
-  "files": [],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@manager/ui": ["../../libs/ui/src/*"]
-    }
+    "composite": true,
+    "types": ["node", "electron"],
+    "lib": ["ESNext", "DOM", "esnext.disposable"]
   },
+  "include": ["src", "tsdown.config.ts"]
 }

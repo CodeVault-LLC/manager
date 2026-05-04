@@ -10,8 +10,10 @@
 
 This repository contains the Manager Application.
 
-## Features
+## Goal
 
-- **Notes** - Write notes with ease
-- **Image Converter** - Convert images into different resolutions and pixels with minimal effort. Lightning fast by Rust.
-- **System Information** - Get a overview of system, network, storage, security and more of your computer.
+This project revolves around the idea of a personal dashboard application, with integrations to various services, and a focus on simplicity and overview. The goal is to create an application that allows users to easily access and manage their various accounts and services in one place, without the need for multiple applications or websites.
+
+## Who
+
+This project is made for Developers, and users who want to have a personal dashboard application without the need for multiple applications or websites.

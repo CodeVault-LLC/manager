@@ -1,1 +1,0 @@
-protoc --plugin=protoc-gen-ts_proto=".\\node_modules\\.bin\\protoc-gen-ts_proto.cmd" --ts_proto_out=grpc_js:./src/main/grpc/__generated -I ./resources/proto ./resources/proto/*.proto

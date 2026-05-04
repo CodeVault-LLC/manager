@@ -1,5 +1,6 @@
 {
-  "name": "@manager/root",
+  "name": "@manager/monorepo",
+  "private": true,
   "version": "0.0.0",
   "devDependencies": {
     "@eslint/js": "^9.27.0",
@@ -11,7 +12,30 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "typescript-eslint": "^8.32.1"
   },
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "tsdown": "^0.21.10",
+      "typescript": "^6.0.3",
+      "vitest": "^4.1.5"
+    }
+  },
+  "scripts": {
+    "dev": "bun run scripts/dev-runner.ts dev",
+    "dev:desktop": "bun run scripts/dev-runner.ts dev:desktop",
+    "dev:web": "bun run scripts/dev-runner.ts dev:web",
+    "web": "bun --cwd apps/web run dev",
+    "dev:bundle": "bun --cwd apps/desktop run dev:bundle",
+    "dev:electron": "bun --cwd apps/desktop run dev:electron",
+    "build": "bun --cwd apps/desktop run build",
+    "typecheck": "bun --cwd apps/desktop run typecheck",
+    "test": "bun --cwd apps/desktop run test"
+  },
   "dependencies": {
-    "nx": "^21.3.11"
+    "@effect/platform-node": "4.0.0-beta.45",
+    "effect": "4.0.0-beta.45"
   }
 }

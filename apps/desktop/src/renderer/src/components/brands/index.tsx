@@ -1,7 +1,0 @@
-export * from './windows'
-export * from './chrome'
-export * from './edge'
-export * from './google'
-export * from './x'
-export * from './msn'
-export * from './premier-league'
