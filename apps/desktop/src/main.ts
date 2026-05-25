@@ -23,10 +23,13 @@ import {
 } from "./settingsService.ts";
 import {
   buildServerIntegration,
+  clearGithubNotificationsCache,
   connectIntegration,
   disconnectIntegration,
   handleProtocolUrl,
-} from "./integrationManager.ts";
+} from "./integrations/index.ts";
+import { pollGithubNotifications } from "./integrations/githubNotificationsPoller.ts";
+import { readGithubNotificationsState } from "./integrations/githubNotificationsStore.ts";
 
 // Register the custom `manager://` protocol BEFORE `app.ready` so the OS
 // associates it with this app for OAuth2 redirect callbacks.
@@ -50,6 +53,8 @@ const desktopAppBranding: DesktopAppBranding = resolveDesktopAppBranding({
 const APP_DISPLAY_NAME = desktopAppBranding.displayName;
 let mainWindow: BrowserWindow | null = null;
 let isQuitting = false;
+let pendingProtocolUrl: string | null = null;
+let githubNotificationsPollTimeout: ReturnType<typeof setTimeout> | null = null;
 
 type WindowTitleBarOptions = Pick<
   BrowserWindowConstructorOptions,
@@ -127,6 +132,71 @@ const RESET_SETTINGS_CHANNEL = "desktop:reset-settings";
 const CONNECT_INTEGRATION_CHANNEL = "desktop:connect-integration";
 const DISCONNECT_INTEGRATION_CHANNEL = "desktop:disconnect-integration";
 
+function extractProtocolUrl(argv: string[]): string | null {
+  for (const arg of argv) {
+    if (arg.startsWith("manager://")) {
+      return arg;
+    }
+  }
+  return null;
+}
+
+function handleIncomingProtocolUrl(url: string): void {
+  pendingProtocolUrl = url;
+
+  if (!app.isReady()) return;
+
+  const db = getDatabase();
+  void handleProtocolUrl(url, db);
+  pendingProtocolUrl = null;
+}
+
+function registerProtocolClient(): void {
+  if (process.defaultApp) {
+    const entryPoint = process.argv[1];
+    if (!entryPoint) {
+      console.warn(
+        "[oauth] Unable to register manager:// protocol in development (missing entry point).",
+      );
+      return;
+    }
+
+    app.setAsDefaultProtocolClient("manager", process.execPath, [entryPoint]);
+    return;
+  }
+
+  app.setAsDefaultProtocolClient("manager");
+}
+
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+if (!gotSingleInstanceLock) {
+  app.quit();
+}
+
+if (gotSingleInstanceLock) {
+  app.on("second-instance", (_event, argv) => {
+    const protocolUrl = extractProtocolUrl(argv);
+    if (protocolUrl) {
+      handleIncomingProtocolUrl(protocolUrl);
+    }
+
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+
+  app.on("open-url", (event, url) => {
+    event.preventDefault();
+    handleIncomingProtocolUrl(url);
+  });
+}
+
+const launchProtocolUrl = extractProtocolUrl(process.argv);
+if (launchProtocolUrl) {
+  pendingProtocolUrl = launchProtocolUrl;
+}
+
 // ---------------------------------------------------------------------------
 // Helper — build a full ServerConfig snapshot from the current DB state
 // ---------------------------------------------------------------------------
@@ -144,21 +214,33 @@ function buildServerConfig(): ServerConfig {
 
   return {
     settings,
+    githubNotifications: readGithubNotificationsState(db),
     integrations: Object.fromEntries(
       integrationKinds.map((kind) => {
-        const enabled =
-          kind === "github"
-            ? settings.integrations.github.enabled
-            : kind === "bitbucket"
-              ? settings.integrations.bitbucket.enabled
-              : kind === "google"
-                ? settings.integrations.google.enabled
-                : settings.integrations["mobilbank-sparebank"].enabled;
-
-        return [kind, buildServerIntegration(kind, enabled)];
+        return [kind, buildServerIntegration(kind, settings)];
       }),
     ) as ServerConfig["integrations"],
   };
+}
+
+function scheduleGithubNotificationsPoll(delayMs: number): void {
+  if (githubNotificationsPollTimeout) {
+    clearTimeout(githubNotificationsPollTimeout);
+    githubNotificationsPollTimeout = null;
+  }
+
+  githubNotificationsPollTimeout = setTimeout(() => {
+    void runGithubNotificationsPoll();
+  }, delayMs);
+}
+
+async function runGithubNotificationsPoll(): Promise<void> {
+  const db = getDatabase();
+  const nextPollIntervalSeconds = await pollGithubNotifications(db);
+
+  if (!isQuitting) {
+    scheduleGithubNotificationsPoll(nextPollIntervalSeconds * 1000);
+  }
 }
 
 function registerIpcHandlers(): void {
@@ -196,13 +278,21 @@ function registerIpcHandlers(): void {
     CONNECT_INTEGRATION_CHANNEL,
     async (_, kind: IntegrationKind) => {
       const db = getDatabase();
-      return connectIntegration(kind, db);
+      const result = await connectIntegration(kind, db);
+      if (kind === "github") {
+        scheduleGithubNotificationsPoll(500);
+      }
+      return result;
     },
   );
 
   ipcMain.handle(DISCONNECT_INTEGRATION_CHANNEL, (_, kind: IntegrationKind) => {
     const db = getDatabase();
     disconnectIntegration(kind, db);
+    if (kind === "github") {
+      clearGithubNotificationsCache(db);
+      scheduleGithubNotificationsPoll(60_000);
+    }
     return buildServerConfig();
   });
 }
@@ -254,6 +344,8 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  registerProtocolClient();
+
   // Initialise the SQLite database (runs migrations if needed).
   getDatabase();
 
@@ -263,8 +355,13 @@ app.whenReady().then(() => {
     return new Response(null, { status: 204 });
   });
 
+  if (pendingProtocolUrl) {
+    handleIncomingProtocolUrl(pendingProtocolUrl);
+  }
+
   registerIpcHandlers();
   createWindow();
+  scheduleGithubNotificationsPoll(2_000);
 });
 
 app.on("window-all-closed", () => {
@@ -274,6 +371,11 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", () => {
+  isQuitting = true;
+  if (githubNotificationsPollTimeout) {
+    clearTimeout(githubNotificationsPollTimeout);
+    githubNotificationsPollTimeout = null;
+  }
   closeDatabase();
 });
 

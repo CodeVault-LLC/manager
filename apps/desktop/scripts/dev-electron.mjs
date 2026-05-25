@@ -1,5 +1,12 @@
 import { spawn, spawnSync } from "node:child_process";
-import { watch } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  watch,
+  writeFileSync,
+} from "node:fs";
+import { homedir } from "node:os";
 import { join } from "node:path";
 
 import { desktopDir, resolveElectronPath } from "./electron-launcher.mjs";
@@ -34,6 +41,40 @@ await waitForResources({
 });
 
 const childEnv = { ...process.env };
+
+function applyEnvFile(targetEnv, absoluteFilePath) {
+  if (!existsSync(absoluteFilePath)) {
+    return;
+  }
+
+  const contents = readFileSync(absoluteFilePath, "utf8");
+  for (const rawLine of contents.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const equalsIndex = line.indexOf("=");
+    if (equalsIndex <= 0) {
+      continue;
+    }
+
+    const key = line.slice(0, equalsIndex).trim();
+    if (!key || targetEnv[key] !== undefined) {
+      continue;
+    }
+
+    const rawValue = line.slice(equalsIndex + 1).trim();
+    const quotedValue =
+      (rawValue.startsWith('"') && rawValue.endsWith('"')) ||
+      (rawValue.startsWith("'") && rawValue.endsWith("'"));
+    targetEnv[key] = quotedValue ? rawValue.slice(1, -1) : rawValue;
+  }
+}
+
+applyEnvFile(childEnv, join(desktopDir, ".env"));
+applyEnvFile(childEnv, join(desktopDir, ".env.local"));
+
 delete childEnv.ELECTRON_RUN_AS_NODE;
 
 let shuttingDown = false;
@@ -59,6 +100,72 @@ function cleanupStaleDevApps() {
   spawnSync("pkill", ["-f", "--", `--manager-dev-root=${desktopDir}`], {
     stdio: "ignore",
   });
+}
+
+function escapeDesktopExecArg(value) {
+  return String(value).replace(/([\\\s"'`$])/g, "\\$1");
+}
+
+function ensureLinuxProtocolHandler() {
+  if (process.platform !== "linux") {
+    return;
+  }
+
+  const applicationsDir = join(homedir(), ".local", "share", "applications");
+  const desktopFileName = "manager-dev.desktop";
+  const desktopFilePath = join(applicationsDir, desktopFileName);
+  const electronPath = resolveElectronPath();
+  const mainEntryPath = join(desktopDir, "dist-electron", "main.cjs");
+  const iconPath = join(desktopDir, "src", "assets", "icon.png");
+  const execParts = [
+    escapeDesktopExecArg(electronPath),
+    escapeDesktopExecArg(`--manager-dev-root=${desktopDir}`),
+    escapeDesktopExecArg(mainEntryPath),
+    "%u",
+  ];
+
+  const desktopEntry = [
+    "[Desktop Entry]",
+    "Type=Application",
+    "Version=1.0",
+    "Name=Manager (Dev)",
+    "Comment=Manager desktop development handler",
+    `Exec=${execParts.join(" ")}`,
+    `Icon=${escapeDesktopExecArg(iconPath)}`,
+    "NoDisplay=true",
+    "Terminal=false",
+    "StartupNotify=false",
+    "MimeType=x-scheme-handler/manager;",
+    "Categories=Development;",
+    "",
+  ].join("\n");
+
+  try {
+    mkdirSync(applicationsDir, { recursive: true });
+    writeFileSync(desktopFilePath, desktopEntry, "utf8");
+
+    const updateDb = spawnSync("update-desktop-database", [applicationsDir], {
+      stdio: "ignore",
+    });
+    if (updateDb.status !== 0) {
+      // Optional in many setups; URI registration can still work without it.
+    }
+
+    const setDefault = spawnSync(
+      "xdg-mime",
+      ["default", desktopFileName, "x-scheme-handler/manager"],
+      { stdio: "ignore" },
+    );
+
+    if (setDefault.status !== 0) {
+      console.warn(
+        "[dev-electron] Failed to set x-scheme-handler/manager default via xdg-mime.",
+      );
+      return;
+    }
+  } catch (error) {
+    console.warn("[dev-electron] Failed to register Linux URI handler:", error);
+  }
 }
 
 function startApp() {
@@ -213,6 +320,7 @@ async function shutdown(exitCode) {
 
 startWatchers();
 cleanupStaleDevApps();
+ensureLinuxProtocolHandler();
 startApp();
 
 process.once("SIGINT", () => {

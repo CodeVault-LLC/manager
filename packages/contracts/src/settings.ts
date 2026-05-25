@@ -1,5 +1,6 @@
 import { Effect, Schema } from "effect";
 import { OAuthAccessToken, OAuthRefreshToken } from "./integrationInstance.ts";
+import { GithubScopeList } from "./github.ts";
 
 export type IntegrationSettingsOrder<Fields extends Schema.Struct.Fields> =
   readonly Extract<keyof Fields, string>[];
@@ -35,7 +36,7 @@ export const GitHubIntegrationSettings = makeIntegrationSettingsSchema(
     accessToken: Schema.NullOr(OAuthAccessToken),
     refreshToken: Schema.NullOr(OAuthRefreshToken),
     /** Space-separated OAuth scopes that were granted. */
-    scopes: Schema.Array(Schema.String),
+    scopes: GithubScopeList,
     connectedUsername: Schema.NullOr(Schema.String),
   },
   { order: ["enabled", "driver", "connectedUsername"] },

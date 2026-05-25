@@ -10,6 +10,20 @@
 
 This repository contains the Manager Application.
 
+## Desktop OAuth Setup (GitHub)
+
+To enable the GitHub integration in the desktop app, configure these
+environment variables before starting development:
+
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+
+The GitHub OAuth App callback URL must be:
+
+- `manager://oauth/callback`
+
+A template is available at `apps/desktop/.env.example`.
+
 ## Goal
 
 This project revolves around the idea of a personal dashboard application, with integrations to various services, and a focus on simplicity and overview. The goal is to create an application that allows users to easily access and manage their various accounts and services in one place, without the need for multiple applications or websites.

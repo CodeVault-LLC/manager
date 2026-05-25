@@ -1,6 +1,7 @@
 import type { IntegrationKind } from "./integrationInstance.ts";
 import type { ServerIntegration } from "./server.ts";
 import type { ServerSettings } from "./settings.ts";
+import type { GithubNotificationsState } from "./github.ts";
 
 export type DesktopUpdateChannel = "latest" | "nightly";
 export type DesktopAppStageLabel = "Alpha" | "Dev" | "Nightly";
@@ -23,11 +24,17 @@ export interface ServerConfig {
    * this on startup and after each connect/disconnect.
    */
   integrations: Partial<Record<IntegrationKind, ServerIntegration>>;
+  /** Last cached GitHub notifications and poll metadata. */
+  githubNotifications: GithubNotificationsState;
 }
+
+export type ConnectIntegrationStatus = "started" | "completed";
 
 /** Result shape returned by `connectIntegration`. */
 export interface ConnectIntegrationResult {
   success: boolean;
+  /** `started` means callback-based flow continues asynchronously. */
+  status?: ConnectIntegrationStatus;
   /** Human-readable error message if `success` is `false`. */
   error?: string;
 }
