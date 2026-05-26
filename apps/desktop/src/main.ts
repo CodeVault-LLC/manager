@@ -10,6 +10,7 @@ import * as Path from "node:path";
 import * as FS from "node:fs";
 import { resolveDesktopAppBranding } from "./appBranding.ts";
 import type {
+  ConnectIntegrationOptions,
   DesktopAppBranding,
   IntegrationKind,
   ServerConfig,
@@ -23,6 +24,7 @@ import {
 } from "./settingsService.ts";
 import {
   buildServerIntegration,
+  clearDeviantArtMediaCache,
   clearGithubNotificationsCache,
   connectIntegration,
   disconnectIntegration,
@@ -30,6 +32,8 @@ import {
 } from "./integrations/index.ts";
 import { pollGithubNotifications } from "./integrations/githubNotificationsPoller.ts";
 import { readGithubNotificationsState } from "./integrations/githubNotificationsStore.ts";
+import { pollDeviantArtMedia } from "./integrations/deviantart/deviantartMediaPoller.ts";
+import { readDeviantArtMediaState } from "./integrations/deviantart/deviantartMediaStore.ts";
 
 // Register the custom `manager://` protocol BEFORE `app.ready` so the OS
 // associates it with this app for OAuth2 redirect callbacks.
@@ -55,6 +59,7 @@ let mainWindow: BrowserWindow | null = null;
 let isQuitting = false;
 let pendingProtocolUrl: string | null = null;
 let githubNotificationsPollTimeout: ReturnType<typeof setTimeout> | null = null;
+let deviantArtMediaPollTimeout: ReturnType<typeof setTimeout> | null = null;
 
 type WindowTitleBarOptions = Pick<
   BrowserWindowConstructorOptions,
@@ -131,6 +136,9 @@ const UPDATE_SETTINGS_CHANNEL = "desktop:update-settings";
 const RESET_SETTINGS_CHANNEL = "desktop:reset-settings";
 const CONNECT_INTEGRATION_CHANNEL = "desktop:connect-integration";
 const DISCONNECT_INTEGRATION_CHANNEL = "desktop:disconnect-integration";
+const GET_DEVIANTART_MEDIA_STATE_CHANNEL = "desktop:get-deviantart-media-state";
+const REFRESH_DEVIANTART_MEDIA_STATE_CHANNEL =
+  "desktop:refresh-deviantart-media-state";
 
 function extractProtocolUrl(argv: string[]): string | null {
   for (const arg of argv) {
@@ -207,6 +215,7 @@ function buildServerConfig(): ServerConfig {
 
   const integrationKinds: IntegrationKind[] = [
     "github",
+    "deviantart",
     "bitbucket",
     "google",
     "mobilbank-sparebank",
@@ -215,6 +224,7 @@ function buildServerConfig(): ServerConfig {
   return {
     settings,
     githubNotifications: readGithubNotificationsState(db),
+    deviantartMedia: readDeviantArtMediaState(db),
     integrations: Object.fromEntries(
       integrationKinds.map((kind) => {
         return [kind, buildServerIntegration(kind, settings)];
@@ -234,12 +244,35 @@ function scheduleGithubNotificationsPoll(delayMs: number): void {
   }, delayMs);
 }
 
+function scheduleDeviantArtMediaPoll(delayMs: number): void {
+  if (deviantArtMediaPollTimeout) {
+    clearTimeout(deviantArtMediaPollTimeout);
+    deviantArtMediaPollTimeout = null;
+  }
+
+  deviantArtMediaPollTimeout = setTimeout(() => {
+    void runDeviantArtMediaPoll();
+  }, delayMs);
+}
+
 async function runGithubNotificationsPoll(): Promise<void> {
   const db = getDatabase();
   const nextPollIntervalSeconds = await pollGithubNotifications(db);
 
   if (!isQuitting) {
     scheduleGithubNotificationsPoll(nextPollIntervalSeconds * 1000);
+  }
+}
+
+async function runDeviantArtMediaPoll(options?: {
+  force?: boolean;
+}): Promise<void> {
+  const db = getDatabase();
+  const state = await pollDeviantArtMedia(db, options);
+  console.log(state);
+
+  if (!isQuitting) {
+    scheduleDeviantArtMediaPoll(state.pollIntervalSeconds * 1000);
   }
 }
 
@@ -250,6 +283,8 @@ function registerIpcHandlers(): void {
   ipcMain.removeAllListeners(RESET_SETTINGS_CHANNEL);
   ipcMain.removeAllListeners(CONNECT_INTEGRATION_CHANNEL);
   ipcMain.removeAllListeners(DISCONNECT_INTEGRATION_CHANNEL);
+  ipcMain.removeAllListeners(GET_DEVIANTART_MEDIA_STATE_CHANNEL);
+  ipcMain.removeAllListeners(REFRESH_DEVIANTART_MEDIA_STATE_CHANNEL);
 
   // Synchronous — returns app branding immediately.
   ipcMain.on(GET_APP_BRANDING_CHANNEL, (event) => {
@@ -276,11 +311,14 @@ function registerIpcHandlers(): void {
 
   ipcMain.handle(
     CONNECT_INTEGRATION_CHANNEL,
-    async (_, kind: IntegrationKind) => {
+    async (_, kind: IntegrationKind, options?: ConnectIntegrationOptions) => {
       const db = getDatabase();
-      const result = await connectIntegration(kind, db);
+      const result = await connectIntegration(kind, db, options);
       if (kind === "github") {
         scheduleGithubNotificationsPoll(500);
+      }
+      if (kind === "deviantart") {
+        scheduleDeviantArtMediaPoll(500);
       }
       return result;
     },
@@ -293,7 +331,21 @@ function registerIpcHandlers(): void {
       clearGithubNotificationsCache(db);
       scheduleGithubNotificationsPoll(60_000);
     }
+    if (kind === "deviantart") {
+      clearDeviantArtMediaCache(db);
+      scheduleDeviantArtMediaPoll(60_000);
+    }
     return buildServerConfig();
+  });
+
+  ipcMain.handle(GET_DEVIANTART_MEDIA_STATE_CHANNEL, () => {
+    const db = getDatabase();
+    return readDeviantArtMediaState(db);
+  });
+
+  ipcMain.handle(REFRESH_DEVIANTART_MEDIA_STATE_CHANNEL, async () => {
+    await runDeviantArtMediaPoll({ force: true });
+    return readDeviantArtMediaState(getDatabase());
   });
 }
 
@@ -362,6 +414,7 @@ app.whenReady().then(() => {
   registerIpcHandlers();
   createWindow();
   scheduleGithubNotificationsPoll(2_000);
+  scheduleDeviantArtMediaPoll(3_000);
 });
 
 app.on("window-all-closed", () => {
@@ -375,6 +428,10 @@ app.on("before-quit", () => {
   if (githubNotificationsPollTimeout) {
     clearTimeout(githubNotificationsPollTimeout);
     githubNotificationsPollTimeout = null;
+  }
+  if (deviantArtMediaPollTimeout) {
+    clearTimeout(deviantArtMediaPollTimeout);
+    deviantArtMediaPollTimeout = null;
   }
   closeDatabase();
 });

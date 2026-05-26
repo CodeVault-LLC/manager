@@ -88,6 +88,10 @@ export function updateSettings(
         ...current.integrations.github,
         ...(patch.integrations?.github ?? {}),
       },
+      deviantart: {
+        ...current.integrations.deviantart,
+        ...(patch.integrations?.deviantart ?? {}),
+      },
       bitbucket: {
         ...current.integrations.bitbucket,
         ...(patch.integrations?.bitbucket ?? {}),

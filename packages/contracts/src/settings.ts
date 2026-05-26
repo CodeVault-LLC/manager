@@ -1,6 +1,7 @@
 import { Effect, Schema } from "effect";
 import { OAuthAccessToken, OAuthRefreshToken } from "./integrationInstance.ts";
 import { GithubScopeList } from "./github.ts";
+import { DeviantArtScopeList } from "./deviantart.ts";
 
 export type IntegrationSettingsOrder<Fields extends Schema.Struct.Fields> =
   readonly Extract<keyof Fields, string>[];
@@ -42,6 +43,24 @@ export const GitHubIntegrationSettings = makeIntegrationSettingsSchema(
   { order: ["enabled", "driver", "connectedUsername"] },
 );
 export type GitHubIntegrationSettings = typeof GitHubIntegrationSettings.Type;
+
+// ---------------------------------------------------------------------------
+// DeviantArt
+// ---------------------------------------------------------------------------
+
+export const DeviantArtIntegrationSettings = makeIntegrationSettingsSchema(
+  {
+    enabled: Schema.Boolean,
+    driver: Schema.NullOr(Schema.Literal("oauth2")),
+    accessToken: Schema.NullOr(OAuthAccessToken),
+    refreshToken: Schema.NullOr(OAuthRefreshToken),
+    scopes: DeviantArtScopeList,
+    connectedUsername: Schema.NullOr(Schema.String),
+  },
+  { order: ["enabled", "driver", "connectedUsername"] },
+);
+export type DeviantArtIntegrationSettings =
+  typeof DeviantArtIntegrationSettings.Type;
 
 // ---------------------------------------------------------------------------
 // Bitbucket
@@ -119,6 +138,18 @@ export const ServerSettingsSchema = Schema.Struct({
         }),
       ),
     ),
+    deviantart: DeviantArtIntegrationSettings.pipe(
+      Schema.withDecodingDefault(
+        Effect.succeed({
+          enabled: false,
+          driver: null,
+          accessToken: null,
+          refreshToken: null,
+          scopes: [],
+          connectedUsername: null,
+        }),
+      ),
+    ),
     bitbucket: BitbucketIntegrationSettings.pipe(
       Schema.withDecodingDefault(
         Effect.succeed({
@@ -163,6 +194,14 @@ export type ServerSettings = typeof ServerSettingsSchema.Type;
 export const DEFAULT_SERVER_SETTINGS: ServerSettings = {
   integrations: {
     github: {
+      enabled: false,
+      driver: null,
+      accessToken: null,
+      refreshToken: null,
+      scopes: [],
+      connectedUsername: null,
+    },
+    deviantart: {
       enabled: false,
       driver: null,
       accessToken: null,

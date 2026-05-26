@@ -33,6 +33,7 @@ export type IntegrationInstanceId = typeof IntegrationInstanceId.Type;
  */
 export const IntegrationKind = Schema.Literals([
   "github",
+  "deviantart",
   "bitbucket",
   "google",
   "mobilbank-sparebank",

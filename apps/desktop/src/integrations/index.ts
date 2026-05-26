@@ -1,10 +1,14 @@
 import type { IntegrationKind, ServerIntegration } from "@manager/contracts";
 import type { ConnectIntegrationResult } from "@manager/contracts";
+import type { ConnectIntegrationOptions } from "@manager/contracts";
 import type { ServerSettings } from "@manager/contracts/settings";
 import type { AppDatabase } from "../database.ts";
 import { readSettings, updateSettings } from "../settingsService.ts";
 import { GithubDriver } from "./GithubDriver.ts";
+import { DeviantArtDriver } from "./deviantart/DeviantArtDriver.ts";
 import { clearGithubNotificationsCache as clearGithubNotificationsCacheStore } from "./githubNotificationsPoller.ts";
+import { clearDeviantArtMediaCache as clearDeviantArtMediaCacheStore } from "./deviantart/deviantartMediaPoller.ts";
+import { launchOAuthUrl } from "./oauthLaunch.ts";
 
 type RuntimeState = {
   availability: ServerIntegration["availability"];
@@ -18,6 +22,7 @@ type RuntimeState = {
 const runtimeState = new Map<IntegrationKind, RuntimeState>();
 
 const githubDriver = new GithubDriver();
+const deviantArtDriver = new DeviantArtDriver();
 
 function getDefaultRuntimeState(): RuntimeState {
   return {
@@ -84,6 +89,24 @@ function hydrateRuntimeState(
       });
       return;
     }
+    case "deviantart": {
+      const integration = settings.integrations.deviantart;
+      const isAuthenticated =
+        Boolean(integration.enabled) && Boolean(integration.accessToken);
+      setRuntimeState("deviantart", {
+        availability: "unknown",
+        unavailableReason: null,
+        driver: integration.driver,
+        connectedAccount: integration.connectedUsername,
+        status: integration.enabled
+          ? isAuthenticated
+            ? "ready"
+            : "warning"
+          : "disabled",
+        auth: isAuthenticated ? "authenticated" : "unauthenticated",
+      });
+      return;
+    }
     case "google": {
       const integration = settings.integrations.google;
       const isAuthenticated =
@@ -127,6 +150,7 @@ function hydrateRuntimeState(
 
 const KIND_TO_INSTANCE_ID: Record<IntegrationKind, string> = {
   github: "github",
+  deviantart: "deviantart",
   bitbucket: "bitbucket",
   google: "google",
   "mobilbank-sparebank": "mobilbank-sparebank",
@@ -141,11 +165,13 @@ export function buildServerIntegration(
   const enabled =
     kind === "github"
       ? settings.integrations.github.enabled
-      : kind === "bitbucket"
-        ? settings.integrations.bitbucket.enabled
-        : kind === "google"
-          ? settings.integrations.google.enabled
-          : settings.integrations["mobilbank-sparebank"].enabled;
+      : kind === "deviantart"
+        ? settings.integrations.deviantart.enabled
+        : kind === "bitbucket"
+          ? settings.integrations.bitbucket.enabled
+          : kind === "google"
+            ? settings.integrations.google.enabled
+            : settings.integrations["mobilbank-sparebank"].enabled;
 
   const rt = getRuntimeState(kind);
   return {
@@ -189,12 +215,55 @@ async function connectMobilbank(
 export async function connectIntegration(
   kind: IntegrationKind,
   db: AppDatabase,
+  options?: ConnectIntegrationOptions,
 ): Promise<ConnectIntegrationResult> {
   switch (kind) {
     case "github": {
       const result = await githubDriver.startFlow();
+      if (result.success && result.authUrl) {
+        try {
+          await launchOAuthUrl(result.authUrl, options);
+        } catch (error) {
+          githubDriver.cancelFlowByAuthUrl(result.authUrl);
+          return {
+            success: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to open the GitHub authorization page.",
+          };
+        }
+      }
       if (result.success) {
         setRuntimeState("github", {
+          status: "warning",
+          auth: "unauthenticated",
+          availability: "unknown",
+          unavailableReason: null,
+          driver: "oauth2",
+          connectedAccount: null,
+        });
+      }
+      return result;
+    }
+    case "deviantart": {
+      const result = await deviantArtDriver.startFlow();
+      if (result.success && result.authUrl) {
+        try {
+          await launchOAuthUrl(result.authUrl, options);
+        } catch (error) {
+          deviantArtDriver.cancelFlowByAuthUrl(result.authUrl);
+          return {
+            success: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to open the DeviantArt authorization page.",
+          };
+        }
+      }
+      if (result.success) {
+        setRuntimeState("deviantart", {
           status: "warning",
           auth: "unauthenticated",
           availability: "unknown",
@@ -227,29 +296,51 @@ export async function handleProtocolUrl(
   urlString: string,
   db: AppDatabase,
 ): Promise<void> {
-  if (!githubDriver.canHandleCallback(urlString)) {
+  if (githubDriver.canHandleCallback(urlString)) {
+    try {
+      const result = await githubDriver.completeFlow(urlString, db);
+      setRuntimeState("github", {
+        status: "ready",
+        auth: "authenticated",
+        availability: "unknown",
+        unavailableReason: null,
+        driver: "oauth2",
+        connectedAccount: result.connectedAccount,
+      });
+    } catch (error) {
+      setRuntimeState("github", {
+        status: "error",
+        auth: "unauthenticated",
+        unavailableReason: "service-error",
+        connectedAccount: null,
+        driver: "oauth2",
+      });
+      console.error("[integrations] GitHub OAuth2 callback failed:", error);
+    }
     return;
   }
 
-  try {
-    const result = await githubDriver.completeFlow(urlString, db);
-    setRuntimeState("github", {
-      status: "ready",
-      auth: "authenticated",
-      availability: "unknown",
-      unavailableReason: null,
-      driver: "oauth2",
-      connectedAccount: result.connectedAccount,
-    });
-  } catch (error) {
-    setRuntimeState("github", {
-      status: "error",
-      auth: "unauthenticated",
-      unavailableReason: "service-error",
-      connectedAccount: null,
-      driver: "oauth2",
-    });
-    console.error("[integrations] GitHub OAuth2 callback failed:", error);
+  if (deviantArtDriver.canHandleCallback(urlString)) {
+    try {
+      const result = await deviantArtDriver.completeFlow(urlString, db);
+      setRuntimeState("deviantart", {
+        status: "ready",
+        auth: "authenticated",
+        availability: "unknown",
+        unavailableReason: null,
+        driver: "oauth2",
+        connectedAccount: result.connectedAccount,
+      });
+    } catch (error) {
+      setRuntimeState("deviantart", {
+        status: "error",
+        auth: "unauthenticated",
+        unavailableReason: "service-error",
+        connectedAccount: null,
+        driver: "oauth2",
+      });
+      console.error("[integrations] DeviantArt OAuth2 callback failed:", error);
+    }
   }
 }
 
@@ -264,6 +355,16 @@ export function disconnectIntegration(
     ...current.integrations,
     ...(kind === "github" && {
       github: {
+        enabled: false,
+        driver: null,
+        accessToken: null,
+        refreshToken: null,
+        scopes: [],
+        connectedUsername: null,
+      },
+    }),
+    ...(kind === "deviantart" && {
+      deviantart: {
         enabled: false,
         driver: null,
         accessToken: null,
@@ -318,4 +419,8 @@ export function disconnectIntegration(
 
 export function clearGithubNotificationsCache(db: AppDatabase): void {
   clearGithubNotificationsCacheStore(db);
+}
+
+export function clearDeviantArtMediaCache(db: AppDatabase): void {
+  clearDeviantArtMediaCacheStore(db);
 }
